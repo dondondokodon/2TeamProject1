@@ -19,6 +19,8 @@
     <Filter Include="Source\System">
       <UniqueIdentifier>{bdca9bd5-7c86-4bde-986d-9cf51f91eb5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\PlayerState">
+      <UniqueIdentifier>{0bffdc9a-cd4e-45c9-9c02-8336458d41cc}</UniqueIdentifier>
     <Filter Include="Source\.cppファイル">
       <UniqueIdentifier>{85cd51ec-ef97-4b06-b463-7cbfef585811}</UniqueIdentifier>
     </Filter>
@@ -180,6 +182,30 @@
     <ClInclude Include="Source\Stage.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\StageObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationController.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerState.h">
+      <Filter>Source\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\JumpState.h">
+      <Filter>Source\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\IdleState.h">
+      <Filter>Source\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WalkState.h">
+      <Filter>Source\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerStates.h">
+      <Filter>Source\PlayerState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -316,6 +342,27 @@
     </ClCompile>
     <ClCompile Include="Source\Stage.cpp">
       <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerState.cpp">
+      <Filter>Source\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\JumpState.cpp">
+      <Filter>Source\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IdleState.cpp">
+      <Filter>Source\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WalkState.cpp">
+      <Filter>Source\PlayerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

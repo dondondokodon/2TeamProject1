@@ -49,6 +49,8 @@ public:
 	//衝撃を与える
 	void AddImpulse(const DirectX::XMFLOAT3& impulse);
 
+	bool getIsGround() { return isGround; }
+
 private:
 	//垂直速力更新処理	
 	void UpdateVerticalVelocity(float elapsedTime);
@@ -86,6 +88,7 @@ protected:
 
 	//無敵時間更新
 	void UpdateInvincibleTimer(float elapsedTime);
+
 
 protected:
 	DirectX::XMFLOAT3 position = { 0,0,0 };
