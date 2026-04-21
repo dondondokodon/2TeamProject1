@@ -21,6 +21,7 @@
     </Filter>
     <Filter Include="Source\PlayerState">
       <UniqueIdentifier>{0bffdc9a-cd4e-45c9-9c02-8336458d41cc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\.cppファイル">
       <UniqueIdentifier>{85cd51ec-ef97-4b06-b463-7cbfef585811}</UniqueIdentifier>
     </Filter>
@@ -182,15 +183,6 @@
     <ClInclude Include="Source\Stage.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResourceManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AnimationController.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PlayerState.h">
       <Filter>Source\PlayerState</Filter>
     </ClInclude>
@@ -205,6 +197,15 @@
     </ClInclude>
     <ClInclude Include="Source\PlayerStates.h">
       <Filter>Source\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationController.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceManager.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageObject.h">
+      <Filter>Source\.hファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -343,15 +344,6 @@
     <ClCompile Include="Source\Stage.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StageObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ResourceManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AnimationController.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PlayerState.cpp">
       <Filter>Source\PlayerState</Filter>
     </ClCompile>
@@ -363,6 +355,15 @@
     </ClCompile>
     <ClCompile Include="Source\WalkState.cpp">
       <Filter>Source\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationController.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageObject.cpp">
+      <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
