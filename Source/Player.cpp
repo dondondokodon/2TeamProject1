@@ -11,7 +11,9 @@
 //コンストラクタ
 void Player::Initialize()
 {
-	model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+
+	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.01f;
@@ -21,6 +23,13 @@ void Player::Initialize()
 
 	//ヒットSE読み込み
 	hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
+
+	//アニメーションコントローラーにモデルをセット
+	animation.setModel(model.get());
+
+	//初期ステートをIdleStateに設定
+	state = std::make_unique<IdleState>();
+	state->Initialize(*this);
 }
 
 //デストラクタ
@@ -28,24 +37,49 @@ void Player::Finalize()
 {
 	delete hitSE;
 	delete hitEffect;
-	delete model;
+	//delete model;
+}
+
+//ステート変更処理
+void Player::ChangeState(std::unique_ptr<PlayerState> newState)
+{
+	//現在のステートの終了処理
+	if (state)
+	{
+		state->Finalize(*this);
+	}
+	//新しいステートに変更
+	state = std::move(newState);
+	//新しいステートの初期化処理
+	if (state)
+	{
+		state->Initialize(*this);
+	}
 }
 
 //更新処理
 void Player::Update(float elapsedTime)
 {
-	
+	//ステートの更新処理
+	if(state)
+	{
+		state->Update(*this, elapsedTime);
+	}
+
 	//移動入力処理
-	InputMove(elapsedTime);
+	//InputMove(elapsedTime);
 
 	//ジャンプ入力処理
-	InputJump();
+	//InputJump();
 
 	//速力処理更新
 	UpdateVelocity(elapsedTime);
 
 	//弾丸入力処理
 	InputProjectile();
+
+	//アニメーション更新処理
+	animation.UpdateAnimation(elapsedTime);
 
 	//弾丸更新処理
 	projectileManager.Update(elapsedTime);
@@ -72,7 +106,7 @@ void Player::Update(float elapsedTime)
 //描画処理
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-	renderer->Render(rc, transform, model, ShaderId::Lambert);
+	renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
 
 	//弾丸描画処理
 	projectileManager.Render(rc, renderer);
@@ -185,7 +219,7 @@ void Player::InputMove(float elapsedTime)
 	Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
 
 	//旋回処理
-	//Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+	Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 }
 
 
@@ -317,7 +351,7 @@ void Player::CollisionProjectilesVsEnemies()
 }
 
 //ジャンプ入力処理
-void Player::InputJump()
+bool Player::InputJump()
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if (gamePad.GetButtonDown() & GamePad::BTN_A)
@@ -327,8 +361,10 @@ void Player::InputJump()
 			velocity.y = 0.0f;
 			Jump(JumpSpeed);
 			JumpCount++;
+			return true;
 		}
 	}
+	return false;
 }
 
 //弾丸入力処理

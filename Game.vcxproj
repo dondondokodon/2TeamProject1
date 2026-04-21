@@ -119,6 +119,7 @@
     <ClInclude Include="External\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="External\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="External\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="Source\AnimationController.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\CameraController.h" />
     <ClInclude Include="Source\Character.h" />
@@ -129,18 +130,24 @@
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\EnemySlime.h" />
     <ClInclude Include="Source\Framework.h" />
+    <ClInclude Include="Source\IdleState.h" />
+    <ClInclude Include="Source\JumpState.h" />
     <ClInclude Include="Source\MathUtils.h" />
     <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="Source\PlayerState.h" />
+    <ClInclude Include="Source\PlayerStates.h" />
     <ClInclude Include="Source\Projectile.h" />
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\ProjectileStraight.h" />
+    <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneGame.h" />
     <ClInclude Include="Source\SceneLoading.h" />
     <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\Stage.h" />
+    <ClInclude Include="Source\StageObject.h" />
     <ClInclude Include="Source\System\Audio.h" />
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
@@ -162,6 +169,7 @@
     <ClInclude Include="Source\System\Shader.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\WalkState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp" />
@@ -170,6 +178,7 @@
     <ClCompile Include="External\imgui-docking\imgui_impl_dx11.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_impl_win32.cpp" />
     <ClCompile Include="External\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="Source\AnimationController.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CameraController.cpp" />
     <ClCompile Include="Source\Character.cpp" />
@@ -180,18 +189,23 @@
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\EnemySlime.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
+    <ClCompile Include="Source\IdleState.cpp" />
+    <ClCompile Include="Source\JumpState.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MathUtils.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\PlayerState.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\ProjectileHoming.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\ProjectileStraight.cpp" />
+    <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
     <ClCompile Include="Source\SceneLoading.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
+    <ClCompile Include="Source\StageObject.cpp" />
     <ClCompile Include="Source\System\Audio.cpp" />
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />
@@ -209,6 +223,7 @@
     <ClCompile Include="Source\System\RenderState.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\WalkState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Basic.hlsli" />
