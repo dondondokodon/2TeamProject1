@@ -1,12 +1,17 @@
 #pragma once
 
+#include<memory>
 #include"System/ModelRenderer.h"
 #include"System/AudioSource.h"
 #include"Character.h"
 #include"ProjectileManager.h"
 #include"Effect.h"
+#include"AnimationController.h"
 
-//プライヤー
+#include"PlayerStates.h"
+
+
+//プレイヤー
 class Player :public Character
 {
 private:
@@ -43,20 +48,27 @@ public:
 	void InputMove(float elapsedTime);
 
 	//ジャンプ入力処理
-	void InputJump();
+	bool InputJump();
 
 	//弾丸入力処理
 	void InputProjectile();
+
+	//ステート変更処理
+	void ChangeState(std::unique_ptr<PlayerState> newState);
+
+	//スティック入力値から移動ベクトルを取得
+	DirectX::XMFLOAT3 GetMoveVec() const;
+
+	//ゲッター
+	AnimationController& GetAnimation() { return animation; }
 
 protected:
 	//着地したときに呼ばれる
 	void OnLanding()override;
 
 private:
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 
-	//スティック入力値から移動ベクトルを取得
-	DirectX::XMFLOAT3 GetMoveVec() const;
 
 	float moveSpeed = 5.0f;
 
@@ -76,4 +88,6 @@ private:
 	ProjectileManager projectileManager;
 	Effect* hitEffect = nullptr;
 	AudioSource* hitSE = nullptr;
+	AnimationController animation;
+	std::unique_ptr<PlayerState> state = nullptr;
 };

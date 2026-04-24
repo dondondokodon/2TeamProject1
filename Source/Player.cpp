@@ -8,87 +8,121 @@
 #include"ProjectileStraight.h"
 #include"ProjectileHoming.h"
 
-//コンストラクタ
+//�R���X�g���N�^
 void Player::Initialize()
 {
-	model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
 
-	//モデルが大きいのでスケーリング
+	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+
+	//���f�����傫���̂ŃX�P�[�����O
 	scale.x = scale.y = scale.z = 0.01f;
 
-	//ヒットエフェクト読み込み
+	//�q�b�g�G�t�F�N�g�ǂݍ���
 	hitEffect = new Effect("Data/Effect/Hit.efk");
 
-	//ヒットSE読み込み
+	//�q�b�gSE�ǂݍ���
 	hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
+
+	//�A�j���[�V�����R���g���[���[�Ƀ��f����Z�b�g
+	animation.setModel(model.get());
+
+	//�����X�e�[�g��IdleState�ɐݒ�
+	state = std::make_unique<IdleState>();
+	state->Initialize(*this);
 }
 
-//デストラクタ
+//�f�X�g���N�^
 void Player::Finalize()
 {
 	delete hitSE;
 	delete hitEffect;
-	delete model;
+	//delete model;
 }
 
-//更新処理
+//�X�e�[�g�ύX����
+void Player::ChangeState(std::unique_ptr<PlayerState> newState)
+{
+	//���݂̃X�e�[�g�̏I������
+	if (state)
+	{
+		state->Finalize(*this);
+	}
+	//�V�����X�e�[�g�ɕύX
+	state = std::move(newState);
+	//�V�����X�e�[�g�̏���������
+	if (state)
+	{
+		state->Initialize(*this);
+	}
+}
+
+//�X�V����
 void Player::Update(float elapsedTime)
 {
-	
-	//移動入力処理
-	InputMove(elapsedTime);
+	//�X�e�[�g�̍X�V����
+	if(state)
+	{
+		state->Update(*this, elapsedTime);
+	}
 
-	//ジャンプ入力処理
-	InputJump();
+	//�ړ����͏���
+	//InputMove(elapsedTime);
 
-	//速力処理更新
+	//�W�����v���͏���
+	//InputJump();
+
+	//���͏����X�V
 	UpdateVelocity(elapsedTime);
 
-	//弾丸入力処理
+	//�e�ۓ��͏���
 	InputProjectile();
 
-	//弾丸更新処理
+	//�A�j���[�V�����X�V����
+	animation.UpdateAnimation(elapsedTime);
+
+	//�e�ۍX�V����
 	projectileManager.Update(elapsedTime);
 
-	//無敵時間更新
+	//���G���ԍX�V
 	UpdateInvincibleTimer(elapsedTime);
 
-	//死んでほしくないので死んだら回復
+	//����łق����Ȃ��̂Ŏ��񂾂��
 	if (health <= 0)	health = 100;
 
-	//プレイヤーと敵との衝突処理
+	//�v���C���[�ƓG�Ƃ̏Փˏ���
 	CollisionPlayerVsEnemies();
 
-	//弾丸と敵の衝突処理
+	//�e�ۂƓG�̏Փˏ���
 	CollisionProjectilesVsEnemies();
 
-	//オブジェクト行列を更新
+	//�I�u�W�F�N�g�s���X�V
 	UpdateTransform();
 
-	//モデル行列更新
+	//���f���s��X�V
 	model->UpdateTransform();
 }
 
-//描画処理
+//�`�揈��
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-	renderer->Render(rc, transform, model, ShaderId::Lambert);
+	renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
 
-	//弾丸描画処理
+	//�e�ە`�揈��
 	projectileManager.Render(rc, renderer);
 }
 
-//更新処理
+//�X�V����
 void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
-	//基底クラスの関数の呼び出し
+	//���N���X�̊֐��̌Ăяo��
 	Character::RenderDebugPrimitive(rc, renderer);
 
-	//弾丸デバッグプリミティブ描画
+	//�e�ۃf�o�b�O�v���~�e�B�u�`��
 	projectileManager.RenderDebugPrimitive(rc, renderer);
 }
 
-//デバッグ用GUI描画
+//�f�o�b�O�pGUI�`��
 void Player::DrawDebugGUI()
 {
 	ImVec2 pos = ImGui::GetMainViewport()->GetWorkPos();
@@ -97,12 +131,12 @@ void Player::DrawDebugGUI()
 
 	if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
 	{
-		//トランスフォーム
+		//�g�����X�t�H�[��
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			//位置
+			//�ʒu
 			ImGui::InputFloat3("Position", &position.x);
-			//回転
+			//��]
 			DirectX::XMFLOAT3 a;
 			a.x = DirectX::XMConvertToDegrees(angle.x);
 			a.y = DirectX::XMConvertToDegrees(angle.y);
@@ -111,7 +145,7 @@ void Player::DrawDebugGUI()
 			angle.x = DirectX::XMConvertToRadians(a.x);
 			angle.y = DirectX::XMConvertToRadians(a.y);
 			angle.z = DirectX::XMConvertToRadians(a.z);
-			//スケール	
+			//�X�P�[��	
 			ImGui::InputFloat3("Scale", &scale.x);
 		}
 	}
@@ -120,94 +154,94 @@ void Player::DrawDebugGUI()
 
 DirectX::XMFLOAT3 Player::GetMoveVec()const
 {
-	//入力情報を取得
+	//���͏���擾
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	float ax = gamePad.GetAxisLX();
 	float ay = gamePad.GetAxisLY();
 
-	//カメラ方向とスティックの入力値によって進行方向を計算する
+	//�J���������ƃX�e�B�b�N�̓��͒l�ɂ���Đi�s������v�Z����
 	Camera& camera = Camera::Instance();
 	const DirectX::XMFLOAT3& cameraRight = camera.GetRight();
 	const DirectX::XMFLOAT3& cameraFront = camera.GetFront();
 
-	//移動ベクトルはXZ平面に水平なベクトルになるようにする
+	//�ړ��x�N�g����XZ���ʂɐ����ȃx�N�g���ɂȂ�悤�ɂ���
 
-	//カメラ右方向ベクトルをXZ単位ベクトルに変換
+	//�J�����E�����x�N�g����XZ�P�ʃx�N�g���ɕϊ�
 	float cameraRightX = cameraRight.x;
 	float cameraRightZ = cameraRight.z;
 	float cameraRightLength = sqrtf(cameraRightX * cameraRightX+cameraRightZ*cameraRightZ);
 	if (cameraRightLength > 0.0f)
 	{
-		//単位ベクトル化
+		//�P�ʃx�N�g����
 		cameraRightX /= cameraRightLength;
 		cameraRightZ /= cameraRightLength;
 	}
 
-	//カメラ前方向ベクトルをXZ単位ベクトルに変換
+	//�J�����O�����x�N�g����XZ�P�ʃx�N�g���ɕϊ�
 	float cameraFrontX = cameraFront.x;
 	float cameraFrontZ = cameraFront.z;
 	float cameraFrontLength = sqrtf(cameraFrontX *cameraFrontX + cameraFrontZ*cameraFrontZ);
 	if (cameraFrontLength > 0.0f)
 	{
-		//単位ベクトル化
+		//�P�ʃx�N�g����
 		cameraFrontX /= cameraFrontLength;
 		cameraFrontZ /= cameraFrontLength;
 	}
 
-	//スティックの水平入力値をカメラ右方向に反映し、
-	//スティックの垂直入力値をカメラ前方向に反映し、
-	//進行ベクトルを計算する
+	//�X�e�B�b�N�̐������͒l��J�����E�����ɔ��f���A
+	//�X�e�B�b�N�̐������͒l��J�����O�����ɔ��f���A
+	//�i�s�x�N�g����v�Z����
 	DirectX::XMFLOAT3 vec;
 	/*vec.x = cameraRightX * ax+cameraRightZ*ay;
 	vec.z = cameraFrontX * ax+cameraFrontZ*ay;*/
 
 	vec.x = cameraRightX * ax + cameraFrontX * ay;
 	vec.z = cameraRightZ * ax + cameraFrontZ * ay;
-	//Y軸方向には移動しない
+	//Y�������ɂ͈ړ����Ȃ�
 	vec.y = 0.0f;
 
 	return vec;
 }
 
-//着地したときに呼ばれる
+//���n�����Ƃ��ɌĂ΂��
 void Player::OnLanding()
 {
 	JumpCount = 0;
 }
 
-//移動入力処理
+//�ړ����͏���
 void Player::InputMove(float elapsedTime)
 {
-	//進行ベクトル取得
+	//�i�s�x�N�g���擾
 	DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-	//移動処理
+	//�ړ�����
 	Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
 
-	//旋回処理
+	//���񏈗�
 	Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 }
 
 
-//プレイヤーとエネミーとの衝突処理
+//�v���C���[�ƃG�l�~�[�Ƃ̏Փˏ���
 void Player::CollisionPlayerVsEnemies()
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 
-	//全ての敵と総当たりで衝突処理
+	//�S�Ă̓G�Ƒ�������ŏՓˏ���
 	int enemyCount = enemyManager.GetEnemyCount();
 	for (int i = 0;i < enemyCount;++i)
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
 
-		//衝突処理
+		//�Փˏ���
 		DirectX::XMFLOAT3 outPosition;
-		//球と球のほう
+		//���Ƌ��̂ق�
 		//if (Collision::IntersectSphereVsSphere(position, radius,
 		//	enemy->GetPosition(), enemy->GetRadius(), 
 		//	outPosition))
 		//{
-		//	//押し出し後の位置設定
+		//	//�����o����̈ʒu�ݒ�
 		//	outPosition.x += enemy->GetPosition().x;
 		//	outPosition.y += enemy->GetPosition().y;
 		//	outPosition.z += enemy->GetPosition().z;
@@ -218,7 +252,7 @@ void Player::CollisionPlayerVsEnemies()
 			enemy->GetRadius(), enemy->GetHeight(), outPosition
 		))
 		{
-			//前で先生がやってるやつ
+			//�O�Ő搶������Ă���
 			DirectX::HXMVECTOR P = DirectX::XMLoadFloat3(&position);
 			DirectX::HXMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
 			DirectX::HXMVECTOR V = DirectX::XMVectorSubtract(P, E);
@@ -226,33 +260,33 @@ void Player::CollisionPlayerVsEnemies()
 			DirectX::XMFLOAT3 normal;
 			DirectX::XMStoreFloat3(&normal, N);
 			float enemyTop = enemy->GetPosition().y + enemy->GetHeight();
-			//たぶんベクトルでやる判定　ｘｚ平面のベクトルでうまいことやりそう
+			//���Ԃ�x�N�g���ł�锻��@�������ʂ̃x�N�g���ł��܂����Ƃ�肻��
 			/*if (enemyTop <= position.y - velocity.y)
 			{
-			    自分でやったやつ
+			    �����ł�������
 				velocity.y = JumpSpeed*0.5f;
 			}*/
-			//上から踏んだ時ジャンプ（プレイヤーから敵へのベクトルでやってる？）
+			//�ォ�瓥�񂾎��W�����v�i�v���C���[����G�ւ̃x�N�g���ł���Ă�H�j
 			if (normal.y > 0.8f)
 			{
-				//ダメージを与える
+				//�_���[�W��^����
 				enemy->ApplyDamage(1,0.5f);
 
 				Jump(JumpSpeed * 0.5f);
 			}
-			//押し出し後の位置設定
+			//�����o����̈ʒu�ݒ�
 			else
 			enemy->SetPosition(outPosition);
 		}
 	}
 }
 
-//弾丸と敵の衝突処理
+//�e�ۂƓG�̏Փˏ���
 void Player::CollisionProjectilesVsEnemies()
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 
-	//全ての弾丸とすべての敵を総当たりで衝突処理
+	//�S�Ă̒e�ۂƂ��ׂĂ̓G�𑍓�����ŏՓˏ���
 	int projectileCount = projectileManager.GetProjectileCount();
 	int enemyCount = enemyManager.GetEnemyCount();
 	for (int i = 0;i < projectileCount;i++)
@@ -262,7 +296,7 @@ void Player::CollisionProjectilesVsEnemies()
 		{
 			Enemy* enemy = enemyManager.GetEnemy(j);
 
-			//衝突処理
+			//�Փˏ���
 			DirectX::XMFLOAT3 outPosition;
 			if (Collision::IntersectSphereVsCylinder(
 				projectile->GetPosition(),
@@ -272,43 +306,43 @@ void Player::CollisionProjectilesVsEnemies()
 				enemy->GetHeight(),
 				outPosition))
 			{
-				//ダメージを与える
+				//�_���[�W��^����
 				if (enemy->ApplyDamage(1, 0.5f))
 				{
-					//吹き飛ばす
+					//������΂�
 					{
 						DirectX::XMFLOAT3 impulse;
 						DirectX::XMVECTOR pPos = DirectX::XMLoadFloat3(&projectile->GetPosition());
 						DirectX::XMVECTOR ePos = DirectX::XMLoadFloat3(&enemy->GetPosition());
 
-						DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(ePos, pPos);//向き
-						dir = DirectX::XMVector3Normalize(dir);//正規化
+						DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(ePos, pPos);//����
+						dir = DirectX::XMVector3Normalize(dir);//���K��
 
 						float power = 10.0f;
 						dir = DirectX::XMVectorScale(dir, power);
 
 						DirectX::XMStoreFloat3(&impulse, dir);
 
-						//上には少しだけはねる
+						//��ɂ͏��������͂˂�
 						impulse.y=power*0.5f;
 						
 
 						enemy->AddImpulse(impulse);
 					}
 
-					//ヒットエフェクト再生
+					//�q�b�g�G�t�F�N�g�Đ�
 					{
 						DirectX::XMFLOAT3 e = enemy->GetPosition();
 						e.y += enemy->GetHeight() * 0.5f;
 						hitEffect->Play(e);
 					}
 
-					//ヒットSE再生
+					//�q�b�gSE�Đ�
 					{
 						hitSE->Play(false);
 					}
 
-					//弾丸破棄
+					//�e�۔j��
 					projectile->Destroy();
 				}
 			}
@@ -316,8 +350,8 @@ void Player::CollisionProjectilesVsEnemies()
 	}
 }
 
-//ジャンプ入力処理
-void Player::InputJump()
+//�W�����v���͏���
+bool Player::InputJump()
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if (gamePad.GetButtonDown() & GamePad::BTN_A)
@@ -327,57 +361,59 @@ void Player::InputJump()
 			velocity.y = 0.0f;
 			Jump(JumpSpeed);
 			JumpCount++;
+			return true;
 		}
 	}
+	return false;
 }
 
-//弾丸入力処理
+//�e�ۓ��͏���
 void Player::InputProjectile()
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	//直進弾丸発射
+	//���i�e�۔���
 	if (gamePad.GetButtonDown() & GamePad::BTN_X)
 	{
-		//前方向
+		//�O����
 		DirectX::XMFLOAT3 dir;
 		dir.x = sinf(angle.y);
 		dir.y = 0.0f;
 		dir.z = cosf(angle.y);
 
-		//発射位置（プレイヤーの腰当たり）
+		//���ˈʒu�i�v���C���[�̍�������j
 		DirectX::XMFLOAT3 pos;
 		pos.x = position.x;
 		pos.y = position.y+0.5f;
 		pos.z = position.z;
 
-		//発射
+		//����
 		ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
 		projectile->Launch(dir, pos);
 	}
 
-	//追尾弾発射
+	//�ǔ��e����
 	if (gamePad.GetButtonDown() & GamePad::BTN_Y)
 	{
-		//前方向
+		//�O����
 		DirectX::XMFLOAT3 dir;
 		dir.x = sinf(angle.y);
 		dir.y = 0.0f;
 		dir.z = cosf(angle.y);
 
-		//発射位置（プレイヤーの腰当たり）
+		//���ˈʒu�i�v���C���[�̍�������j
 		DirectX::XMFLOAT3 pos;
 		pos.x = position.x;
 		pos.y = position.y + 0.5f;
 		pos.z = position.z;
 
-		//ターゲット（デフォルトではプレイヤーの前方）
+		//�^�[�Q�b�g�i�f�t�H���g�ł̓v���C���[�̑O���j
 		DirectX::XMFLOAT3 target;
 		target.x = dir.x;
 		target.y = dir.y;
 		target.z = dir.z;
 
-		//一番近くの敵をターゲットにする
+		//��ԋ߂��̓G��^�[�Q�b�g�ɂ���
 		float dist = FLT_MAX;
 		EnemyManager& enemyManager = EnemyManager::Instance();
 		int enemyCount = enemyManager.GetEnemyCount();
@@ -385,7 +421,7 @@ void Player::InputProjectile()
 		{
 			Enemy* enemy = enemyManager.GetEnemy(i);
 			if (!enemy)	continue;
-			//敵との距離判定
+			//�G�Ƃ̋�������
 			
 			DirectX::XMFLOAT3 epos = enemy->GetPosition();
 
@@ -402,7 +438,7 @@ void Player::InputProjectile()
 			}
 		}
 
-		//発射
+		//����
 		ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
 		projectile->Launch(dir, pos,target);
 	}
