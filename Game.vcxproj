@@ -78,6 +78,9 @@
       </AssemblerOutput>
       <AssemblerOutputFile>Data\Shader\%(Filename).cod</AssemblerOutputFile>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(ProjectName).exe $(SolutionDir) </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -109,6 +112,9 @@
       </AssemblerOutput>
       <AssemblerOutputFile>Data\Shader\%(Filename).cod</AssemblerOutputFile>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(ProjectName).exe $(SolutionDir) </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui-docking\imconfig.h" />
