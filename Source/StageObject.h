@@ -12,7 +12,7 @@ public:
 	virtual void Update(float elapsedTime) = 0;
 
 	//•`‰æˆ—
-	void Render(const RenderContext& rc, ModelRenderer* renderer);
+	virtual void Render(const RenderContext& rc, ModelRenderer* renderer);
 
 private:
 
