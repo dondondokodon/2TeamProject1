@@ -33,6 +33,12 @@ public:
 	//描画
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
 
+	//デバッグプリミティブ描画
+	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
+	{
+		renderer->RenderBox(rc, startPos, { 0,0,0 }, { width, width, 0.1f }, DirectX::XMFLOAT4(1, 1, 0, 1));
+	}
+
 private:
 	DirectX::XMFLOAT3 startPos = { 0,0,0 };
 	DirectX::XMFLOAT3 endPos = { 0,0,0 };
@@ -67,6 +73,18 @@ public:
 
 	//描画処理
 	void Render(const RenderContext& rc, ModelRenderer* renderer)override;
+
+	//デバッグプリミティブ描画
+	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override
+	{
+		StageObject::RenderDebugPrimitive(rc, renderer);
+		//コライダーのデバッグ描画
+		renderer->RenderBox(rc, topCollider.GetCenter(), { 0,0,0 }, topCollider.GetSize(), DirectX::XMFLOAT4(1, 0, 0, 1));
+		renderer->RenderBox(rc, sideCollider.GetCenter(), { 0,0,0 }, sideCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+
+		//ビームのデバッグ描画
+		beam.RenderDebugPrimitive(rc, renderer);
+	}
 
 	//回転 仮
 	void RotateY(float angle)

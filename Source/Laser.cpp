@@ -114,20 +114,6 @@ void Laser::Shoot()
         DirectX::XMFLOAT3 hitPos;
         DirectX::XMFLOAT3 normal;
 
-        ////次ここ触る　コメントの引数のところにステージの全てのオブジェクトを持っているマネージャーのようなクラスを作ってそのクラスの情報を渡すかそのクラスでレイキャスト関数を書いてそのメンバ関数を呼び出せばいい
-        //bool hit = Collision::RayCast(
-        //    pos,
-        //    DirectX::XMFLOAT3(
-        //        pos.x + dir.x * remaining,
-        //        pos.y + dir.y * remaining,
-        //        pos.z + dir.z * remaining
-        //    ),
-        //    /* world matrix */,
-        //    /* mirror or stage model */,
-        //    hitPos,
-        //    normal
-        //);
-
         bool hit = manager->RayCast(
             pos,
             DirectX::XMFLOAT3(
@@ -207,12 +193,12 @@ void Laser::UpdateColliders()
         );
 
     // 足場コライダー（薄い箱）
-    topCollider.SetCenter(center);
-    topCollider.SetSize({ 0.5f, 0.1f, length });
+    topCollider.SetCenter({ center.x,center.y+0.4f,center.z });
+    topCollider.SetSize({ 1.0f, 0.1f, length });
 
     // 側面も同様に薄く作る
-    sideCollider.SetCenter(center);
-    sideCollider.SetSize({ 0.1f, 0.5f, length });
+    sideCollider.SetCenter({center.x,center.y-0.8f,center.z});
+    sideCollider.SetSize({ 1.2f, 0.4f, length });
 }
 
 void Laser::ResolvePlayerCollision()

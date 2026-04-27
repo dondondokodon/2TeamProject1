@@ -471,8 +471,8 @@ void Player::Initialize()
 	state->Initialize(*this);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ 0, 0.5f, 0 });
-	bodyCollider.SetSize({1,1,1});
+	bodyCollider.SetCenter({ position.x, position.y, position.z });
+	bodyCollider.SetSize(scale);
 }
 
 //デストラクタ
@@ -539,6 +539,13 @@ void Player::Update(float elapsedTime)
 	//弾丸と敵の衝突処理
 	CollisionProjectilesVsEnemies();
 
+	//プレイヤーとステージオブジェクトの衝突処理
+	CollisionPlayerVsStage();
+
+	//コライダーのセット
+	bodyCollider.SetCenter({ position.x, position.y-0.1f, position.z });
+	bodyCollider.SetSize({1,0.1,1});
+
 	//オブジェクト行列を更新
 	UpdateTransform();
 
@@ -555,7 +562,7 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 	projectileManager.Render(rc, renderer);
 }
 
-//更新処理
+//デバッグプリミティブ描画
 void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
 	//基底クラスの関数の呼び出し
@@ -563,6 +570,9 @@ void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 
 	//弾丸デバッグプリミティブ描画
 	projectileManager.RenderDebugPrimitive(rc, renderer);
+
+	//BoxColliderのデバッグプリミティブ描画
+	renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
 }
 
 //デバッグ用GUI描画
@@ -809,11 +819,12 @@ void Player::CollisionPlayerVsStage()
 
 		CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
 
-		if (result.hit)
+		if (result.hit&&velocity.y<0)
 		{
 			// 上から乗った場合
 			if (result.normal.y > 0.5f)
 			{
+				velocity.y = 0.0f;
 				position.y += result.pushOut.y;
 				isGround = true;
 			}
@@ -824,8 +835,8 @@ void Player::CollisionPlayerVsStage()
 
 		if (result.hit)
 		{
-			position.x += result.pushOut.x;
-			position.z += result.pushOut.z;
+			position.x -= result.pushOut.x;
+			position.z -= result.pushOut.z;
 		}
 	}
 }

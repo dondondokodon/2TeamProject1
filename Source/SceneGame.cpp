@@ -97,7 +97,10 @@ void SceneGame::Update(float elapsedTime)
 	Player::Instance().Update(elapsedTime);
 
 	//エネミー更新処理
-	EnemyManager::Instance().Update(elapsedTime);
+	//EnemyManager::Instance().Update(elapsedTime);
+
+	//ステージオブジェクト更新処理
+	StageObjectManager::Instance().Update(elapsedTime);
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
@@ -155,8 +158,11 @@ void SceneGame::Render()
 		//プレイヤー描画
 		Player::Instance().Render(rc, modelRenderer);
 
-		//エネミー更新処理
+		//エネミー描画
 		EnemyManager::Instance().Render(rc, modelRenderer);
+
+		//ステージオブジェクト描画
+		StageObjectManager::Instance().Render(rc, modelRenderer);
 
 		//エフェクト描画
 		EffectManager::Instance().Render(rc.view, rc.projection);
@@ -169,6 +175,9 @@ void SceneGame::Render()
 
 		//エネミーデバッグプリミティブ描画
 		EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
+
+		//ステージオブジェクトデバッグプリミティブ描画
+		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 	}
 
 	// 2Dスプライト描画

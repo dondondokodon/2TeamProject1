@@ -5,7 +5,7 @@ class LaserManager
 {
 public:
 	LaserManager() {}
-	~LaserManager() {}
+	~LaserManager() { Clear(); }
 
 	//XVˆ—
 	void Update(float elapsedTime);

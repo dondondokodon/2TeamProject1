@@ -18,7 +18,7 @@ public:
 	//デバッグプリミティブ描画
 	virtual void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 	{
-		renderer->RenderBox(rc, position,angle, scale, DirectX::XMFLOAT4(0, 0, 0,1));
+		renderer->RenderBox(rc, position,angle, scale, DirectX::XMFLOAT4(0, 0, 1,1));
 	}
 
 	//トランスフォーム取得

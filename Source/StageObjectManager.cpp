@@ -3,7 +3,7 @@
 
 #include"LaserManager.h"
 
-StageObjectManager::~StageObjectManager() { Clear(); }
+StageObjectManager::~StageObjectManager() { Clear();delete laserManager; }
 
 //XVˆ—
 void StageObjectManager::Update(float elapsedTime)
@@ -97,4 +97,4 @@ bool StageObjectManager::RayCast(
 
 LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
 
-void StageObjectManager::setLaserManager(LaserManager* mgr) { laserManager = mgr; }
+void StageObjectManager::setLaserManager(LaserManager* mgr) { if (laserManager) delete laserManager;laserManager = mgr; }
