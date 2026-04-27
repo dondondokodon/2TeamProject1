@@ -46,16 +46,27 @@ void Laser::Shoot()
         DirectX::XMFLOAT3 hitPos;
         DirectX::XMFLOAT3 normal;
 
-        //次ここ触る　コメントの引数のところにステージの全てのオブジェクトを持っているマネージャーのようなクラスを作ってそのクラスの情報を渡すかそのクラスでレイキャスト関数を書いてそのメンバ関数を呼び出せばいい
-        bool hit = Collision::RayCast(
+        ////次ここ触る　コメントの引数のところにステージの全てのオブジェクトを持っているマネージャーのようなクラスを作ってそのクラスの情報を渡すかそのクラスでレイキャスト関数を書いてそのメンバ関数を呼び出せばいい
+        //bool hit = Collision::RayCast(
+        //    pos,
+        //    DirectX::XMFLOAT3(
+        //        pos.x + dir.x * remaining,
+        //        pos.y + dir.y * remaining,
+        //        pos.z + dir.z * remaining
+        //    ),
+        //    /* world matrix */,
+        //    /* mirror or stage model */,
+        //    hitPos,
+        //    normal
+        //);
+
+        bool hit = manager->RayCast(
             pos,
             DirectX::XMFLOAT3(
                 pos.x + dir.x * remaining,
                 pos.y + dir.y * remaining,
                 pos.z + dir.z * remaining
             ),
-            /* world matrix */,
-            /* mirror or stage model */,
             hitPos,
             normal
         );

@@ -140,6 +140,7 @@
     <ClInclude Include="Source\IdleState.h" />
     <ClInclude Include="Source\JumpState.h" />
     <ClInclude Include="Source\Laser.h" />
+    <ClInclude Include="Source\LaserManager.h" />
     <ClInclude Include="Source\MathUtils.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerState.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\StageObject.h" />
+    <ClInclude Include="Source\StageObjectManager.h" />
     <ClInclude Include="Source\System\Audio.h" />
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
@@ -201,6 +203,7 @@
     <ClCompile Include="Source\IdleState.cpp" />
     <ClCompile Include="Source\JumpState.cpp" />
     <ClCompile Include="Source\Laser.cpp" />
+    <ClCompile Include="Source\LaserManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MathUtils.cpp" />
     <ClCompile Include="Source\Player.cpp" />
@@ -216,6 +219,7 @@
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageObject.cpp" />
+    <ClCompile Include="Source\StageObjectManager.cpp" />
     <ClCompile Include="Source\System\Audio.cpp" />
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />

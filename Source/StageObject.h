@@ -1,5 +1,6 @@
 #pragma once
 #include "System/ModelRenderer.h"
+#include"System/ShapeRenderer.h"
 #include "memory"
 
 class StageObject
@@ -13,6 +14,18 @@ public:
 
 	//描画処理
 	virtual void Render(const RenderContext& rc, ModelRenderer* renderer);
+
+	//デバッグプリミティブ描画
+	virtual void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
+	{
+		renderer->RenderBox(rc, position,angle, scale, DirectX::XMFLOAT4(0, 0, 0,1));
+	}
+
+	//トランスフォーム取得
+	DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
+
+	//モデル取得
+	const Model* GetModel() const { return model.get(); }
 
 private:
 

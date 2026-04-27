@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include"StageObject.h"
+#include"StageObjectManager.h"
 #include"BoxCollider.h"
 
 //レーザーのビーム
@@ -74,6 +75,8 @@ public:
 	void SetActive(bool flag);
 	bool IsActive() const;
 
+	void setManager(StageObjectManager* mgr) { manager = mgr; }
+
 private:
 	//ビーム
 	LaserBeam beam;
@@ -106,4 +109,7 @@ private:
 
 	//プレイヤー押し戻し
 	void ResolvePlayerCollision();
+
+	//ステージオブジェクトマネージャー
+	StageObjectManager* manager = nullptr;
 };
