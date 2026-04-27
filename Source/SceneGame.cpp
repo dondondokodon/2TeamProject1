@@ -12,6 +12,9 @@ void SceneGame::Initialize()
 	//ステージ初期化
 	stage = new Stage();
 
+	//ステージグリッド初期化
+	stageGrid = new StageGrid();
+
 	//プレイヤー初期化
 	Player::Instance().Initialize();
 
@@ -71,22 +74,30 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	//ステージ更新処理
 	stage->Update(elapsedTime);
 
-	//カメラコントローラー更新処理
+	// プレイヤー更新処理（位置が決まる）
+	Player::Instance().Update(elapsedTime);
+
+	// ★ 毎フレームリセット
+	stageGrid->isTouchingPlayer = false;
+
+	// 木箱との当たり判定（isTouchingPlayer が true になる）
+	stageGrid->CollisionVsPlayer();
+
+	// 木箱の更新処理（isTouchingPlayer を使う）
+	stageGrid->Update(elapsedTime);
+
+	// カメラ更新
 	DirectX::XMFLOAT3 target = Player::Instance().GetPosition();
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	//プレイヤー更新処理
-	Player::Instance().Update(elapsedTime);
-
-	//エネミー更新処理
+	// エネミー更新
 	EnemyManager::Instance().Update(elapsedTime);
 
-	//エフェクト更新処理
+	// エフェクト更新
 	EffectManager::Instance().Update(elapsedTime);
 }
 
@@ -139,6 +150,9 @@ void SceneGame::Render()
 		//ステージ描画
 		stage->Render(rc, modelRenderer);
 
+		//ステージグリッド(今は木箱を出す用)描画
+		stageGrid->Render(rc, modelRenderer);
+
 		//プレイヤー描画
 		Player::Instance().Render(rc, modelRenderer);
 
@@ -156,6 +170,11 @@ void SceneGame::Render()
 
 		//エネミーデバッグプリミティブ描画
 		EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
+
+
+		//木箱用デバッグプリミティブ描画
+		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+
 	}
 
 	// 2Dスプライト描画

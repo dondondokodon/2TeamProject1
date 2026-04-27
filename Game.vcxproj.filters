@@ -126,6 +126,36 @@
     <ClInclude Include="Source\System\Sprite.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AnimationController.h" />
+    <ClInclude Include="Source\IdleState.h" />
+    <ClInclude Include="Source\JumpState.h" />
+    <ClInclude Include="Source\PlayerState.h" />
+    <ClInclude Include="Source\PlayerStates.h" />
+    <ClInclude Include="Source\ResourceManager.h" />
+    <ClInclude Include="Source\StageObject.h" />
+    <ClInclude Include="Source\System\Audio.h" />
+    <ClInclude Include="Source\System\AudioResource.h" />
+    <ClInclude Include="Source\System\AudioSource.h" />
+    <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\GamePad.h" />
+    <ClInclude Include="Source\System\GpuResourceUtils.h" />
+    <ClInclude Include="Source\System\Graphics.h" />
+    <ClInclude Include="Source\System\HighResolutionTimer.h" />
+    <ClInclude Include="Source\System\ImGuiRenderer.h" />
+    <ClInclude Include="Source\System\Input.h" />
+    <ClInclude Include="Source\System\LambertShader.h" />
+    <ClInclude Include="Source\System\Misc.h" />
+    <ClInclude Include="Source\System\Model.h" />
+    <ClInclude Include="Source\System\ModelRenderer.h" />
+    <ClInclude Include="Source\System\ModelResource.h" />
+    <ClInclude Include="Source\System\Mouse.h" />
+    <ClInclude Include="Source\System\RenderContext.h" />
+    <ClInclude Include="Source\System\Shader.h" />
+    <ClInclude Include="Source\System\ShapeRenderer.h" />
+    <ClInclude Include="Source\WalkState.h" />
+    <ClInclude Include="Source\StageGrid.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -210,6 +240,81 @@
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\Stage.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IdleState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\JumpState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Audio.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\AudioResource.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\AudioSource.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\BasicShader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\GamePad.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\GpuResourceUtils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\ImGuiRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Input.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\LambertShader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Model.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\ModelRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\ModelResource.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Mouse.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\RenderState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\ShapeRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Sprite.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WalkState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageGrid.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>
