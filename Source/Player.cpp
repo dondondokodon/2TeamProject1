@@ -518,6 +518,10 @@ void Player::Update(float elapsedTime)
 	//速力処理更新
 	UpdateVelocity(elapsedTime);
 
+	//コライダーのセット
+	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+	bodyCollider.SetSize({ 0.5f,0.1,0.5f });
+
 	//弾丸入力処理
 	InputProjectile();
 
@@ -541,10 +545,6 @@ void Player::Update(float elapsedTime)
 
 	//プレイヤーとステージオブジェクトの衝突処理
 	CollisionPlayerVsStage();
-
-	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y-0.1f, position.z });
-	bodyCollider.SetSize({1,0.1,1});
 
 	//オブジェクト行列を更新
 	UpdateTransform();
@@ -819,7 +819,7 @@ void Player::CollisionPlayerVsStage()
 
 		CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
 
-		if (result.hit&&velocity.y<0)
+		if (result.hit&&velocity.y<=0)
 		{
 			// 上から乗った場合
 			if (result.normal.y > 0.5f)
@@ -827,6 +827,7 @@ void Player::CollisionPlayerVsStage()
 				velocity.y = 0.0f;
 				position.y += result.pushOut.y;
 				isGround = true;
+				OnLanding();
 			}
 		}
 
@@ -835,8 +836,8 @@ void Player::CollisionPlayerVsStage()
 
 		if (result.hit)
 		{
-			position.x -= result.pushOut.x;
-			position.z -= result.pushOut.z;
+			position.x += result.pushOut.x;
+			position.z += result.pushOut.z;
 		}
 	}
 }
