@@ -3,6 +3,8 @@
 #include<set>
 #include"System/ShapeRenderer.h"
 #include "StageObject.h"
+#include"LaserManager.h"
+
 class StageObjectManager
 {
 public:
@@ -41,6 +43,6 @@ public:
 private:
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;
-
+	LaserManager laserManager;
 };
 

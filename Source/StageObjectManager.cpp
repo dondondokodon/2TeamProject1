@@ -23,6 +23,7 @@ void StageObjectManager::Update(float elapsedTime)
 	}
 	removes.clear();
 
+	laserManager.Update(elapsedTime);
 }
 
 //描画処理
@@ -32,6 +33,8 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 	{
 		stageObject->Render(rc, renderer);
 	}
+	
+	laserManager.Render(rc, renderer);
 }
 
 //ステージオブジェクト登録
@@ -60,6 +63,8 @@ void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRend
 	{
 		stageObject->RenderDebugPrimitive(rc, renderer);
 	}
+
+	laserManager.RenderDebugPrimitive(rc, renderer);
 }
 
 //レイキャスト
