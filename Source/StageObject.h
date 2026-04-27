@@ -27,7 +27,7 @@ public:
 	//モデル取得
 	const Model* GetModel() const { return model.get(); }
 
-private:
+protected:
 
 	//行列更新処理
 	void UpdateTransform();

@@ -8,7 +8,7 @@
 class LaserBeam
 {
 public:
-	LaserBeam();
+	LaserBeam() {};
 	~LaserBeam() {}
 
 	//始点と終点をセット
@@ -18,13 +18,13 @@ public:
 	) {
 		startPos = start;
 		endPos = end;
-		updateTransform();
+		UpdateTransform();
 	}
 
 	//太さ
 	void setWidth(float w) {
 		width = w;
-		updateTransform();
+		UpdateTransform();
 	}
 
 	//更新
@@ -49,14 +49,14 @@ private:
 		0,0,0,1
 	};
 
-	void updateTransform();
+	void UpdateTransform();
 };
 
 //レーザーの本体
 class Laser :public StageObject
 {
 public:
-	Laser();
+	Laser() {};
 	~Laser() {}
 
 	//初期化
@@ -68,14 +68,25 @@ public:
 	//描画処理
 	void Render(const RenderContext& rc, ModelRenderer* renderer)override;
 
-	//回転
-	void RotateY(float angle);
+	//回転 仮
+	void RotateY(float angle)
+	{
+		DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(angle);
+		DirectX::XMVECTOR dir = DirectX::XMLoadFloat3(&direction);
+		dir = DirectX::XMVector3TransformNormal(dir, rot);
+		DirectX::XMStoreFloat3(&direction, dir);
+	}
 
 	//ON OFF
-	void SetActive(bool flag);
-	bool IsActive() const;
+	void SetActive(bool flag) { isActive = flag; }
+	bool IsActive() const { return isActive; }
 
+	//ステージオブジェクトマネージャーセット
 	void setManager(StageObjectManager* mgr) { manager = mgr; }
+
+	//ゲッター
+	BoxCollider& GetTopCollider() { return topCollider; }
+	BoxCollider& GetSideCollider() { return sideCollider; }
 
 private:
 	//ビーム

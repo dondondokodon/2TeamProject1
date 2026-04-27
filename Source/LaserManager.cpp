@@ -9,12 +9,12 @@ void LaserManager::Update(float elapsedTime)
 	}
 
 	//破棄処理
-	for (auto& Laser : removes)
+	for (auto& laser : removes)
 	{
 		//std::vectorから要素を削除する場合はイテレーターで削除しなければならない
 		auto it = std::find_if(Lasers.begin(),
 			Lasers.end(),
-			[&](const std::unique_ptr<StageObject>& obj) { return obj.get() == Laser; });
+			[&](const std::unique_ptr<Laser>& ptr) { return ptr.get() == laser; });
 		if (it != Lasers.end())
 		{
 			Lasers.erase(it);

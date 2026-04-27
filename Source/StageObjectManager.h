@@ -3,13 +3,21 @@
 #include<set>
 #include"System/ShapeRenderer.h"
 #include "StageObject.h"
-#include"LaserManager.h"
+//#include"LaserManager.h"
+
+class LaserManager;
 
 class StageObjectManager
 {
 public:
-	StageObjectManager() {}
-	~StageObjectManager() { Clear(); }
+	~StageObjectManager();
+
+	//シングルトンにしてみる
+	static StageObjectManager& Instance()
+	{
+		static StageObjectManager instance;
+		return instance;
+	}
 
 	//更新処理
 	void Update(float elapsedTime);
@@ -40,9 +48,17 @@ public:
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 
+	//レーザーマネージャー取得
+	LaserManager* GetLaserManager();
+
+	//セッター
+	void setLaserManager(LaserManager* mgr);
+
 private:
+	StageObjectManager() {}
+
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;
-	LaserManager laserManager;
+	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
 };
 

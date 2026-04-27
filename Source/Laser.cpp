@@ -1,11 +1,79 @@
 #include "Laser.h"
 #include"Collision.h"
 
+//レーザービーム
+void LaserBeam::UpdateTransform()
+{
+    // ① 方向ベクトル
+    DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&startPos);
+    DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&endPos);
+
+    DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, S);
+
+    // ② 長さ
+    float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(V));
+
+    // ③ 正規化（前方向）
+    DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(V);
+
+    // ④ 上方向（とりあえずワールドUP）
+    DirectX::XMVECTOR up = DirectX::g_XMIdentityR1; // (0,1,0)
+
+    // ⑤ 右方向
+    DirectX::XMVECTOR right = DirectX::XMVector3Cross(up, dir);
+
+    // 上方向再計算（直交化）
+    up = DirectX::XMVector3Cross(dir, right);
+
+    right = DirectX::XMVector3Normalize(right);
+    up = DirectX::XMVector3Normalize(up);
+
+    // ⑥ 中心位置
+    DirectX::XMVECTOR center = DirectX::XMVectorLerp(S, E, 0.5f);
+
+    // ⑦ 行列作成
+    DirectX::XMMATRIX mat;
+
+    mat.r[0] = right;
+    mat.r[1] = up;
+    mat.r[2] = dir;
+    mat.r[3] = DirectX::XMVectorSet(
+        DirectX::XMVectorGetX(center),
+        DirectX::XMVectorGetY(center),
+        DirectX::XMVectorGetZ(center),
+        1.0f
+    );
+
+    // ⑧ スケール（長さと太さ）
+    DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(width, width, length);
+
+    mat = scale * mat;
+
+    // ⑨ 保存
+    DirectX::XMStoreFloat4x4(&transform, mat);
+}
+
+//仮
+void LaserBeam::Update(float elapsedTime)
+{
+	// ビームのエフェクト更新（例: アニメーションUV）
+	UpdateTransform();
+}
+
+//仮
+void LaserBeam::Render(const RenderContext& rc, ModelRenderer* renderer)
+{
+	// ビームの描画
+	//renderer->DrawModel(rc, model, transform);
+}
+
+//レーザー本体
 void Laser::Initialize(
     const DirectX::XMFLOAT3& emitterPos,
     const DirectX::XMFLOAT3& dir,
     float maxLen)
 {
+    model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
     startPos = emitterPos;
     direction = dir;
 
@@ -149,29 +217,7 @@ void Laser::UpdateColliders()
 
 void Laser::ResolvePlayerCollision()
 {
-    Player& player = GetPlayer();
-
-    CollisionResult result =
-        player.collider.Intersect(topCollider);
-
-    if (result.hit)
-    {
-        // 上から乗った場合
-        if (result.normal.y > 0.5f)
-        {
-            player.position.y += result.pushOut.y;
-            player.isGrounded = true;
-        }
-    }
-
-    // 側面
-    result = player.collider.Intersect(sideCollider);
-
-    if (result.hit)
-    {
-        player.position.x += result.pushOut.x;
-        player.position.z += result.pushOut.z;
-    }
+    
 }
 
 void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)

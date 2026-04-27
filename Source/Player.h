@@ -7,6 +7,7 @@
 #include"ProjectileManager.h"
 #include"Effect.h"
 #include"AnimationController.h"
+#include"BoxCollider.h"
 
 #include"PlayerStates.h"
 
@@ -80,6 +81,9 @@ private:
 	//弾丸と敵の衝突処理	
 	void CollisionProjectilesVsEnemies();
 
+	//ステージとの衝突処理
+	void CollisionPlayerVsStage();
+
 	float JumpSpeed = 12.0f;
 
 	int JumpCount = 0;
@@ -90,4 +94,5 @@ private:
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
+	BoxCollider bodyCollider;
 };

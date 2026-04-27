@@ -28,6 +28,9 @@ public:
 	//レーザー取得
 	Laser* GetLaser(int index) { return Lasers.at(index).get(); }
 
+	//レーザー数取得
+	int GetLaserCount() { return static_cast<int>(Lasers.size()); }
+
 private:
 	std::vector <std::unique_ptr<Laser>> Lasers;
 	std::set<Laser*> removes;

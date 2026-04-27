@@ -1,6 +1,10 @@
 #include "StageObjectManager.h"
 #include "Collision.h"
 
+#include"LaserManager.h"
+
+StageObjectManager::~StageObjectManager() { Clear(); }
+
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
 {
@@ -23,7 +27,7 @@ void StageObjectManager::Update(float elapsedTime)
 	}
 	removes.clear();
 
-	laserManager.Update(elapsedTime);
+	laserManager->Update(elapsedTime);
 }
 
 //描画処理
@@ -34,7 +38,7 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 		stageObject->Render(rc, renderer);
 	}
 	
-	laserManager.Render(rc, renderer);
+	laserManager->Render(rc, renderer);
 }
 
 //ステージオブジェクト登録
@@ -64,7 +68,7 @@ void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRend
 		stageObject->RenderDebugPrimitive(rc, renderer);
 	}
 
-	laserManager.RenderDebugPrimitive(rc, renderer);
+	laserManager->RenderDebugPrimitive(rc, renderer);
 }
 
 //レイキャスト
@@ -90,3 +94,7 @@ bool StageObjectManager::RayCast(
 
 	return false;
 }
+
+LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
+
+void StageObjectManager::setLaserManager(LaserManager* mgr) { laserManager = mgr; }

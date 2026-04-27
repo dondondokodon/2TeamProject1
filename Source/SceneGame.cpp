@@ -6,6 +6,10 @@
 #include"Player.h"
 #include "EffectManager.h"
 
+#include"StageObjectManager.h"
+#include"LaserManager.h"
+
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -42,6 +46,15 @@ void SceneGame::Initialize()
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
 	}
+
+	//ステージオブジェクト初期化
+	StageObjectManager& mng=StageObjectManager::Instance();
+	mng.setLaserManager(new LaserManager());
+	LaserManager* laserManager = mng.GetLaserManager();
+	Laser* laser = new Laser();
+	laser->setManager(&mng);
+	laser->Initialize(DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
+	laserManager->Register(laser);
 }
 
 // 終了化
