@@ -82,15 +82,19 @@ void SceneGame::Finalize()
 
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
+
+	//ステージグリッド終了化
+	if (stageGrid != nullptr)
+	{
+		delete stageGrid;
+		stageGrid = nullptr;
+	}
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
 	stage->Update(elapsedTime);
-
-	// プレイヤー更新処理（位置が決まる）
-	Player::Instance().Update(elapsedTime);
 
 	// ★ 毎フレームリセット
 	stageGrid->isTouchingPlayer = false;
