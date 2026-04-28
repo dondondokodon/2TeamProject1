@@ -207,6 +207,36 @@
     <ClInclude Include="Source\System\ShapeRenderer.h">
       <Filter>Source\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AnimationController.h" />
+    <ClInclude Include="Source\IdleState.h" />
+    <ClInclude Include="Source\JumpState.h" />
+    <ClInclude Include="Source\PlayerState.h" />
+    <ClInclude Include="Source\PlayerStates.h" />
+    <ClInclude Include="Source\ResourceManager.h" />
+    <ClInclude Include="Source\StageObject.h" />
+    <ClInclude Include="Source\System\Audio.h" />
+    <ClInclude Include="Source\System\AudioResource.h" />
+    <ClInclude Include="Source\System\AudioSource.h" />
+    <ClInclude Include="Source\System\BasicShader.h" />
+    <ClInclude Include="Source\System\GamePad.h" />
+    <ClInclude Include="Source\System\GpuResourceUtils.h" />
+    <ClInclude Include="Source\System\Graphics.h" />
+    <ClInclude Include="Source\System\HighResolutionTimer.h" />
+    <ClInclude Include="Source\System\ImGuiRenderer.h" />
+    <ClInclude Include="Source\System\Input.h" />
+    <ClInclude Include="Source\System\LambertShader.h" />
+    <ClInclude Include="Source\System\Misc.h" />
+    <ClInclude Include="Source\System\Model.h" />
+    <ClInclude Include="Source\System\ModelRenderer.h" />
+    <ClInclude Include="Source\System\ModelResource.h" />
+    <ClInclude Include="Source\System\Mouse.h" />
+    <ClInclude Include="Source\System\RenderContext.h" />
+    <ClInclude Include="Source\System\Shader.h" />
+    <ClInclude Include="Source\System\ShapeRenderer.h" />
+    <ClInclude Include="Source\WalkState.h" />
+    <ClInclude Include="Source\StageGrid.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Source\BoxCollider.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>

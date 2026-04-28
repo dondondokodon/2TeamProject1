@@ -219,7 +219,19 @@ DirectX::XMFLOAT3 Player::GetMoveVec()const
 	return vec;
 }
 
-//着地したときに呼ばれる
+//向き取得
+DirectX::XMFLOAT3 Player::GetForward() const
+{
+	DirectX::XMFLOAT3 forward;
+	forward.x = sinf(angle.y);
+	forward.y = 0.0f;
+	forward.z = cosf(angle.y);
+	return forward;
+}
+
+
+
+//���n�����Ƃ��ɌĂ΂��
 void Player::OnLanding()
 {
 	JumpCount = 0;
