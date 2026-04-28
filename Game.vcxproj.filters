@@ -419,6 +419,9 @@
     <ClCompile Include="Source\LaserManager.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StageGrid.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
