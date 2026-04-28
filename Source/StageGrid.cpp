@@ -5,7 +5,7 @@
 StageGrid::StageGrid()  
 {
     // ステージモデル（木箱）を読み込み
-    model = new Model("Data/Model/Objects/Box/Box.mdl");
+    model = new Model("Data/Model/Objects/Box/Box_1cm.mdl");
 
     aabbMin = { 0.0f, 0.0f, 0.0f };
     aabbMax = { 0.0f, 0.0f, 0.0f };

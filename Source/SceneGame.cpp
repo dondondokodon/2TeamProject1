@@ -42,14 +42,14 @@ void SceneGame::Initialize()
 	);
 
 	//エネミー初期化
-	EnemyManager& enemyManager=EnemyManager::Instance();
+	/*EnemyManager& enemyManager=EnemyManager::Instance();
 	for (int i = 0;i < 2;i++)
 	{
 		EnemySlime* slime = new EnemySlime();
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
-	}
+	}*/
 
 	//ステージオブジェクト初期化
 	StageObjectManager& mng=StageObjectManager::Instance();
@@ -82,7 +82,7 @@ void SceneGame::Finalize()
 	}
 
 	//エネミー終了化
-	EnemyManager::Instance().Clear();
+	//EnemyManager::Instance().Clear();
 
 	//ステージグリッド終了化
 	if (stageGrid != nullptr)
@@ -181,7 +181,7 @@ void SceneGame::Render()
 		Player::Instance().Render(rc, modelRenderer);
 
 		//エネミー描画
-		EnemyManager::Instance().Render(rc, modelRenderer);
+		//EnemyManager::Instance().Render(rc, modelRenderer);
 
 		//ステージオブジェクト描画
 		StageObjectManager::Instance().Render(rc, modelRenderer);
@@ -196,7 +196,7 @@ void SceneGame::Render()
 		Player::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 		//エネミーデバッグプリミティブ描画
-		EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
+		//EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
 
 		//ステージオブジェクトデバッグプリミティブ描画
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
