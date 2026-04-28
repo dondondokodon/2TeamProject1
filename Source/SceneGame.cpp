@@ -13,6 +13,7 @@
 // 初期化
 void SceneGame::Initialize()
 {
+
 	//ステージ初期化
 	stage = new Stage();
 
