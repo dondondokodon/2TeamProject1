@@ -237,6 +237,18 @@
     <ClInclude Include="Source\StageGrid.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\BoxCollider.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Laser.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageObjectManager.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LaserManager.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -394,6 +406,18 @@
     </ClCompile>
     <ClCompile Include="Source\System\ShapeRenderer.cpp">
       <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BoxCollider.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Laser.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageObjectManager.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LaserManager.cpp">
+      <Filter>Source\.cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageGrid.cpp">
       <Filter>Source\.cppファイル</Filter>

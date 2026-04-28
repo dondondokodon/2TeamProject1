@@ -6,9 +6,14 @@
 #include"Player.h"
 #include "EffectManager.h"
 
+#include"StageObjectManager.h"
+#include"LaserManager.h"
+
+
 // 初期化
 void SceneGame::Initialize()
 {
+
 	//ステージ初期化
 	stage = new Stage();
 
@@ -45,6 +50,15 @@ void SceneGame::Initialize()
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
 	}
+
+	//ステージオブジェクト初期化
+	StageObjectManager& mng=StageObjectManager::Instance();
+	mng.setLaserManager(new LaserManager());
+	LaserManager* laserManager = mng.GetLaserManager();
+	Laser* laser = new Laser();
+	laser->setManager(&mng);
+	laser->Initialize(DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
+	laserManager->Register(laser);
 }
 
 // 終了化
@@ -69,15 +83,19 @@ void SceneGame::Finalize()
 
 	//エネミー終了化
 	EnemyManager::Instance().Clear();
+
+	//ステージグリッド終了化
+	if (stageGrid != nullptr)
+	{
+		delete stageGrid;
+		stageGrid = nullptr;
+	}
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
 	stage->Update(elapsedTime);
-
-	// プレイヤー更新処理（位置が決まる）
-	Player::Instance().Update(elapsedTime);
 
 	// ★ 毎フレームリセット
 	stageGrid->isTouchingPlayer = false;
@@ -94,8 +112,14 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	// エネミー更新
-	EnemyManager::Instance().Update(elapsedTime);
+	//プレイヤー更新処理
+	Player::Instance().Update(elapsedTime);
+
+	//エネミー更新処理
+	//EnemyManager::Instance().Update(elapsedTime);
+
+	//ステージオブジェクト更新処理
+	StageObjectManager::Instance().Update(elapsedTime);
 
 	// エフェクト更新
 	EffectManager::Instance().Update(elapsedTime);
@@ -156,8 +180,11 @@ void SceneGame::Render()
 		//プレイヤー描画
 		Player::Instance().Render(rc, modelRenderer);
 
-		//エネミー更新処理
+		//エネミー描画
 		EnemyManager::Instance().Render(rc, modelRenderer);
+
+		//ステージオブジェクト描画
+		StageObjectManager::Instance().Render(rc, modelRenderer);
 
 		//エフェクト描画
 		EffectManager::Instance().Render(rc.view, rc.projection);
@@ -170,6 +197,9 @@ void SceneGame::Render()
 
 		//エネミーデバッグプリミティブ描画
 		EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
+
+		//ステージオブジェクトデバッグプリミティブ描画
+		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 
 		//木箱用デバッグプリミティブ描画
