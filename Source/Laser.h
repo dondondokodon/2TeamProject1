@@ -79,8 +79,8 @@ public:
 	{
 		StageObject::RenderDebugPrimitive(rc, renderer);
 		//コライダーのデバッグ描画
-		renderer->RenderBox(rc, topCollider.GetCenter(), { 0,0,0 }, topCollider.GetSize(), DirectX::XMFLOAT4(1, 0, 0, 1));
-		renderer->RenderBox(rc, sideCollider.GetCenter(), { 0,0,0 }, sideCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+		renderer->RenderBox(rc, topCollider.GetCenter(), angle, topCollider.GetSize(), DirectX::XMFLOAT4(1, 0, 0, 1));
+		renderer->RenderBox(rc, sideCollider.GetCenter(), angle, sideCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
 
 		//ビームのデバッグ描画
 		beam.RenderDebugPrimitive(rc, renderer);

@@ -57,7 +57,7 @@ void SceneGame::Initialize()
 	LaserManager* laserManager = mng.GetLaserManager();
 	Laser* laser = new Laser();
 	laser->setManager(&mng);
-	laser->Initialize(DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
+	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
 	laserManager->Register(laser);
 }
 

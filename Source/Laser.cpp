@@ -4,53 +4,97 @@
 //レーザービーム
 void LaserBeam::UpdateTransform()
 {
-    // ① 方向ベクトル
+    //// ① 方向ベクトル
+    //DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&startPos);
+    //DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&endPos);
+
+    //DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, S);
+
+    //// ② 長さ
+    //float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(V));
+
+    //// ③ 正規化（前方向）
+    //DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(V);
+
+    //// ④ 上方向（とりあえずワールドUP）
+    //DirectX::XMVECTOR up = DirectX::g_XMIdentityR1; // (0,1,0)
+
+    //// ⑤ 右方向
+    //DirectX::XMVECTOR right = DirectX::XMVector3Cross(up, dir);
+
+    //// 上方向再計算（直交化）
+    //up = DirectX::XMVector3Cross(dir, right);
+
+    //right = DirectX::XMVector3Normalize(right);
+    //up = DirectX::XMVector3Normalize(up);
+
+    //// ⑥ 中心位置
+    //DirectX::XMVECTOR center = DirectX::XMVectorLerp(S, E, 0.5f);
+
+    //// ⑦ 行列作成
+    //DirectX::XMMATRIX mat;
+
+    //mat.r[0] = right;
+    //mat.r[1] = up;
+    //mat.r[2] = dir;
+    //mat.r[3] = DirectX::XMVectorSet(
+    //    DirectX::XMVectorGetX(center),
+    //    DirectX::XMVectorGetY(center),
+    //    DirectX::XMVectorGetZ(center),
+    //    1.0f
+    //);
+
+    //// ⑧ スケール（長さと太さ）
+    //DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(width, width, length);
+
+    //mat = scale * mat;
+
+    //// ⑨ 保存
+    //DirectX::XMStoreFloat4x4(&transform, mat);
+
+    // 1. 方向と長さの計算
     DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&startPos);
     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&endPos);
-
     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, S);
-
-    // ② 長さ
     float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(V));
 
-    // ③ 正規化（前方向）
+    if (length < 0.0001f) return; // 長さがほぼゼロなら処理しない
+
+    // 2. 正規化した方向（前方向 Z）
     DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(V);
 
-    // ④ 上方向（とりあえずワールドUP）
-    DirectX::XMVECTOR up = DirectX::g_XMIdentityR1; // (0,1,0)
+    // 3. 右・上方向の算出（ビルボード的な計算）
+    DirectX::XMVECTOR worldUp = DirectX::g_XMIdentityR1; // (0,1,0)
+    // 方向が真上を向いている場合の回避
+    if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) worldUp = DirectX::g_XMIdentityR2;
 
-    // ⑤ 右方向
-    DirectX::XMVECTOR right = DirectX::XMVector3Cross(up, dir);
+    DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
+    DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
 
-    // 上方向再計算（直交化）
-    up = DirectX::XMVector3Cross(dir, right);
+    // 4. スケール行列（Z方向にのみ長さを伸ばす）
+    // ※もしBoxモデルが「中心から前後0.5ずつ」なら、Zスケールをlengthにする
+    DirectX::XMMATRIX matScale = DirectX::XMMatrixScaling(width, width, length);
 
-    right = DirectX::XMVector3Normalize(right);
-    up = DirectX::XMVector3Normalize(up);
-
-    // ⑥ 中心位置
+    // 5. 回転・並進（移動）行列
+    DirectX::XMMATRIX matRotTrans;
+    matRotTrans.r[0] = right;
+    matRotTrans.r[1] = up;
+    matRotTrans.r[2] = dir;
+    // ここがポイント：配置場所を「中心(center)」ではなく「始点(startPos)」にする
+    // ※ただしモデルが「中心原点」なら、centerにする必要があります。
     DirectX::XMVECTOR center = DirectX::XMVectorLerp(S, E, 0.5f);
+    matRotTrans.r[3] = DirectX::XMVectorSetW(center, 1.0f);
 
-    // ⑦ 行列作成
-    DirectX::XMMATRIX mat;
+    // 6. 合成
+    DirectX::XMStoreFloat4x4(&transform, matScale * matRotTrans);
 
-    mat.r[0] = right;
-    mat.r[1] = up;
-    mat.r[2] = dir;
-    mat.r[3] = DirectX::XMVectorSet(
-        DirectX::XMVectorGetX(center),
-        DirectX::XMVectorGetY(center),
-        DirectX::XMVectorGetZ(center),
-        1.0f
-    );
 
-    // ⑧ スケール（長さと太さ）
-    DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(width, width, length);
+    // center が XMVECTOR の場合
+    DirectX::XMMATRIX debugMat = DirectX::XMMatrixIdentity();
+    // w成分を1.0にするために XMVectorSetW を通すのが安全です
+    debugMat.r[3] = DirectX::XMVectorSetW(center, 1.0f);
+    DirectX::XMStoreFloat4x4(&transform, debugMat);
 
-    mat = scale * mat;
-
-    // ⑨ 保存
-    DirectX::XMStoreFloat4x4(&transform, mat);
 }
 
 //仮
@@ -75,6 +119,7 @@ void Laser::Initialize(
 {
     model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
     startPos = emitterPos;
+    position = startPos;
     direction = dir;
 
     // 正規化
@@ -96,6 +141,7 @@ void Laser::Update(float elapsedTime)
     beam.SetPoints(startPos, endPos);
     beam.Update(elapsedTime);
 
+	UpdateTransform();
     UpdateColliders();
     ResolvePlayerCollision();
 }
