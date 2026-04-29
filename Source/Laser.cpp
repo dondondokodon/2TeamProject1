@@ -102,6 +102,7 @@ void LaserBeam::Update(float elapsedTime)
 {
 	// ビームのエフェクト更新（例: アニメーションUV）
 	UpdateTransform();
+    UpdateColliders();
 }
 
 //仮
@@ -109,6 +110,88 @@ void LaserBeam::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 	// ビームの描画
 	//renderer->DrawModel(rc, model, transform);
+}
+
+void LaserBeam::UpdateColliders()
+{
+    //// 足場は start → end の中点
+    //DirectX::XMFLOAT3 center =
+    //{
+    //    (startPos.x + endPos.x) * 0.5f,
+    //    (startPos.y + endPos.y) * 0.5f,
+    //    (startPos.z + endPos.z) * 0.5f
+    //};
+
+    //float length =
+    //    sqrtf(
+    //        (endPos.x - startPos.x) * (endPos.x - startPos.x) +
+    //        (endPos.y - startPos.y) * (endPos.y - startPos.y) +
+    //        (endPos.z - startPos.z) * (endPos.z - startPos.z)
+    //    );
+
+    //// Z 軸をレーザー方向に向ける回転行列
+    //DirectX::XMMATRIX rotMat =
+    //    DirectX::XMMatrixLookToRH(
+    //        DirectX::XMVectorZero(),
+    //        direction,
+    //        DirectX::XMVectorSet(0, 1, 0, 0)
+    //    );
+
+    //// 足場コライダー（薄い箱）
+    //topCollider.SetCenter({ center.x,center.y + 0.4f,center.z });
+    //topCollider.SetSize({ 1.0f, 0.1f, length });
+    //
+
+    //// 側面も同様に薄く作る
+    //sideCollider.SetCenter({ center.x,center.y - 0.8f,center.z });
+    //sideCollider.SetSize({ 1.2f, 0.4f, length });
+    {
+        // 中点
+        DirectX::XMFLOAT3 center =
+        {
+            (startPos.x + endPos.x) * 0.5f,
+            (startPos.y + endPos.y) * 0.5f,
+            (startPos.z + endPos.z) * 0.5f
+        };
+
+        // 方向ベクトル
+        DirectX::XMVECTOR dir = DirectX::XMVectorSet(
+            endPos.x - startPos.x,
+            endPos.y - startPos.y,
+            endPos.z - startPos.z,
+            0.0f
+        );
+
+        // 正規化
+        dir = DirectX::XMVector3Normalize(dir);
+
+        // 長さ
+        float length = DirectX::XMVectorGetX(
+            DirectX::XMVector3Length(
+                DirectX::XMVectorSubtract(
+                    DirectX::XMLoadFloat3(&endPos),
+                    DirectX::XMLoadFloat3(&startPos)
+                )
+            )
+        );
+
+        // Z 軸をレーザー方向に向ける回転行列
+        DirectX::XMMATRIX rotMat =
+            DirectX::XMMatrixLookToRH(
+                DirectX::XMVectorZero(),
+                dir,
+                DirectX::XMVectorSet(0, 1, 0, 0)
+            );
+
+        // 足場コライダー
+        topCollider.SetCenter({ center.x, center.y + 0.4f, center.z });
+        topCollider.SetSize({ 1.0f, 0.1f, length });
+        topCollider.SetRotationMatrix(rotMat);  // ← これだけでOK
+
+        // 側面コライダー
+        sideCollider.SetCenter({ center.x, center.y - 0.8f, center.z });
+        sideCollider.SetSize({ 1.2f, 0.4f, length });
+        sideCollider.SetRotationMatrix(rotMat);
 }
 
 //レーザー本体
@@ -119,8 +202,9 @@ void Laser::Initialize(
 {
     model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
     startPos = emitterPos;
-    position = startPos;
     direction = dir;
+
+    position = startPos; 
 
     // 正規化
     DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
@@ -139,10 +223,11 @@ void Laser::Update(float elapsedTime)
     Shoot();
 
     beam.SetPoints(startPos, endPos);
+    beam.SetAngle(angle);
+    beam.setDirection(direction);
     beam.Update(elapsedTime);
 
 	UpdateTransform();
-    UpdateColliders();
     ResolvePlayerCollision();
 }
 
@@ -221,31 +306,6 @@ DirectX::XMFLOAT3 Laser::Reflect(
     return out;
 }
 
-void Laser::UpdateColliders()
-{
-    // 足場は start → end の中点
-    DirectX::XMFLOAT3 center =
-    {
-        (startPos.x + endPos.x) * 0.5f,
-        (startPos.y + endPos.y) * 0.5f,
-        (startPos.z + endPos.z) * 0.5f
-    };
-
-    float length =
-        sqrtf(
-            (endPos.x - startPos.x) * (endPos.x - startPos.x) +
-            (endPos.y - startPos.y) * (endPos.y - startPos.y) +
-            (endPos.z - startPos.z) * (endPos.z - startPos.z)
-        );
-
-    // 足場コライダー（薄い箱）
-    topCollider.SetCenter({ center.x,center.y+0.4f,center.z });
-    topCollider.SetSize({ 1.0f, 0.1f, length });
-
-    // 側面も同様に薄く作る
-    sideCollider.SetCenter({center.x,center.y-0.8f,center.z});
-    sideCollider.SetSize({ 1.2f, 0.4f, length });
-}
 
 void Laser::ResolvePlayerCollision()
 {
@@ -258,5 +318,5 @@ void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 
     beam.Render(rc, renderer);
 
-    StageObject::Render(rc, renderer);
+   // StageObject::Render(rc, renderer);
 }
