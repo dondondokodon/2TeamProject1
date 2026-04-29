@@ -11,11 +11,10 @@
 #include"LaserManager.h"
 
 // コンストラクタ
-void Player::Initialize()
+void Player::Initialize(const char* modelPath)
 {
 	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
-
-	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	model = std::make_unique<Model>(modelPath);
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.01f;

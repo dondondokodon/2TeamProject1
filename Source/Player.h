@@ -30,7 +30,7 @@ public:
 	}
 
 	//初期化
-	void Initialize();
+	void Initialize(const char* modelPath);
 
 	//終了化
 	void Finalize();
