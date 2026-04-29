@@ -64,10 +64,11 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 }
 
 //更新処理
-void Player::Update(float elapsedTime)
+void Player::Update(float elapsedTime, bool canControl)
 {
 	//ステートの更新処理
-	if (state)
+	//操作中のプレイヤーだけ入力を受け付ける
+	if (canControl && state)
 	{
 		state->Update(*this, elapsedTime);
 	}
@@ -86,7 +87,11 @@ void Player::Update(float elapsedTime)
 	bodyCollider.SetSize({ 0.5f,0.1,0.5f });
 
 	//弾丸入力処理
-	InputProjectile();
+	//一応、操作中のプレイヤーだけ弾をてつ
+	if (canControl)
+	{
+		InputProjectile();
+	}
 
 	//アニメーション更新処理
 	animation.UpdateAnimation(elapsedTime);
@@ -417,6 +422,44 @@ void Player::CollisionPlayerVsStage()
 	}
 }
 
+//プレイヤー同士の衝突処理
+//操作中のプレイヤーだけを押し戻し、待機中のプレイヤーは動かさない
+void Player::CollisionVsPlayer(Player& other)
+{
+	DirectX::XMFLOAT3 otherPosition = other.GetPosition();
+
+	float dx = position.x - otherPosition.x;
+	float dz = position.z - otherPosition.z;
+
+	//XZ平面で2人の距離を計算する
+	float distanceSq = dx * dx + dz * dz;
+	float minDistance = radius + other.GetRadius();
+
+	//完全に同じ位置にいる場合は、X方向へ押し戻す
+	if (distanceSq <= 0.0001f)
+	{
+		position.x += minDistance;
+		UpdateTransform();
+		return;
+	}
+
+	//半径の合計より近い場合は、重ならない位置まで押し戻す
+	if (distanceSq < minDistance * minDistance)
+	{
+		float distance = sqrtf(distanceSq);
+		float push = minDistance - distance;
+
+		dx /= distance;
+		dz /= distance;
+
+		position.x += dx * push;
+		position.z += dz * push;
+
+		UpdateTransform();
+	}
+}
+
+
 //ジャンプ入力処理
 bool Player::InputJump()
 {
@@ -509,4 +552,12 @@ void Player::InputProjectile()
 		ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
 		projectile->Launch(dir, pos, target);
 	}
+}
+
+//操作対象から外れたときに移動を止め、待機状態に戻す
+void Player::StopControl()
+{
+	velocity.x = 0.0f;
+	velocity.z = 0.0f;
+	ChangeState(std::make_unique<IdleState>());
 }

@@ -4,6 +4,7 @@
 #include"StageGrid.h"
 #include"CameraController.h"
 #include"Scene.h"
+#include"Player.h"
 // ゲームシーン
 class SceneGame:public Scene
 {
@@ -30,4 +31,10 @@ private:
 	Stage* stage = nullptr;
 	StageGrid* stageGrid = nullptr;
 	CameraController* cameraController = nullptr;
+
+	Player* players[2] = {};
+	int controlPlayerIndex = 0;
+
+	void InputChangePlayer();
+	Player* GetControlPlayer();
 };
