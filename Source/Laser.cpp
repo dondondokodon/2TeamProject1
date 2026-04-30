@@ -178,5 +178,5 @@ void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 
     //beam.Render(rc, renderer);
 
-    //StageObject::Render(rc, renderer);
+    StageObject::Render(rc, renderer);
 }

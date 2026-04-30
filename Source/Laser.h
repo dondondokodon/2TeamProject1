@@ -147,7 +147,5 @@ private:
 	float maxLength = 20.0f;
 
 	bool isActive = true;
-
-	void ResolvePlayerCollision();
 	StageObjectManager* manager = nullptr;
 };
