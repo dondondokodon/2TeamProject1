@@ -137,6 +137,8 @@ public:
 
 	void setManager(StageObjectManager* mgr) { manager = mgr; }
 
+
+
 	LaserBeam& GetBeam() { return beam; }
 
 private:
