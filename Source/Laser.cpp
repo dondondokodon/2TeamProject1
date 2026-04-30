@@ -143,11 +143,13 @@ void Laser::Initialize(
     const DirectX::XMFLOAT3& dir,
     float maxLen)
 {
-    model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
     startPos = emitterPos;
     direction = dir;
     maxLength = maxLen;
+  
+    scale = { 0.5f,0.5f,0.5f };
 
     // ê≥ãKâª
     DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
@@ -172,6 +174,7 @@ void Laser::Update(float elapsedTime)
 	position = startPos;
 	direction = beam.direction;
 	position.x -= direction.x*0.5f;
+	angle.y = atan2f(direction.x, direction.z);
 
 	UpdateTransform();
 }
