@@ -169,6 +169,10 @@ void Laser::Update(float elapsedTime)
     // LaserBeam がレーザーを撃つ（反射含む）
     beam.Update();
 
+	position = startPos;
+	direction = beam.direction;
+	position.x -= direction.x*0.5f;
+
 	UpdateTransform();
 }
 

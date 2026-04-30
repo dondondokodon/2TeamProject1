@@ -15,4 +15,10 @@ public:
 
 	//更新処理
 	//void Render(const RenderContext& rc, ModelRenderer* renderer);
+
+	//デバッグプリミティブ描画
+	virtual void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
+	{
+		
+	}
 };
