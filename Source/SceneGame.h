@@ -2,8 +2,6 @@
 
 #include"Stage.h"
 #include"StageGrid.h"
-#include"Laser.h"
-#include"LaserTexture.h"
 #include"CameraController.h"
 #include"Scene.h"
 #include"Player.h"

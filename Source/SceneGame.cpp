@@ -6,10 +6,8 @@
 #include"Player.h"
 #include"Laser.h"
 #include "EffectManager.h"
-
 #include"StageObjectManager.h"
 #include"LaserManager.h"
-
 #include"System/Input.h"
 
 // 初期化
@@ -21,12 +19,6 @@ void SceneGame::Initialize()
 
 	//ステージグリッド初期化
 	stageGrid = new StageGrid();
-
-	//レーザー初期化
-	laser = new Laser();
-
-	//レーザーテクスチャ初期化
-	lasertexture = new LaserTexture();
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -93,18 +85,6 @@ void SceneGame::Finalize()
 		stageGrid = nullptr;
 	}
 
-	//レーザー終了化
-	if (laser!= nullptr)
-	{
-		delete laser;
-		laser = nullptr;
-	}
-
-	//レーザーテクスチャ終了化
-	if (lasertexture != nullptr) {
-		delete lasertexture;
-		lasertexture = nullptr;
-	}
 
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
@@ -279,9 +259,6 @@ void SceneGame::Render()
 
 		//木箱用デバッグプリミティブ描画
 		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
-
-		//レーザー用デバッグプリミティブ描画
-		lasertexture->RenderDebugPrimitive(rc, shapeRenderer);
 
 	}
 
