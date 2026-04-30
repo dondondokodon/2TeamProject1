@@ -127,10 +127,10 @@ void SceneGame::Update(float elapsedTime)
 	stageGrid->isTouchingPlayer = false;
 
 	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	stageGrid->CollisionVsPlayer();
+	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
 
 	// 木箱の更新処理（isTouchingPlayer を使う）
-	stageGrid->Update(elapsedTime);
+	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
 
 	// カメラ更新
 	InputChangePlayer();
