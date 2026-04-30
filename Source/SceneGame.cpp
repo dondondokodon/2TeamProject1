@@ -16,7 +16,7 @@ void SceneGame::Initialize()
 {
 
 	//ステージ初期化
-	stage = new Stage();
+	//stage = new Stage();
 
 	//ステージグリッド初期化
 	stageGrid = new StageGrid();
@@ -65,19 +65,21 @@ void SceneGame::Initialize()
 	LaserManager* laserManager = mng.GetLaserManager();
 	Laser* laser = new Laser();
 	laser->setManager(&mng);
-	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
+	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
 	laserManager->Register(laser);
+
+	mng.Register(new Stage);
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
 	//ステージ終了化
-	if (stage != nullptr)
+	/*if (stage != nullptr)
 	{
 		delete stage;
 		stage = nullptr;
-	}
+	}*/
 
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
@@ -112,7 +114,7 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	stage->Update(elapsedTime);
+	//stage->Update(elapsedTime);
 
 	// ★ 毎フレームリセット
 	stageGrid->isTouchingPlayer = false;
@@ -209,7 +211,7 @@ void SceneGame::Render()
 	// 3Dモデル描画
 	{
 		//ステージ描画
-		stage->Render(rc, modelRenderer);
+		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
 		stageGrid->Render(rc, modelRenderer);

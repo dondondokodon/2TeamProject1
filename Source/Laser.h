@@ -101,7 +101,7 @@ private:
 };
 
 //レーザーの本体
-clasｋさｆｋｓｆじょs Laser :public StageObject
+class Laser :public StageObject
 {
 	public:
 	
