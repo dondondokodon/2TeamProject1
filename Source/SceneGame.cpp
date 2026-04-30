@@ -9,6 +9,7 @@
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 
+#include"System/Input.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -21,8 +22,15 @@ void SceneGame::Initialize()
 	stageGrid = new StageGrid();
 
 	//プレイヤー初期化
-	Player::Instance().Initialize();
+	players[0] = new Player();
+	players[0]->Initialize();
+	players[0]->SetPosition({ -5.0f, 0.0f, 0.0f });
 
+	players[1] = new Player();
+	players[1]->Initialize();
+	players[1]->SetPosition({ 5.0f, 0.0f, 0.0f });
+
+	controlPlayerIndex = 0;
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
@@ -72,7 +80,16 @@ void SceneGame::Finalize()
 	}
 
 	//プレイヤー終了化
-	Player::Instance().Finalize();
+	for (int i = 0; i < 2; ++i)
+	{
+		if (players[i] != nullptr)
+		{
+			players[i]->Finalize();
+			delete players[i];
+			players[i] = nullptr;
+		}
+	}
+
 
 	//カメラコントローラー終了化
 	if (cameraController!=nullptr)
@@ -107,13 +124,33 @@ void SceneGame::Update(float elapsedTime)
 	stageGrid->Update(elapsedTime);
 
 	// カメラ更新
-	DirectX::XMFLOAT3 target = Player::Instance().GetPosition();
+	InputChangePlayer();
+
+	Player* controlPlayer = GetControlPlayer();
+
+	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
+	for (int i = 0; i < 2; ++i)
+	{
+		if (players[i] != nullptr)
+		{
+			bool canControl = (i == controlPlayerIndex);
+			players[i]->Update(elapsedTime, canControl);
+		}
+	}
+
+	if (players[0] != nullptr && players[1] != nullptr)
+	{
+		int otherIndex = 1 - controlPlayerIndex;
+		players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex]);
+	}
+
+
 	//プレイヤー更新処理
-	Player::Instance().Update(elapsedTime);
+	// Player::Instance().Update(elapsedTime);
 
 	//エネミー更新処理
 	//EnemyManager::Instance().Update(elapsedTime);
@@ -178,7 +215,13 @@ void SceneGame::Render()
 		stageGrid->Render(rc, modelRenderer);
 
 		//プレイヤー描画
-		Player::Instance().Render(rc, modelRenderer);
+		for (int i = 0; i < 2; ++i)
+		{
+			if (players[i] != nullptr)
+			{
+				players[i]->Render(rc, modelRenderer);
+			}
+		}
 
 		//エネミー描画
 		//EnemyManager::Instance().Render(rc, modelRenderer);
@@ -193,7 +236,13 @@ void SceneGame::Render()
 	// 3Dデバッグ描画
 	{
 		//プレイヤーデバッグプリミティブ描画
-		Player::Instance().RenderDebugPrimitive(rc, shapeRenderer);
+		for (int i = 0; i < 2; ++i)
+		{
+			if (players[i] != nullptr)
+			{
+				players[i]->RenderDebugPrimitive(rc, shapeRenderer);
+			}
+		}
 
 		//エネミーデバッグプリミティブ描画
 		//EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
@@ -221,4 +270,28 @@ void SceneGame::DrawGUI()
 
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
+	//Player::Instance().DrawDebugGUI();
+	Player* controlPlayer = GetControlPlayer();
+
+	if (controlPlayer != nullptr)
+	{
+		controlPlayer->DrawDebugGUI();
+	}
+
+}
+
+void SceneGame::InputChangePlayer()
+{
+	GamePad& gamePad = Input::Instance().GetGamePad();
+
+	if (gamePad.GetButtonDown() & GamePad::BTN_B)
+	{
+		players[controlPlayerIndex]->StopControl();
+		controlPlayerIndex = 1 - controlPlayerIndex;
+	}
+}
+
+Player* SceneGame::GetControlPlayer()
+{
+	return players[controlPlayerIndex];
 }
