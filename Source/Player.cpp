@@ -386,41 +386,6 @@ void Player::CollisionProjectilesVsEnemies()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
-	//StageObjectManager& stageObjectManager = StageObjectManager::Instance();
-
-	////とりあえずレーザーだけ
-	//LaserManager* laserManager = stageObjectManager.GetLaserManager();	
-
-	//for (int i = 0;i < laserManager->GetLaserCount();++i)
-	//{
-	//	Laser* laser = laserManager->GetLaser(i);
-	//	if (!laser)	continue;
-	//	//レーザーの当たり判定をプレイヤーのコライダーと衝突判定
-
-	//	CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
-
-	//	if (result.hit&&velocity.y<=0)
-	//	{
-	//		// 上から乗った場合
-	//		if (result.normal.y > 0.5f)
-	//		{
-	//			velocity.y = 0.0f;
-	//			position.y += result.pushOut.y;
-	//			isGround = true;
-	//			OnLanding();
-	//		}
-	//	}
-
-	//	// 側面
-	//	result = bodyCollider.Intersect(laser->GetSideCollider());
-
-	//	if (result.hit)
-	//	{
-	//		position.x += result.pushOut.x;
-	//		position.z += result.pushOut.z;
-	//	}
-	//}
-
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
 	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 

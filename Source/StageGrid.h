@@ -2,6 +2,7 @@
 
 #include"System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
+#include"Player.h"
 #include"../Source/stage.h"
 
 // ------------------------------------------------------------
@@ -17,13 +18,13 @@ public:
     ~StageGrid();
 
     // 毎フレーム更新処理（移動処理・AABB更新など）
-    void Update(float elapsedTime);
+    void Update(float elapsedTime, Player& p);
 
     // モデル描画
     void Render(const RenderContext& rc, ModelRenderer* renderer);
 
     // プレイヤーとの衝突処理（Cylinder vs AABB）
-    void CollisionVsPlayer();
+    void CollisionVsPlayer(Player& p);
 
     // デバッグ用 AABB 描画
     void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);

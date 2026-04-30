@@ -22,20 +22,20 @@ void LaserBeam::Update(float elapsedTime)
 
         DirectX::XMFLOAT3 hitPos, hitNormal;
 
-        // ★ StageObjectManager にレイキャストを依頼する
+        // �� StageObjectManager �Ƀ��C�L���X�g��˗�����
         bool hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
 
         if (hit)
         {
             segments.push_back({ start, hitPos });
 
-            //// 反射
-            //DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
-            //DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
-            //DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
-            //DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
+            // ����
+            DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
+            DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
+            DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
+            DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
 
-            //start = hitPos;
+            start = hitPos;
         }
         else
         {
@@ -47,21 +47,21 @@ void LaserBeam::Update(float elapsedTime)
   
 }
 
-//デバッグ用GUI描画
+//�f�o�b�O�pGUI�`��
 void LaserBeam::DrawDebugGUI()
 {
     if (ImGui::Begin("Beam", nullptr, ImGuiWindowFlags_None))
     {
-        //トランスフォーム
+        //�g�����X�t�H�[��
         if (ImGui::CollapsingHeader("Item", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            //位置
+            //�ʒu
             ImGui::InputFloat3("dir", &direction.x);
 
-            //長さ
+            //����
 			ImGui::InputFloat("maxLength", &maxLength);
 
-            //太さ
+            //����
 			ImGui::InputFloat("radius", &radius);
         }
     }
@@ -71,12 +71,12 @@ void LaserBeam::DrawDebugGUI()
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
     if (isRotating)
-        return LaserHit(); // 当たりなし
+        return LaserHit(); // ������Ȃ�
 
     LaserHit result;
 
 
-    // AABB の min/max
+    // AABB �� min/max
     DirectX::XMFLOAT3 bmin =
     {
         box.GetCenter().x - box.GetSize().x * 0.5f,
@@ -90,7 +90,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
         box.GetCenter().z + box.GetSize().z * 0.5f
     };
 
-    // 全ての線分に対して判定
+    // �S�Ă̐����ɑ΂��Ĕ���
     for (const auto& seg : segments)
     {
         DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
@@ -99,17 +99,17 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
 
-        // AABB 中心
+        // AABB ���S
         DirectX::XMVECTOR boxCenter = DirectX::XMLoadFloat3(&box.GetCenter());
         DirectX::XMVECTOR v = DirectX::XMVectorSubtract(boxCenter, s);
 
-        // 線分上の最近接点
+        // ������̍ŋߐړ_
         float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(v, dir));
         t = std::clamp(t, 0.0f, segLen);
 
         DirectX::XMVECTOR closestOnRay = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
 
-        // AABB 上の最近接点
+        // AABB ��̍ŋߐړ_
         DirectX::XMFLOAT3 rayPoint;
         DirectX::XMStoreFloat3(&rayPoint, closestOnRay);
 
@@ -122,7 +122,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         DirectX::XMVECTOR aabbP = DirectX::XMLoadFloat3(&closestOnAABB);
 
-        // 距離
+        // ����
         float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(aabbP , closestOnRay)));
 
         if (dist <= radius)
@@ -134,35 +134,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
             DirectX::XMVECTOR n = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(aabbP , closestOnRay));
             DirectX::XMStoreFloat3(&result.normal, n);
 
-            //// ★ AABBの面ベースで法線を求める
-            //DirectX::XMFLOAT3 normal = { 0,0,0 };
-
-            //// AABB中心と接触点との差
-            //float dx = rayPoint.x - box.GetCenter().x;
-            //float dy = rayPoint.y - box.GetCenter().y;
-            //float dz = rayPoint.z - box.GetCenter().z;
-
-            //// 各軸の「残り距離」
-            //float px = (box.GetSize().x * 0.5f) - fabsf(dx);
-            //float py = (box.GetSize().y * 0.5f) - fabsf(dy);
-            //float pz = (box.GetSize().z * 0.5f) - fabsf(dz);
-
-            //// 一番めり込みが小さい軸＝当たった面
-            //if (px < py && px < pz)
-            //{
-            //    normal = { (dx > 0) ? 1.0f : -1.0f, 0, 0 };
-            //}
-            //else if (py < pz)
-            //{
-            //    normal = { 0, (dy > 0) ? 1.0f : -1.0f, 0 };
-            //}
-            //else
-            //{
-            //    normal = { 0, 0, (dz > 0) ? 1.0f : -1.0f };
-            //}
-
-            //result.normal = normal;
-
+         
             result.point = closestOnAABB;
             return result;
         }
@@ -386,37 +358,24 @@ void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 //        sideCollider.SetRotationMatrix(rotMat);
 //}
 
-//レーザー本体
+//���[�U�[�{��
 void Laser::Initialize(
     const DirectX::XMFLOAT3& emitterPos,
     const DirectX::XMFLOAT3& dir,
     float maxLen)
 {
     model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
-    //startPos = emitterPos;
-    //direction = dir;
-
-    //position = startPos; 
-
-    //// 正規化
-    //DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
-    //v = DirectX::XMVector3Normalize(v);
-    //DirectX::XMStoreFloat3(&direction, v);
-
-    //maxLength = maxLen;
-
-    //Shoot();
 
     startPos = emitterPos;
     direction = dir;
     maxLength = maxLen;
 
-    // 正規化
+    // ���K��
     DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
     v = DirectX::XMVector3Normalize(v);
     DirectX::XMStoreFloat3(&direction, v);
 
-    // LaserBeam に初期値を渡す
+    // LaserBeam �ɏ����l��n��
     beam.origin = startPos;
     beam.direction = direction;
     beam.maxLength = maxLength;
@@ -498,92 +457,11 @@ void Laser::Update(float elapsedTime)
     beam.Update(elapsedTime);
 }
 
-//void Laser::Shoot()
-//{
-//    DirectX::XMFLOAT3 pos = startPos;
-//    DirectX::XMFLOAT3 dir = direction;
-//
-//    endPos = startPos;
-//
-//    float remaining = maxLength;
-//
-//    for (int i = 0; i < 5; i++) // 反射回数制限
-//    {
-//        DirectX::XMFLOAT3 hitPos;
-//        DirectX::XMFLOAT3 normal;
-//
-//        bool hit = manager->RayCast(
-//            pos,
-//            DirectX::XMFLOAT3(
-//                pos.x + dir.x * remaining,
-//                pos.y + dir.y * remaining,
-//                pos.z + dir.z * remaining
-//            ),
-//            hitPos,
-//            normal
-//        );
-//
-//        if (!hit)
-//        {
-//            endPos = {
-//                pos.x + dir.x * remaining,
-//                pos.y + dir.y * remaining,
-//                pos.z + dir.z * remaining
-//            };
-//            break;
-//        }
-//
-//        endPos = hitPos;
-//
-//        auto Distance = [](const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
-//            {
-//                float dx = a.x - b.x;
-//                float dy = a.y - b.y;
-//                float dz = a.z - b.z;
-//                return sqrtf(dx * dx + dy * dy + dz * dz);
-//            };
-//
-//        remaining -= Distance(pos, hitPos);
-//
-//        pos = hitPos;
-//
-//        // 反射
-//        dir = Reflect(dir, normal);
-//    }
-//}
-//
-//DirectX::XMFLOAT3 Laser::Reflect(
-//    const DirectX::XMFLOAT3& inDir,
-//    const DirectX::XMFLOAT3& normal)
-//{
-//    DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&inDir);
-//    DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&normal);
-//
-//    float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(d, n));
-//
-//    DirectX::XMVECTOR result =
-//        DirectX::XMVectorSubtract(
-//            d,
-//            DirectX::XMVectorScale(n, 2.0f * dot)
-//        );
-//
-//    DirectX::XMFLOAT3 out;
-//    DirectX::XMStoreFloat3(&out, DirectX::XMVector3Normalize(result));
-//
-//    return out;
-//}
-//
-//
-//void Laser::ResolvePlayerCollision()
-//{
-//    
-//}
-
 void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
     if (!isActive) return;
 
     //beam.Render(rc, renderer);
 
-    //StageObject::Render(rc, renderer);
+    StageObject::Render(rc, renderer);
 }
