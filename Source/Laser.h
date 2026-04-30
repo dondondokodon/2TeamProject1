@@ -15,7 +15,7 @@ struct LaserHit
 	bool hit = false;
 	DirectX::XMFLOAT3 point;
 	DirectX::XMFLOAT3 normal;
-	float penetration = 0.0f;//�����蔻��̊ђʗʁi�����j
+	float penetration = 0.0f;
 };
 
 class LaserBeam
@@ -109,7 +109,11 @@ private:
 class Laser :public StageObject
 {
 	public:
-	
+
+		float currentAngleY = 0.0f;   // 現在の角度
+		float targetAngleY = 0.0f;   // 目標の角度
+		float rotateSpeed = 4.0f;   // 1フレームあたりの回転速度（度）
+
 		//�f�o�b�O�v���~�e�B�u�`��
 		void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override
 		{
@@ -160,6 +164,8 @@ private:
 	float maxLength = 20.0f;
 
 	bool isActive = true;
+	bool isRotating = false;
+
 
 	void ResolvePlayerCollision();
 	StageObjectManager* manager = nullptr;

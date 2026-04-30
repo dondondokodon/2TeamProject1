@@ -358,7 +358,7 @@ void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 //        sideCollider.SetRotationMatrix(rotMat);
 //}
 
-//���[�U�[�{��
+
 void Laser::Initialize(
     const DirectX::XMFLOAT3& emitterPos,
     const DirectX::XMFLOAT3& dir,
@@ -370,12 +370,12 @@ void Laser::Initialize(
     direction = dir;
     maxLength = maxLen;
 
-    // ���K��
+    
     DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
     v = DirectX::XMVector3Normalize(v);
     DirectX::XMStoreFloat3(&direction, v);
 
-    // LaserBeam �ɏ����l��n��
+    // LaserBeam
     beam.origin = startPos;
     beam.direction = direction;
     beam.maxLength = maxLength;
