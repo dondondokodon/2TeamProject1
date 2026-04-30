@@ -109,4 +109,5 @@ private:
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
 	BoxCollider bodyCollider;
+	DirectX::XMFLOAT3 bodyColliderOffset = { 0,0.55f,0 };
 };

@@ -59,3 +59,12 @@ void LaserManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* 
 		stageObject->RenderDebugPrimitive(rc, renderer);
 	}
 }
+
+//デバッグ用GUI描画
+void LaserManager::DrawDebugGUI()
+{
+	for (auto& laser : Lasers)
+	{
+		laser->DrawDebugGUI();
+	}
+}

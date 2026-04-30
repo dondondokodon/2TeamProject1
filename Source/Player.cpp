@@ -83,8 +83,8 @@ void Player::Update(float elapsedTime, bool canControl)
 	UpdateVelocity(elapsedTime);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-	bodyCollider.SetSize({ 0.5f,0.1,0.5f });
+	bodyCollider.SetCenter({ position.x+bodyColliderOffset.x, position.y+bodyColliderOffset.y, position.z+bodyColliderOffset.z });
+	bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -386,38 +386,68 @@ void Player::CollisionProjectilesVsEnemies()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
+	//StageObjectManager& stageObjectManager = StageObjectManager::Instance();
+
+	////とりあえずレーザーだけ
+	//LaserManager* laserManager = stageObjectManager.GetLaserManager();	
+
+	//for (int i = 0;i < laserManager->GetLaserCount();++i)
+	//{
+	//	Laser* laser = laserManager->GetLaser(i);
+	//	if (!laser)	continue;
+	//	//レーザーの当たり判定をプレイヤーのコライダーと衝突判定
+
+	//	CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
+
+	//	if (result.hit&&velocity.y<=0)
+	//	{
+	//		// 上から乗った場合
+	//		if (result.normal.y > 0.5f)
+	//		{
+	//			velocity.y = 0.0f;
+	//			position.y += result.pushOut.y;
+	//			isGround = true;
+	//			OnLanding();
+	//		}
+	//	}
+
+	//	// 側面
+	//	result = bodyCollider.Intersect(laser->GetSideCollider());
+
+	//	if (result.hit)
+	//	{
+	//		position.x += result.pushOut.x;
+	//		position.z += result.pushOut.z;
+	//	}
+	//}
+
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
+	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 
-	//とりあえずレーザーだけ
-	LaserManager* laserManager = stageObjectManager.GetLaserManager();	
-
-	for (int i = 0;i < laserManager->GetLaserCount();++i)
+	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
 	{
 		Laser* laser = laserManager->GetLaser(i);
-		if (!laser)	continue;
-		//レーザーの当たり判定をプレイヤーのコライダーと衝突判定
+		if (!laser || !laser->IsActive()) continue;
 
-		CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
+		// ★ LaserBeam の太さ付き判定を使う
+		LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);
 
-		if (result.hit&&velocity.y<=0)
+		if (!hit.hit) continue;
+
+		// 上から乗った
+		if (hit.normal.y > 0.7f && velocity.y <= 0)
 		{
-			// 上から乗った場合
-			if (result.normal.y > 0.5f)
-			{
-				velocity.y = 0.0f;
-				position.y += result.pushOut.y;
-				isGround = true;
-				OnLanding();
-			}
+			velocity.y = 0.0f;
+			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f-bodyColliderOffset.y+0.002f;
+			isGround = true;
+			OnLanding();
 		}
-
-		// 側面
-		result = bodyCollider.Intersect(laser->GetSideCollider());
-
-		if (result.hit)
+		else
 		{
-			position.x += result.pushOut.x;
-			position.z += result.pushOut.z;
+			// 横 or 下 → 押し戻す
+			position.x += hit.normal.x * hit.penetration;
+			position.y += hit.normal.y * hit.penetration;
+			position.z += hit.normal.z * hit.penetration;
 		}
 	}
 }
