@@ -102,6 +102,8 @@ public:
 	float isActive = true;
 	float radius = 0.5f;
 	int maxReflection = 3;
+	bool isRotating = false;
+
 
 	std::vector<LaserSegment> segments;
 
@@ -200,7 +202,8 @@ class Laser :public StageObject
 			StageObject::RenderDebugPrimitive(rc, renderer);
 			//ビームのデバッグ描画
 			beam.RenderDebugPrimitive(rc, renderer);
-			renderer->RenderBox(rc, startPos, { 0,0,0 }, { 1, 1, 0.1f }, DirectX::XMFLOAT4(1, 0, 0, 1));
+			DirectX::XMFLOAT3 angle = { 0, currentAngleY, 0 };
+			renderer->RenderBox(rc, startPos, angle, { 1, 1, 0.1f }, DirectX::XMFLOAT4(1, 0, 0, 1));
 		}
 
 		//デバッグ用GUI描画
@@ -278,6 +281,10 @@ public:
 	void RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY);
 
 	LaserBeam& GetBeam() { return beam; }
+	
+	bool IsRotating() const { return isRotating; }
+	
+	const LaserBeam& GetBeam() const { return beam; }
 
 private:
 	LaserBeam beam;  // ← これがレーザーの本体
@@ -289,6 +296,11 @@ private:
 	bool isActive = true;
 	float currentAngleY = 0.0f;   // 今の角度
 	float targetAngleY = 0.0f;   // 目標角度（45°ずつ増える）
+	float previousAngleY = 0.0f;    // 前フレームの角度
+	bool isRotating = false;   // 回転中かどうか
+
+	
+
 
 
 	void ResolvePlayerCollision();

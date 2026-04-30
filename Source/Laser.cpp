@@ -70,7 +70,11 @@ void LaserBeam::DrawDebugGUI()
 
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
+    if (isRotating)
+        return LaserHit(); // 当たりなし
+
     LaserHit result;
+
 
     // AABB の min/max
     DirectX::XMFLOAT3 bmin =
@@ -422,6 +426,9 @@ void Laser::Initialize(
 
 void Laser::Update(float elapsedTime)
 {
+    beam.isRotating = isRotating;
+
+
     if (!isActive) return;
 
   /*  Shoot();
@@ -443,16 +450,46 @@ void Laser::Update(float elapsedTime)
     DirectX::XMFLOAT3 center = { 0, 0, 0 };
 
     // Q/E で回転
-    float rotSpeed = DirectX::XM_PI / 4.0f;
+    float step = DirectX::XM_PI / 4.0f;
 
-    if (GetAsyncKeyState('Q') & 0x0001)
+    if (!isRotating)
     {
-        targetAngleY -= rotSpeed;
+
+        if (GetAsyncKeyState('Q') & 0x0001)
+        {
+            targetAngleY -= step;
+            isRotating = true;   // ← 回転開始
+        }
+        if (GetAsyncKeyState('E') & 0x0001)
+        {
+            targetAngleY += step;
+            isRotating = true;   // ← 回転開始
+        }
     }
-    if (GetAsyncKeyState('E') & 0x0001)
+
+    float diff = targetAngleY - currentAngleY;
+
+    if (fabs(diff) < 0.001f)
     {
-        targetAngleY += rotSpeed;
+        diff = 0.0f;
+        currentAngleY = targetAngleY;
+        isRotating = false;
     }
+    else
+    {
+        float dir = (diff > 0.0f) ? 1.0f : -1.0f;
+
+        // 等速回転（例：1秒で90°）
+        float delta = (DirectX::XM_PI / 2.0f) * elapsedTime * dir;
+
+        if (fabs(delta) > fabs(diff))
+            delta = diff;
+
+        currentAngleY += delta;
+
+        RotateAroundCenter(center, delta);
+    }
+
 
     // レーザーの反射計算
     beam.origin = startPos;
