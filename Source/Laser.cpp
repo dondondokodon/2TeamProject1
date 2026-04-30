@@ -58,6 +58,9 @@ void LaserBeam::DrawDebugGUI()
 
             //’·‚³
 			ImGui::InputFloat("maxLength", &maxLength);
+
+            //‘¾‚³
+			ImGui::InputFloat("radius", &radius);
         }
     }
     ImGui::End();
@@ -390,7 +393,7 @@ void Laser::Initialize(
     beam.direction = direction;
     beam.maxLength = maxLength;
     beam.maxReflection = 5;
-    beam.radius = 0.3f;
+    //beam.radius = 0.3f;
 }
 
 void Laser::Update(float elapsedTime)

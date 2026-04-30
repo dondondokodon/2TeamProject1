@@ -99,7 +99,7 @@ public:
 	DirectX::XMFLOAT3 origin;
 	DirectX::XMFLOAT3 direction;
 	float maxLength = 50.0f;
-	float radius = 1.0f;
+	float radius = 0.5f;
 	int maxReflection = 3;
 
 	std::vector<LaserSegment> segments;
