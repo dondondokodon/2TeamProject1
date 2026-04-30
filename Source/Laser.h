@@ -101,7 +101,7 @@ private:
 };
 
 //レーザーの本体
-class Laser :public StageObject
+clasｋさｆｋｓｆじょs Laser :public StageObject
 {
 	public:
 	
@@ -136,6 +136,8 @@ public:
 	bool IsActive() const { return isActive; }
 
 	void setManager(StageObjectManager* mgr) { manager = mgr; }
+
+
 
 	LaserBeam& GetBeam() { return beam; }
 
