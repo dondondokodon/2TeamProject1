@@ -4,6 +4,7 @@
 #include"EnemyManager.h"
 #include"EnemySlime.h"
 #include"Player.h"
+#include"Laser.h"
 #include "EffectManager.h"
 
 // 初期化
@@ -14,6 +15,12 @@ void SceneGame::Initialize()
 
 	//ステージグリッド初期化
 	stageGrid = new StageGrid();
+
+	//レーザー初期化
+	laser = new Laser();
+
+	//レーザーテクスチャ初期化
+	lasertexture = new LaserTexture();
 
 	//プレイヤー初期化
 	Player::Instance().Initialize();
@@ -55,6 +62,26 @@ void SceneGame::Finalize()
 	{
 		delete stage;
 		stage = nullptr;
+	}
+
+	//ステージグリッド終了化
+	if (stageGrid != nullptr)
+	{
+		delete stageGrid;
+		stageGrid = nullptr;
+	}
+
+	//レーザー終了化
+	if (laser!= nullptr)
+	{
+		delete laser;
+		laser = nullptr;
+	}
+
+	//レーザーテクスチャ終了化
+	if (lasertexture != nullptr) {
+		delete lasertexture;
+		lasertexture = nullptr;
 	}
 
 	//プレイヤー終了化
@@ -156,6 +183,9 @@ void SceneGame::Render()
 		//プレイヤー描画
 		Player::Instance().Render(rc, modelRenderer);
 
+		//レーザー描画
+		laser->Render(rc, modelRenderer);
+
 		//エネミー更新処理
 		EnemyManager::Instance().Render(rc, modelRenderer);
 
@@ -171,9 +201,11 @@ void SceneGame::Render()
 		//エネミーデバッグプリミティブ描画
 		EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
 
-
 		//木箱用デバッグプリミティブ描画
 		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+
+		//レーザー用デバッグプリミティブ描画
+		lasertexture->RenderDebugPrimitive(rc, shapeRenderer);
 
 	}
 

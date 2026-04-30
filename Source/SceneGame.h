@@ -2,6 +2,8 @@
 
 #include"Stage.h"
 #include"StageGrid.h"
+#include"Laser.h"
+#include"LaserTexture.h"
 #include"CameraController.h"
 #include"Scene.h"
 // ゲームシーン
@@ -30,4 +32,6 @@ private:
 	Stage* stage = nullptr;
 	StageGrid* stageGrid = nullptr;
 	CameraController* cameraController = nullptr;
+	Laser* laser = nullptr;   
+	LaserTexture* lasertexture = nullptr;   
 };
