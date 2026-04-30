@@ -82,8 +82,8 @@ void Player::Update(float elapsedTime)
 	UpdateVelocity(elapsedTime);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-	bodyCollider.SetSize({ 0.5f,0.1,0.5f });
+	bodyCollider.SetCenter({ position.x, position.y+0.55f, position.z });
+	bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
 
 	//弾丸入力処理
 	InputProjectile();
