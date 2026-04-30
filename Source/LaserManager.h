@@ -25,6 +25,9 @@ public:
 	//デバッグプリミティブ描画
 	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);
 
+	//デバッグ用GUI描画
+	void DrawDebugGUI();
+
 	//レーザー取得
 	Laser* GetLaser(int index) { return Lasers.at(index).get(); }
 
