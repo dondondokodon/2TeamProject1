@@ -7,6 +7,7 @@
 #include"ProjectileManager.h"
 #include"Effect.h"
 #include"AnimationController.h"
+#include"BoxCollider.h"	
 
 #include"PlayerStates.h"
 
@@ -15,10 +16,12 @@
 class Player :public Character
 {
 private:
-	Player(){}
-	~Player()override{}
+
 
 public:
+	Player() {}
+	~Player()override {}
+
 	//インスタンス取得
 	static Player& Instance()
 	{
@@ -33,7 +36,7 @@ public:
 	void Finalize();
 
 	//更新処理
-	void Update(float elapsedTime);
+	void Update(float elapsedTime, bool canControl);
 
 	//描画処理
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
@@ -52,6 +55,12 @@ public:
 
 	//弾丸入力処理
 	void InputProjectile();
+
+	//操作対象から外れたときの処理
+	void StopControl();
+
+	//プレイヤー同士の衝突処理
+	void CollisionVsPlayer(Player& other);
 
 	//ステート変更処理
 	void ChangeState(std::unique_ptr<PlayerState> newState);
@@ -86,6 +95,9 @@ private:
 	//弾丸と敵の衝突処理	
 	void CollisionProjectilesVsEnemies();
 
+	//ステージとの衝突処理
+	void CollisionPlayerVsStage();
+
 	float JumpSpeed = 12.0f;
 
 	int JumpCount = 0;
@@ -96,6 +108,6 @@ private:
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
-
-
+	BoxCollider bodyCollider;
+	DirectX::XMFLOAT3 bodyColliderOffset = { 0,0.55f,0 };
 };
