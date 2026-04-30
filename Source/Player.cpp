@@ -82,7 +82,7 @@ void Player::Update(float elapsedTime)
 	UpdateVelocity(elapsedTime);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y+0.55f, position.z });
+	bodyCollider.SetCenter({ position.x+bodyColliderOffset.x, position.y+bodyColliderOffset.y, position.z+bodyColliderOffset.z });
 	bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
 
 	//弾丸入力処理
@@ -433,7 +433,7 @@ void Player::CollisionPlayerVsStage()
 		if (hit.normal.y > 0.7f && velocity.y <= 0)
 		{
 			velocity.y = 0.0f;
-			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f;
+			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f-bodyColliderOffset.y+0.002f;
 			isGround = true;
 			OnLanding();
 		}

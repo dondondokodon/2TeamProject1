@@ -90,7 +90,7 @@ struct LaserHit
 	bool hit = false;
 	DirectX::XMFLOAT3 point;
 	DirectX::XMFLOAT3 normal;
-	float penetration = 0.0f;
+	float penetration = 0.0f;//“–‚½‚è”»’è‚ÌŠÑ’Ê—Êi‹——£j
 };
 
 class LaserBeam

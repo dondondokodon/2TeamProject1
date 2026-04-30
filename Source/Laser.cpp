@@ -125,6 +125,35 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
             DirectX::XMVECTOR n = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(aabbP , closestOnRay));
             DirectX::XMStoreFloat3(&result.normal, n);
 
+            //// ★ AABBの面ベースで法線を求める
+            //DirectX::XMFLOAT3 normal = { 0,0,0 };
+
+            //// AABB中心と接触点との差
+            //float dx = rayPoint.x - box.GetCenter().x;
+            //float dy = rayPoint.y - box.GetCenter().y;
+            //float dz = rayPoint.z - box.GetCenter().z;
+
+            //// 各軸の「残り距離」
+            //float px = (box.GetSize().x * 0.5f) - fabsf(dx);
+            //float py = (box.GetSize().y * 0.5f) - fabsf(dy);
+            //float pz = (box.GetSize().z * 0.5f) - fabsf(dz);
+
+            //// 一番めり込みが小さい軸＝当たった面
+            //if (px < py && px < pz)
+            //{
+            //    normal = { (dx > 0) ? 1.0f : -1.0f, 0, 0 };
+            //}
+            //else if (py < pz)
+            //{
+            //    normal = { 0, (dy > 0) ? 1.0f : -1.0f, 0 };
+            //}
+            //else
+            //{
+            //    normal = { 0, 0, (dz > 0) ? 1.0f : -1.0f };
+            //}
+
+            //result.normal = normal;
+
             result.point = closestOnAABB;
             return result;
         }
