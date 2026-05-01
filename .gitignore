@@ -418,3 +418,5 @@ FodyWeavers.xsd
 *.msp
 *.exe
 /Game.exe
+/Data/Model/Objects/Laser/laser.fbx
+/Data/Model/Objects/Laser/laser.mdl

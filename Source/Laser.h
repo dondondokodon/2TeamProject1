@@ -3,6 +3,7 @@
 #include"StageObject.h"
 #include"StageObjectManager.h"
 #include"BoxCollider.h"
+#include"CylinderCollider.h"
 
 struct LaserSegment
 {
@@ -34,6 +35,7 @@ public:
 
 	void Update(float elaspedTime);
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
+	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
 	
 
