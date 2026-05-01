@@ -394,6 +394,8 @@ void Player::CollisionPlayerVsStage()
 		Laser* laser = laserManager->GetLaser(i);
 		if (!laser || !laser->IsActive()) continue;
 
+	
+
 		// ★ LaserBeam の太さ付き判定を使う
 		LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);
 
@@ -414,7 +416,9 @@ void Player::CollisionPlayerVsStage()
 			position.y += hit.normal.y * hit.penetration;
 			position.z += hit.normal.z * hit.penetration;
 		}
+
 	}
+
 }
 
 //プレイヤー同士の衝突処理
