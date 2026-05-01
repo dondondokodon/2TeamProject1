@@ -28,7 +28,7 @@ public:
 	void DrawGUI()override;
 
 private:
-	Stage* stage = nullptr;
+	//Stage* stage = nullptr;
 	StageGrid* stageGrid = nullptr;
 	CameraController* cameraController = nullptr;
 
