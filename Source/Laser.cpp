@@ -3,6 +3,7 @@
 #include <algorithm>
 #include<imgui.h>
 #include"StageObjectManager.h"
+#include"math.h"
 
 void LaserBeam::Update(float elapsedTime) 
 {
@@ -74,6 +75,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
         return LaserHit(); // ������Ȃ�
 
     LaserHit result;
+    //float bestDist = FLT_MAX;
 
 
     // AABB �� min/max
@@ -127,6 +129,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         if (dist <= radius)
         {
+            float hitDist = t;  //������̋���
             result.hit = true;
             result.penetration = radius - dist;
 
@@ -140,6 +143,74 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
         }
     }
 
+    return result;
+    //return bestHit;
+}
+
+//�~���Ƃ̔���
+LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
+{
+
+    LaserHit result;
+
+    float cylinderHalfHeight = cylinder.GetHeight() * 0.5f;
+    float cylinderRadius = cylinder.GetRadius();
+    DirectX::XMFLOAT3 center = cylinder.GetCenter();
+
+    for (const auto& seg : segments) {
+        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+        float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+
+        // 1. ���[�U�[�i�����j��̍ŋߐړ_ p �����߂�
+        DirectX::XMVECTOR cylinderCenter = DirectX::XMLoadFloat3(&center);
+        float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(cylinderCenter, s), dir));
+        t = std::clamp(t, 0.0f, segLen);
+        DirectX::XMVECTOR pVec = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
+        DirectX::XMFLOAT3 p;
+        DirectX::XMStoreFloat3(&p, pVec);
+
+        // 2. �~�����̍ŋߐړ_ q �����߂�
+        DirectX::XMFLOAT3 q;
+        // ����(Y)�͒P���ɃN�����v
+        q.y = std::clamp(p.y, center.y - cylinderHalfHeight, center.y + cylinderHalfHeight);
+
+        // ����(XZ)�͉~�͈͓̔��ɃN�����v
+        float dx = p.x - center.x;
+        float dz = p.z - center.z;
+        float dXZ = sqrtf(dx * dx + dz * dz);
+        if (dXZ > cylinderRadius) {
+            q.x = center.x + (dx / dXZ) * cylinderRadius;
+            q.z = center.z + (dz / dXZ) * cylinderRadius;
+        }
+        else {
+            q.x = p.x;
+            q.z = p.z;
+        }
+
+        // 3. ��������
+        DirectX::XMVECTOR qVec = DirectX::XMLoadFloat3(&q);
+        DirectX::XMVECTOR diff = DirectX::XMVectorSubtract(qVec, pVec);
+        float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(diff));
+
+        if (dist <= this->radius) {
+            result.hit = true;
+            result.penetration = this->radius - dist;
+
+            // �@��
+            if (dist > 0.0001f) {
+                DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(diff));
+            }
+            else {
+                // �^�񒆂�������^��ɂ��Ă���
+                result.normal = { 0, 1, 0 };
+            }
+
+            result.point = q;
+            return result;
+        }
+    }
     return result;
 }
 
@@ -364,11 +435,13 @@ void Laser::Initialize(
     const DirectX::XMFLOAT3& dir,
     float maxLen)
 {
-    model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
     startPos = emitterPos;
     direction = dir;
     maxLength = maxLen;
+  
+    scale = { 0.5f,0.5f,0.5f };
 
     
     DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
@@ -397,6 +470,10 @@ void Laser::Update(float elapsedTime)
     beam.setDirection(direction);
     beam.Update(elapsedTime);*/
 
+	position = startPos;
+	direction = beam.direction;
+	position.x -= direction.x*0.5f;
+	angle.y = atan2f(direction.x, direction.z);
     
     
 

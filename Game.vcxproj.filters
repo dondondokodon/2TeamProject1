@@ -249,6 +249,12 @@
     <ClInclude Include="Source\LaserManager.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CylinderCollider.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CollisionResult.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -420,6 +426,9 @@
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageGrid.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CylinderCollider.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>
