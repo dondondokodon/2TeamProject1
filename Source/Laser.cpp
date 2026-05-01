@@ -132,7 +132,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         if (dist <= radius - skin)
         {
-            float hitDist = t;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‹ï¿½ï¿½ï¿½
+            float hitDist = t;  //E½E½E½E½E½E½Ì‹ï¿½E½E½
             result.hit = true;
 
             float depth = radius - dist;
@@ -168,11 +168,12 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
     //return bestHit;
 }
 
-//ï¿½~ï¿½ï¿½ï¿½Æ‚Ì”ï¿½ï¿½ï¿½
+//E½~E½E½E½Æ‚Ì”ï¿½E½E½
 LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
 {
 
     LaserHit result;
+   
 
     float cylinderHalfHeight = cylinder.GetHeight() * 0.5f;
     float cylinderRadius = cylinder.GetRadius();
@@ -184,7 +185,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
         DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
         float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
 
-        // 1. ï¿½ï¿½ï¿½[ï¿½Uï¿½[ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ÌÅ‹ßÚ“_ p ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ï¿½
+        // 1. E½E½E½[E½UE½[E½iE½E½E½E½E½jE½E½ÌÅ‹ßÚ“_ p E½E½E½E½E½ß‚ï¿½
         DirectX::XMVECTOR cylinderCenter = DirectX::XMLoadFloat3(&center);
         float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(cylinderCenter, s), dir));
         t = std::clamp(t, 0.0f, segLen);
@@ -192,12 +193,12 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
         DirectX::XMFLOAT3 p;
         DirectX::XMStoreFloat3(&p, pVec);
 
-        // 2. ï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½ÌÅ‹ßÚ“_ q ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ï¿½
+        // 2. E½~E½E½E½E½E½ÌÅ‹ßÚ“_ q E½E½E½E½E½ß‚ï¿½
         DirectX::XMFLOAT3 q;
-        // ï¿½ï¿½ï¿½ï¿½(Y)ï¿½Í’Pï¿½ï¿½ï¿½ÉƒNï¿½ï¿½ï¿½ï¿½ï¿½v
+        // E½E½E½E½(Y)E½Í’PE½E½E½ÉƒNE½E½E½E½E½v
         q.y = std::clamp(p.y, center.y - cylinderHalfHeight, center.y + cylinderHalfHeight);
 
-        // ï¿½ï¿½ï¿½ï¿½(XZ)ï¿½Í‰~ï¿½Ì”ÍˆÍ“ï¿½ï¿½ÉƒNï¿½ï¿½ï¿½ï¿½ï¿½v
+        // E½E½E½E½(XZ)E½Í‰~E½Ì”ÍˆÍ“ï¿½E½ÉƒNE½E½E½E½E½v
         float dx = p.x - center.x;
         float dz = p.z - center.z;
         float dXZ = sqrtf(dx * dx + dz * dz);
@@ -210,7 +211,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
             q.z = p.z;
         }
 
-        // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // 3. E½E½E½E½E½E½E½E½
         DirectX::XMVECTOR qVec = DirectX::XMLoadFloat3(&q);
         DirectX::XMVECTOR diff = DirectX::XMVectorSubtract(qVec, pVec);
         float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(diff));
@@ -219,12 +220,12 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
             result.hit = true;
             result.penetration = this->radius - dist;
 
-            // ï¿½@ï¿½ï¿½
+            // E½@E½E½
             if (dist > 0.0001f) {
                 DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(diff));
             }
             else {
-                // ï¿½^ï¿½ñ’†‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½É‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+                // E½^E½ñ’EE½E½E½E½E½E½E½^E½E½É‚ï¿½E½Ä‚ï¿½E½E½
                 result.normal = { 0, 1, 0 };
             }
 

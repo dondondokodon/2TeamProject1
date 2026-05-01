@@ -415,41 +415,37 @@ void Player::CollisionPlayerVsStage()
 
 		bool isHit = false;
 		int loopCount = 0;
-		//const float skinWidth = 0.002f; // 押し戻しのための余裕距離
-		const float skinWidth = 0.002f; // 押し戻しのための余裕距離
+		const float skinWidth = 0.002f;
+
+		LaserHit hit; // ← 外で宣言
+
 		do {
 			loopCount++;
-			// ★ LaserBeam の太さ付き判定を使う
-			//LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);BoxColliderのとき
-			LaserHit hit = laser->GetBeam().CheckHitCylinder(bodyCylinderCollider);
+
+			hit = laser->GetBeam().CheckHitCylinder(bodyCylinderCollider);
 
 			if (!hit.hit)
 			{
 				isHit = false;
-				continue;
+				break; // ← continueじゃなくてbreak
 			}
-				
-	
 
-		// ★ LaserBeam の太さ付き判定を使う
-		LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);
-
-			isHit = hit.hit;
+			isHit = true;
 
 			// 上から乗った
 			if (hit.normal.y > 0.7f && velocity.y <= 0)
 			{
 				velocity.y = 0.0f;
-				//position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f - bodyColliderOffset.y + skinWidth;	//BoxColliderのとき
+
 				float halfHeight = bodyCylinderCollider.GetHeight() * 0.5f;
-				position.y = hit.point.y + halfHeight - 0.5f + skinWidth;
-				
+				position.y = hit.point.y + halfHeight + skinWidth;
+
 				isGround = true;
 				OnLanding();
 			}
 			else
 			{
-				// 横 or 下 → 押し戻す
+				// 押し戻し
 				position.x += hit.normal.x * hit.penetration;
 				position.y += hit.normal.y * hit.penetration;
 				position.z += hit.normal.z * hit.penetration;
@@ -457,22 +453,7 @@ void Player::CollisionPlayerVsStage()
 
 			UpdateCollider();
 
-		} while (isHit&&loopCount<10);
-		// 上から乗った
-		if (hit.normal.y > 0.1f && velocity.y <= 0)
-		{
-			velocity.y = 0.0f;
-			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f - bodyColliderOffset.y + 0.002f;
-			isGround = true;
-			OnLanding();
-		}
-		else
-		{
-			
-			//横だけ押し戻す
-			position.x += hit.normal.x * hit.penetration;
-			position.z += hit.normal.z * hit.penetration;
-		}
+		} while (isHit && loopCount < 10);
 	}
 
 
