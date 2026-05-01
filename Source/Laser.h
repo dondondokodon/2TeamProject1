@@ -3,6 +3,7 @@
 #include"StageObject.h"
 #include"StageObjectManager.h"
 #include"BoxCollider.h"
+#include"CylinderCollider.h"
 
 struct LaserSegment
 {
@@ -31,6 +32,7 @@ public:
 
 	void Update();
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
+	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
 	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 	{

@@ -34,8 +34,10 @@ void Player::Initialize()
 	state->Initialize(*this);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y, position.z });
-	bodyCollider.SetSize(scale);
+	//bodyCollider.SetCenter({ position.x, position.y, position.z });
+	//bodyCollider.SetSize(scale);
+
+	UpdateCollider();
 }
 
 //デストラクタ
@@ -82,9 +84,8 @@ void Player::Update(float elapsedTime, bool canControl)
 	//速力処理更新
 	UpdateVelocity(elapsedTime);
 
-	//コライダーのセット
-	bodyCollider.SetCenter({ position.x+bodyColliderOffset.x, position.y+bodyColliderOffset.y, position.z+bodyColliderOffset.z });
-	bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
+	//コライダー更新処理
+	UpdateCollider();
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -121,6 +122,19 @@ void Player::Update(float elapsedTime, bool canControl)
 	model->UpdateTransform();
 }
 
+//コライダー更新処理
+void Player::UpdateCollider()
+{
+	//コライダーのセット
+	//bodyCollider.SetCenter({ position.x + bodyColliderOffset.x, position.y + bodyColliderOffset.y, position.z + bodyColliderOffset.z });
+	//bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
+
+	//円柱
+	bodyCylinderCollider.SetCenter({ position.x, position.y+0.5f, position.z });
+	bodyCylinderCollider.SetRadius(0.5f);
+	bodyCylinderCollider.SetHeight(0.7f);
+}
+
 //描画処理
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
@@ -134,13 +148,18 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
 	//基底クラスの関数の呼び出し
-	Character::RenderDebugPrimitive(rc, renderer);
+	//Character::RenderDebugPrimitive(rc, renderer);
 
 	//弾丸デバッグプリミティブ描画
 	projectileManager.RenderDebugPrimitive(rc, renderer);
 
 	//BoxColliderのデバッグプリミティブ描画
-	renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+	//renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+
+	//円柱
+	DirectX::XMFLOAT3 position = bodyCylinderCollider.GetCenter();
+	position.y -= bodyCylinderCollider.GetHeight() * 0.5f;
+	renderer->RenderCylinder(rc, position, bodyCylinderCollider.GetRadius(), bodyCylinderCollider.GetHeight()*2, DirectX::XMFLOAT4(0, 1, 1, 1));
 }
 
 //デバッグ用GUI描画
@@ -394,26 +413,47 @@ void Player::CollisionPlayerVsStage()
 		Laser* laser = laserManager->GetLaser(i);
 		if (!laser || !laser->IsActive()) continue;
 
-		// ★ LaserBeam の太さ付き判定を使う
-		LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);
+		bool isHit = false;
+		int loopCount = 0;
+		//const float skinWidth = 0.002f; // 押し戻しのための余裕距離
+		const float skinWidth = 0.002f; // 押し戻しのための余裕距離
+		do {
+			loopCount++;
+			// ★ LaserBeam の太さ付き判定を使う
+			//LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);BoxColliderのとき
+			LaserHit hit = laser->GetBeam().CheckHitCylinder(bodyCylinderCollider);
 
-		if (!hit.hit) continue;
+			if (!hit.hit)
+			{
+				isHit = false;
+				continue;
+			}
+				
 
-		// 上から乗った
-		if (hit.normal.y > 0.7f && velocity.y <= 0)
-		{
-			velocity.y = 0.0f;
-			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f-bodyColliderOffset.y+0.002f;
-			isGround = true;
-			OnLanding();
-		}
-		else
-		{
-			// 横 or 下 → 押し戻す
-			position.x += hit.normal.x * hit.penetration;
-			position.y += hit.normal.y * hit.penetration;
-			position.z += hit.normal.z * hit.penetration;
-		}
+			isHit = hit.hit;
+
+			// 上から乗った
+			if (hit.normal.y > 0.7f && velocity.y <= 0)
+			{
+				velocity.y = 0.0f;
+				//position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f - bodyColliderOffset.y + skinWidth;	//BoxColliderのとき
+				float halfHeight = bodyCylinderCollider.GetHeight() * 0.5f;
+				position.y = hit.point.y + halfHeight - 0.5f + skinWidth;
+				
+				isGround = true;
+				OnLanding();
+			}
+			else
+			{
+				// 横 or 下 → 押し戻す
+				position.x += hit.normal.x * hit.penetration;
+				position.y += hit.normal.y * hit.penetration;
+				position.z += hit.normal.z * hit.penetration;
+			}
+
+			UpdateCollider();
+
+		} while (isHit&&loopCount<10);
 	}
 }
 

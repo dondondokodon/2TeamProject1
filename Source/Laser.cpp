@@ -3,6 +3,7 @@
 #include <algorithm>
 #include<imgui.h>
 #include"StageObjectManager.h"
+#include"math.h"
 
 void LaserBeam::Update()
 {
@@ -69,6 +70,7 @@ void LaserBeam::DrawDebugGUI()
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
     LaserHit result;
+    //float bestDist = FLT_MAX;
 
     // AABB の min/max
     DirectX::XMFLOAT3 bmin =
@@ -121,6 +123,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         if (dist <= radius)
         {
+            float hitDist = t;  //線分上の距離
             result.hit = true;
             result.penetration = radius - dist;
 
@@ -134,6 +137,74 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
         }
     }
 
+    return result;
+    //return bestHit;
+}
+
+//円柱との判定
+LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
+{
+
+    LaserHit result;
+
+    float cylinderHalfHeight = cylinder.GetHeight() * 0.5f;
+    float cylinderRadius = cylinder.GetRadius();
+    DirectX::XMFLOAT3 center = cylinder.GetCenter();
+
+    for (const auto& seg : segments) {
+        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+        float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+
+        // 1. レーザー（線分）上の最近接点 p を求める
+        DirectX::XMVECTOR cylinderCenter = DirectX::XMLoadFloat3(&center);
+        float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(cylinderCenter, s), dir));
+        t = std::clamp(t, 0.0f, segLen);
+        DirectX::XMVECTOR pVec = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
+        DirectX::XMFLOAT3 p;
+        DirectX::XMStoreFloat3(&p, pVec);
+
+        // 2. 円柱内の最近接点 q を求める
+        DirectX::XMFLOAT3 q;
+        // 高さ(Y)は単純にクランプ
+        q.y = std::clamp(p.y, center.y - cylinderHalfHeight, center.y + cylinderHalfHeight);
+
+        // 水平(XZ)は円の範囲内にクランプ
+        float dx = p.x - center.x;
+        float dz = p.z - center.z;
+        float dXZ = sqrtf(dx * dx + dz * dz);
+        if (dXZ > cylinderRadius) {
+            q.x = center.x + (dx / dXZ) * cylinderRadius;
+            q.z = center.z + (dz / dXZ) * cylinderRadius;
+        }
+        else {
+            q.x = p.x;
+            q.z = p.z;
+        }
+
+        // 3. 距離判定
+        DirectX::XMVECTOR qVec = DirectX::XMLoadFloat3(&q);
+        DirectX::XMVECTOR diff = DirectX::XMVectorSubtract(qVec, pVec);
+        float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(diff));
+
+        if (dist <= this->radius) {
+            result.hit = true;
+            result.penetration = this->radius - dist;
+
+            // 法線
+            if (dist > 0.0001f) {
+                DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(diff));
+            }
+            else {
+                // 真ん中すぎたら真上にしておく
+                result.normal = { 0, 1, 0 };
+            }
+
+            result.point = q;
+            return result;
+        }
+    }
     return result;
 }
 
