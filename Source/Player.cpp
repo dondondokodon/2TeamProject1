@@ -427,17 +427,19 @@ void Player::CollisionPlayerVsStage()
 			if (!hit.hit)
 			{
 				isHit = false;
-				break; // © continue‚¶‚á‚È‚­‚Äbreak
+				break;
 			}
 
 			isHit = true;
 
-			// ã‚©‚çæ‚Á‚½
+			// ã‚Éæ‚éˆ—
 			if (hit.normal.y > 0.7f && velocity.y <= 0)
 			{
 				velocity.y = 0.0f;
 
 				float halfHeight = bodyCylinderCollider.GetHeight() * 0.5f;
+				const float skinWidth = 0.002f;
+
 				position.y = hit.point.y + halfHeight + skinWidth;
 
 				isGround = true;
@@ -445,10 +447,22 @@ void Player::CollisionPlayerVsStage()
 			}
 			else
 			{
-				// ‰Ÿ‚µ–ß‚µ
-				position.x += hit.normal.x * hit.penetration;
-				position.y += hit.normal.y * hit.penetration;
-				position.z += hit.normal.z * hit.penetration;
+				// ? ‰Ÿ‚µo‚µi—]—T•t‚«j
+				float push = hit.penetration + 0.001f;
+
+				position.x += hit.normal.x * push;
+				position.z += hit.normal.z * push;
+
+				// ? ‚ß‚èž‚Ý–hŽ~i‘¬“xŽE‚µj
+				float dot =
+					velocity.x * hit.normal.x +
+					velocity.z * hit.normal.z;
+
+				if (dot < 0.0f)
+				{
+					velocity.x -= hit.normal.x * dot;
+					velocity.z -= hit.normal.z * dot;
+				}
 			}
 
 			UpdateCollider();
