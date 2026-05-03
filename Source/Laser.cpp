@@ -5,6 +5,8 @@
 #include"StageObjectManager.h"
 #include"math.h"
 
+using namespace DirectX;
+
 void LaserBeam::Update(float elapsedTime) 
 {
     segments.clear();
@@ -31,6 +33,7 @@ void LaserBeam::Update(float elapsedTime)
             segments.push_back({ start, hitPos });
 
             //     
+            // ????
             DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
             DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
             DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
@@ -48,21 +51,21 @@ void LaserBeam::Update(float elapsedTime)
   
 }
 
-// f o b O pGUI `  
+//?f?o?b?O?pGUI?`??
 void LaserBeam::DrawDebugGUI()
 {
     if (ImGui::Begin("Beam", nullptr, ImGuiWindowFlags_None))
     {
-        // g     X t H [  
+        //?g?????X?t?H?[??
         if (ImGui::CollapsingHeader("Item", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            // ʒu
+            //??u
             ImGui::InputFloat3("dir", &direction.x);
 
-            //    
+            //????
 			ImGui::InputFloat("maxLength", &maxLength);
 
-            //    
+            //????
 			ImGui::InputFloat("radius", &radius);
         }
     }
@@ -72,13 +75,13 @@ void LaserBeam::DrawDebugGUI()
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
     if (isRotating)
-        return LaserHit(); //       Ȃ 
+        return LaserHit(); // ????????
 
     LaserHit result;
     //float bestDist = FLT_MAX;
 
 
-    // AABB    min/max
+    // AABB ?? min/max
     DirectX::XMFLOAT3 bmin =
     {
         box.GetCenter().x - box.GetSize().x * 0.5f,
@@ -92,7 +95,7 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
         box.GetCenter().z + box.GetSize().z * 0.5f
     };
 
-    //  S Ă̐    ɑ΂  Ĕ   
+    // ?S???????????????
     for (const auto& seg : segments)
     {
         DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
@@ -101,17 +104,17 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
 
-        // AABB    S
+        // AABB ???S
         DirectX::XMVECTOR boxCenter = DirectX::XMLoadFloat3(&box.GetCenter());
         DirectX::XMVECTOR v = DirectX::XMVectorSubtract(boxCenter, s);
 
-        //       ̍ŋߐړ_
+        // ??????????_
         float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(v, dir));
         t = std::clamp(t, 0.0f, segLen);
 
         DirectX::XMVECTOR closestOnRay = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
 
-        // AABB   ̍ŋߐړ_
+        // AABB ??????_
         DirectX::XMFLOAT3 rayPoint;
         DirectX::XMStoreFloat3(&rayPoint, closestOnRay);
 
@@ -124,95 +127,165 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 
         DirectX::XMVECTOR aabbP = DirectX::XMLoadFloat3(&closestOnAABB);
 
-        //     
+        // ????
         float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(aabbP , closestOnRay)));
 
-        if (dist <= radius)
-        {
-            float hitDist = t;  //      ̋   
-            result.hit = true;
-            result.penetration = radius - dist;
 
-            // normal
-            DirectX::XMVECTOR n = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(aabbP , closestOnRay));
+        float skin = 0.01f;
+
+        if (dist <= radius - skin)
+        {
+            float hitDist = t;  //・ｽ・ｽ・ｽ・ｽ・ｽ・ｽﾌ具ｿｽ・ｽ・ｽ
+            result.hit = true;
+
+            float depth = radius - dist;
+
+            // 押しすぎ防止
+            float push = depth * 0.7f;
+
+            // 最小保証
+            push = max(push, 0.01f);
+
+            result.penetration = push;
+
+            // 法線
+            DirectX::XMFLOAT3 dirOut =
+            {
+                box.GetCenter().x - rayPoint.x,
+                box.GetCenter().y - rayPoint.y,
+                box.GetCenter().z - rayPoint.z
+            };
+
+            DirectX::XMVECTOR n = DirectX::XMVector3Normalize(
+                DirectX::XMLoadFloat3(&dirOut)
+            );
+
             DirectX::XMStoreFloat3(&result.normal, n);
 
-         
-            result.point = closestOnAABB;
             return result;
         }
+      
     }
 
     return result;
     //return bestHit;
 }
 
-// ~   Ƃ̔   
-LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder)const
+//・ｽ~・ｽ・ｽ・ｽﾆの費ｿｽ・ｽ・ｽ
+LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 {
+    if (isRotating)
+        return LaserHit();
 
     LaserHit result;
 
-    float cylinderHalfHeight = cylinder.GetHeight() * 0.5f;
-    float cylinderRadius = cylinder.GetRadius();
+    float halfH = cylinder.GetHeight() * 0.5f;
+    float cylR = cylinder.GetRadius();
     DirectX::XMFLOAT3 center = cylinder.GetCenter();
 
-    for (const auto& seg : segments) {
-        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
-        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
-        float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+    for (const auto& seg : segments)
+    {
+        DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
+        DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
 
-        // 1.    [ U [ i     j  ̍ŋߐړ_ p      ߂ 
-        DirectX::XMVECTOR cylinderCenter = DirectX::XMLoadFloat3(&center);
-        float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(cylinderCenter, s), dir));
+        DirectX::XMVECTOR dir = XMVector3Normalize(XMVectorSubtract(e, s));
+        float segLen = XMVectorGetX(XMVector3Length(XMVectorSubtract(e, s)));
+
+        // レーザー上の最近接点 p
+        DirectX::XMVECTOR c = XMLoadFloat3(&center);
+        float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
         t = std::clamp(t, 0.0f, segLen);
-        DirectX::XMVECTOR pVec = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
+
+        DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
+
         DirectX::XMFLOAT3 p;
-        DirectX::XMStoreFloat3(&p, pVec);
+        XMStoreFloat3(&p, pVec);
 
-        // 2.  ~     ̍ŋߐړ_ q      ߂ 
+        // Cylinder 上の最近接点 q
         DirectX::XMFLOAT3 q;
-        //     (Y) ͒P   ɃN     v
-        q.y = std::clamp(p.y, center.y - cylinderHalfHeight, center.y + cylinderHalfHeight);
 
-        //     (XZ) ͉~ ͈͓̔  ɃN     v
+        // Y clamp
+        q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
+
+        // XZ 円
         float dx = p.x - center.x;
         float dz = p.z - center.z;
-        float dXZ = sqrtf(dx * dx + dz * dz);
-        if (dXZ > cylinderRadius) {
-            q.x = center.x + (dx / dXZ) * cylinderRadius;
-            q.z = center.z + (dz / dXZ) * cylinderRadius;
+        float len = sqrtf(dx * dx + dz * dz);
+
+        if (len > cylR)
+        {
+            q.x = center.x + dx / len * cylR;
+            q.z = center.z + dz / len * cylR;
         }
-        else {
+        else
+        {
             q.x = p.x;
             q.z = p.z;
         }
 
-        // 3.         
-        DirectX::XMVECTOR qVec = DirectX::XMLoadFloat3(&q);
-        DirectX::XMVECTOR diff = DirectX::XMVectorSubtract(qVec, pVec);
-        float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(diff));
+        DirectX::XMVECTOR qVec = XMLoadFloat3(&q);
 
-        if (dist <= this->radius) {
+        // 距離
+        DirectX::XMVECTOR v = XMVectorSubtract(qVec, pVec);
+        float dist = XMVectorGetX(XMVector3Length(v));
+
+        float skin = 0.01f;
+
+        if (dist <= radius - skin)
+        {
             result.hit = true;
-            result.penetration = this->radius - dist;
 
-            //  @  
-            if (dist > 0.0001f) {
-                DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(diff));
+            float depth = radius - dist;
+
+            // AABB と同じ押し量
+            float push = depth * 0.7f;
+            push = max(push, 0.01f);
+
+            result.penetration = push;
+
+            // ? 法線（AABB と同じ向きに統一）
+            DirectX::XMVECTOR n;
+
+            if (dist > 0.0001f)
+            {
+                // AABB と同じ向き：center - p
+                DirectX::XMFLOAT3 dirOut =
+                {
+                    center.x - p.x,
+                    center.y - p.y,
+                    center.z - p.z
+                };
+                n = XMVector3Normalize(XMLoadFloat3(&dirOut));
             }
-            else {
-                //  ^ 񒆂       ^  ɂ  Ă   
-                result.normal = { 0, 1, 0 };
+            else
+            {
+                // fallback：XZ 方向優先
+                DirectX::XMFLOAT3 fallback =
+                {
+                    center.x - p.x,
+                    0.0f,
+                    center.z - p.z
+                };
+
+                DirectX::XMVECTOR fb = XMLoadFloat3(&fallback);
+
+                if (XMVector3Length(fb).m128_f32[0] < 0.0001f)
+                    fb = XMVectorSet(1, 0, 0, 0);
+
+                n = XMVector3Normalize(fb);
             }
 
+            XMStoreFloat3(&result.normal, n);
             result.point = q;
+
             return result;
         }
     }
+
     return result;
 }
+
+
 
 void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 {
@@ -454,6 +527,8 @@ void Laser::Initialize(
     beam.maxLength = maxLength;
     beam.maxReflection = 5;
     //beam.radius = 0.3f;
+
+
 }
 
 void Laser::Update(float elapsedTime)
