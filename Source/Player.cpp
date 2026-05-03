@@ -428,12 +428,6 @@ void Player::CollisionPlayerVsStage()
 				isHit = false;
 				continue;
 			}
-				
-	
-
-		// ★ LaserBeam の太さ付き判定を使う
-		LaserHit hit = laser->GetBeam().CheckHitAABB(bodyCollider);
-
 			isHit = hit.hit;
 
 			// 上から乗った
@@ -458,22 +452,6 @@ void Player::CollisionPlayerVsStage()
 			UpdateCollider();
 
 		} while (isHit&&loopCount<10);
-		// 上から乗った
-		if (hit.normal.y > 0.7f && velocity.y <= 0)
-		{
-			velocity.y = 0.0f;
-			position.y = hit.point.y + bodyCollider.GetSize().y * 0.5f-bodyColliderOffset.y+0.002f;
-			isGround = true;
-			OnLanding();
-		}
-		else
-		{
-			// 横 or 下 → 押し戻す
-			position.x += hit.normal.x * hit.penetration;
-			position.y += hit.normal.y * hit.penetration;
-			position.z += hit.normal.z * hit.penetration;
-		}
-
 	}
 
 }
