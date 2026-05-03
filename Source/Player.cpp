@@ -440,7 +440,7 @@ void Player::CollisionPlayerVsStage()
 				float halfHeight = bodyCylinderCollider.GetHeight() * 0.5f;
 				const float skinWidth = 0.002f;
 
-				position.y = hit.point.y + halfHeight + skinWidth;
+				position.y = hit.point.y + halfHeight -0.5f  + skinWidth;
 
 				isGround = true;
 				OnLanding();

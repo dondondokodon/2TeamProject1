@@ -98,13 +98,6 @@ public:
 	void DrawDebugGUI();
 
 private:
-	/*bool RayCastMesh(
-		const DirectX::XMFLOAT3& start,
-		const DirectX::XMFLOAT3& end,
-		const Model* model,
-		DirectX::XMFLOAT3& hitPos,
-		DirectX::XMFLOAT3& hitNormal
-	) const;*/
 };
 
 //???[?U?[??{??
