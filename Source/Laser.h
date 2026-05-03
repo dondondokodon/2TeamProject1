@@ -22,7 +22,7 @@ struct LaserHit
 class LaserBeam
 {
 public:
-	DirectX::XMFLOAT3 origin;
+	DirectX::XMFLOAT3 origin = {0,0,0};
 	DirectX::XMFLOAT3 direction;
 	float maxLength = 50.0f;
 	float isActive = true;

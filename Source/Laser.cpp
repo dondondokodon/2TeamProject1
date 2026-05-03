@@ -508,7 +508,7 @@ void Laser::Initialize(
     const DirectX::XMFLOAT3& dir,
     float maxLen)
 {
-    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
+   model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
     startPos = emitterPos;
     direction = dir;
