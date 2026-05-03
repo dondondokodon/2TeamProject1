@@ -284,8 +284,9 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
     //return result;
 
-    //if (isRotating)
-    //return LaserHit();
+//一回ちゃんとしてた時のやつ持ってきた
+    if (isRotating)
+    return LaserHit();
 
     LaserHit result;
 
