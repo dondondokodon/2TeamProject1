@@ -150,6 +150,7 @@
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\ProjectileStraight.h" />
     <ClInclude Include="Source\ResourceManager.h" />
+    <ClInclude Include="Source\RideState.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneGame.h" />
     <ClInclude Include="Source\SceneLoading.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\ProjectileStraight.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
+    <ClCompile Include="Source\RideState.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
     <ClCompile Include="Source\SceneLoading.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
