@@ -9,6 +9,7 @@
 #include"ProjectileHoming.h"
 #include"StageObjectManager.h"
 #include"LaserManager.h"
+#include"RideState.h"
 
 // コンストラクタ
 void Player::Initialize(const char* modelPath)
@@ -65,25 +66,72 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
-	//ステートの更新処理
-	//操作中のプレイヤーだけ入力を受け付ける
-	if (canControl && state)
+	//肩車解除後、すぐ再び肩車にならないようにする時間を減らす
+	if (rideTimer > 0.0f)
 	{
-		state->Update(*this, elapsedTime);
+		rideTimer -= elapsedTime;
+
+		//再肩車禁止時間が終わったら、乗っていた相手の情報を外す
+		if (rideTimer <= 0.0f && !isRiding)
+		{
+			ridingTarget = nullptr;
+		}
 	}
 
-	//移動入力処理
-	//InputMove(elapsedTime);
+	//操作中、または肩車中のプレイヤーだけステートを更新する
+	if ((canControl || isRiding) && state)
+	{
+		state->Update(*this, elapsedTime, canControl);
+	}
 
-	//ジャンプ入力処理
-	//InputJump();
+	//肩車中で上がりきってない場合playerupdateをおわらｓる
+	if (isRiding && !IsRideReady())
+	{
+		return;
+	}
 
-	//速力処理更新
+	//肩車中で操作していない場合は、RideStateで相手についていくだけにする
+	if (isRiding && !canControl)
+	{
+		return;
+	}
+
+	//重力や移動速度を反映する
 	UpdateVelocity(elapsedTime);
 
-	//コライダーのセット
+	//肩車中で操作している場合は、相手の上にいる間だけ足場扱いにする
+	if (isRiding && ridingTarget != nullptr && canControl && IsRideReady())
+	{
+		DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+		float dx = position.x - targetPosition.x;
+		float dz = position.z - targetPosition.z;
+		float distanceSq = dx * dx + dz * dz;
+
+		float standRadius = radius + ridingTarget->GetRadius();
+
+		//Player2の上にいる間だけ、高さを固定する
+		if (distanceSq < standRadius * standRadius)
+		{
+			float targetY = targetPosition.y + ridingTarget->GetHeight();
+
+			position.y = targetY;
+			velocity.y = 0.0f;
+			isGround = true;
+		}
+		//Player2の上から外れたら肩車を解除する
+		else
+		{
+			isRiding = false;
+			ridingTarget = nullptr;
+			isGround = false;
+		}
+	}
+
+
+	//コライダーを現在位置に合わせる
 	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-	bodyCollider.SetSize({ 0.5f,0.1,0.5f });
+	bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -101,8 +149,8 @@ void Player::Update(float elapsedTime, bool canControl)
 	//無敵時間更新
 	UpdateInvincibleTimer(elapsedTime);
 
-	//死んでほしくないので死んだら回復
-	if (health <= 0)	health = 100;
+	//死んだら回復
+	if (health <= 0)	{ health = 100;}
 
 	//プレイヤーと敵との衝突処理
 	CollisionPlayerVsEnemies();
@@ -423,16 +471,39 @@ void Player::CollisionPlayerVsStage()
 
 //プレイヤー同士の衝突処理
 //操作中のプレイヤーだけを押し戻し、待機中のプレイヤーは動かさない
-void Player::CollisionVsPlayer(Player& other)
+void Player::CollisionVsPlayer(Player& other, bool canRide)
 {
 	DirectX::XMFLOAT3 otherPosition = other.GetPosition();
-
+		
 	float dx = position.x - otherPosition.x;
 	float dz = position.z - otherPosition.z;
 
 	//XZ平面で2人の距離を計算する
 	float distanceSq = dx * dx + dz * dz;
 	float minDistance = radius + other.GetRadius();
+
+	//距離が半径の合計以上なら衝突していないので、押し戻さない
+	if (distanceSq >= minDistance * minDistance)
+	{
+		return;
+	}
+
+	//肩車できる場合は肩車状態にする
+	if (canRide)
+	{
+		float otherTop = otherPosition.y + other.GetHeight();
+
+		//自分が相手の上にいる場合は、肩車にしない
+		bool isAboveOther = position.y >= otherTop - 0.2f; //判定(ゆるさ)
+
+		if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
+		{
+			StartRiding(other);
+		}
+
+		return;
+	}
+
 
 	//完全に同じ位置にいる場合は、X方向へ押し戻す
 	if (distanceSq <= 0.0001f)
@@ -450,7 +521,7 @@ void Player::CollisionVsPlayer(Player& other)
 
 		dx /= distance;
 		dz /= distance;
-
+		//自分だけ押し戻す
 		position.x += dx * push;
 		position.z += dz * push;
 
@@ -559,4 +630,114 @@ void Player::StopControl()
 	velocity.x = 0.0f;
 	velocity.z = 0.0f;
 	ChangeState(std::make_unique<IdleState>());
+}
+
+//肩車開始処理
+void Player::StartRiding(Player& target)
+{
+	//肩車中にする
+	isRiding = true;
+
+	//乗る相手を保存する
+	ridingTarget = &target;
+
+	//前の移動入力や速度を消す
+	ResetMove();
+
+	//肩車状態へ切り替える
+	ChangeState(std::make_unique<RideState>());
+}
+
+//肩車状態の更新処理
+void Player::UpdateRiding(float elapsedTime)
+{
+	if (ridingTarget == nullptr)
+	{
+		isRiding = false;
+		ChangeState(std::make_unique<IdleState>());
+		return;
+	}
+
+	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+	// XZ座標は乗っている相手に合わせる
+	position.x = targetPosition.x;
+	position.z = targetPosition.z;
+
+	float targetY = targetPosition.y + ridingTarget->GetHeight();
+
+	float riseSpeed = 5.0f;
+
+	if (position.y < targetY)
+	{
+		position.y += riseSpeed * elapsedTime;
+
+		if (position.y > targetY)
+		{
+			position.y = targetY;
+		}
+	}
+	else
+	{
+		position.y = targetY;
+	}
+
+	ResetMove();
+
+	isGround = true;
+
+	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+	bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
+
+	UpdateTransform();
+	model->UpdateTransform();
+}
+
+
+//肩車解除処理
+void Player::StopRiding()
+{
+	isRiding = false;
+
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	velocity.z = 0.0f;
+
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+	maxMoveSpeed = 0.0f;
+
+	isGround = true;
+	OnLanding();
+
+	rideTimer = 3.0f;
+
+	ChangeState(std::make_unique<IdleState>());
+
+	UpdateTransform();
+	model->UpdateTransform();
+}
+
+void Player::ResetMove()
+{
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	velocity.z = 0.0f;
+
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+	maxMoveSpeed = 0.0f;
+}
+
+
+bool Player::IsRideReady() const
+{
+	if (ridingTarget == nullptr)
+	{
+		return false;
+	}
+
+	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight();
+
+	return position.y >= targetY;
 }

@@ -144,8 +144,13 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		int otherIndex = 1 - controlPlayerIndex;
-		players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex]);
+		// プレイヤー同士の衝突処理
+		if (!players[0]->IsRiding())//どちらも肩車していないときだけ衝突処理を行う
+		{
+			int otherIndex = 1 - controlPlayerIndex;										
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//プレイヤ1が操作中でプレイヤ2が待機中のときだけ肩車可能
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//操作中のプレイヤだけを押し戻し、待機中のプレイヤーは動かさない
+		}
 	}
 
 
@@ -282,7 +287,11 @@ void SceneGame::InputChangePlayer()
 
 	if (gamePad.GetButtonDown() & GamePad::BTN_B)
 	{
-		players[controlPlayerIndex]->StopControl();
+		if (!players[controlPlayerIndex]->IsRiding())
+		{
+			players[controlPlayerIndex]->StopControl();
+		}
+
 		controlPlayerIndex = 1 - controlPlayerIndex;
 	}
 }
