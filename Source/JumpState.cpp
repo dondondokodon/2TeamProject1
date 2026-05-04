@@ -13,7 +13,7 @@ void JumpState::Finalize(Player& player)
 }
 
 //XVˆ—
-void JumpState::Update(Player& player, float elapsedTime)
+void JumpState::Update(Player& player, float elapsedTime, bool canControl)
 {
 	//ˆÚ“®“ü—Íˆ—
 	player.InputMove(elapsedTime);
