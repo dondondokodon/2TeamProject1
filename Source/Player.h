@@ -60,6 +60,9 @@ public:
 	//弾丸入力処理
 	void InputProjectile();
 
+	//回転入力処理（ロボット専用）
+	void InputRotate();
+
 	//操作対象から外れたときの処理
 	void StopControl();
 
@@ -78,6 +81,10 @@ public:
 	void StopRiding();
 	//肩車中か
 	bool IsRiding() const { return isRiding; }
+	//ロボットかどうかを設定する
+	void SetIsRobot(bool v) { isRobot = v; }
+	//ロボットかどうかを取得する
+	bool GetIsRobot() const { return isRobot; }
 	//肩車位置まで上がりきっているか
 	bool IsRideReady() const;
 
@@ -128,6 +135,8 @@ private:
 	Player* ridingTarget = nullptr;
 	//player1が降りるときの無効か時間
 	float rideTimer = 0.0f;
+	//ロボットかどうか（Player2はtrue）
+	bool isRobot = false;
 
 	ProjectileManager projectileManager;
 	Effect* hitEffect = nullptr;

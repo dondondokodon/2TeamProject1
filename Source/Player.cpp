@@ -306,16 +306,16 @@ void Player::OnLanding()
 //移動入力処理
 void Player::InputMove(float elapsedTime)
 {
-	//進行ベクトル取得
 	DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-	//移動処理
 	Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
 
-	//旋回処理
-	Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+	//ロボットは進行方向に向かない
+	if (!isRobot)
+	{
+		Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+	}
 }
-
 
 //プレイヤーとエネミーとの衝突処理
 void Player::CollisionPlayerVsEnemies()
@@ -786,4 +786,24 @@ bool Player::IsRideReady() const
 	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight();
 
 	return position.y >= targetY - 0.01f;
+}
+
+//回転入力処理（ロボット専用）
+void Player::InputRotate()
+{
+	if (!isRobot) return;
+
+	GamePad& gamePad = Input::Instance().GetGamePad();
+
+	//Q/E（LB/RB）で45度刻みで回転
+	const float step = DirectX::XMConvertToRadians(45.0f);
+
+	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+	{
+		angle.y -= step;
+	}
+	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER)
+	{
+		angle.y += step;
+	}
 }
