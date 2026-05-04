@@ -131,8 +131,8 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 }
 
 // コライダー更新
-bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
+//bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+//bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -152,6 +152,8 @@ bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
 	//死んでほしくないので死んだら回復
 	if (health <= 0)	health = 100;
+
+	UpdateCollider();
 
 	//プレイヤーと敵との衝突処理
 	CollisionPlayerVsEnemies();
@@ -744,9 +746,9 @@ void Player::UpdateRiding(float elapsedTime)
 
 	isGround = true;
 
-	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-	bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
-
+	//bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+	//bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
+	UpdateCollider();
 	UpdateTransform();
 	model->UpdateTransform();
 }
@@ -770,7 +772,7 @@ void Player::StopRiding()
 	rideTimer = 3.0f;
 
 	ChangeState(std::make_unique<IdleState>());
-
+	UpdateCollider();
 	UpdateTransform();
 	model->UpdateTransform();
 }
