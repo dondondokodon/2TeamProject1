@@ -249,10 +249,15 @@
     <ClInclude Include="Source\LaserManager.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CylinderCollider.h">
-      <Filter>Source\.hファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CollisionResult.h">
+<ClInclude Include="Source\RideState.h">
+  <Filter>Source\.hファイル</Filter>
+</ClInclude>
+<ClInclude Include="Source\CylinderCollider.h">
+  <Filter>Source\.hファイル</Filter>
+</ClInclude>
+<ClInclude Include="Source\CollisionResult.h">
+  <Filter>Source\.hファイル</Filter>
+</ClInclude>
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -428,7 +433,12 @@
     <ClCompile Include="Source\StageGrid.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CylinderCollider.cpp">
+<ClCompile Include="Source\RideState.cpp">
+  <Filter>Source\.cppファイル</Filter>
+</ClCompile>
+<ClCompile Include="Source\CylinderCollider.cpp">
+  <Filter>Source\.cppファイル</Filter>
+</ClCompile>
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>
