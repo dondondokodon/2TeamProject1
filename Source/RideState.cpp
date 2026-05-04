@@ -6,7 +6,8 @@ void RideState::Initialize(Player& player)
 	//肩車状態に入った瞬間に移動入力を止める
 	player.ResetMove();
 
-	//歩きモーションが残らないように待機アニメーションへ戻す
+	//最初は待機アニメーションにする
+	isWalkAnimation = false;
 	player.GetAnimation().PlayAnimation("Idle", true);
 }
 
@@ -23,32 +24,31 @@ void RideState::Update(Player& player, float elapsedTime, bool canControl)
 		return;
 	}
 
-	//操作中なら、肩車中でも自分で動ける
+	//操作中なら、肩車中でもPlayer1を動かす
 	if (canControl)
 	{
 		player.InputMove(elapsedTime);
 		player.InputJump();
 
-		//移動入力を取得する
 		DirectX::XMFLOAT3 moveVec = player.GetMoveVec();
+		bool isMoving = (fabsf(moveVec.x) > 0.0f || fabsf(moveVec.z) > 0.0f);
 
-		//移動入力があるなら歩きアニメーションにする
-		if (fabsf(moveVec.x) > 0.0f || fabsf(moveVec.z) > 0.0f)
+		//移動し始めた瞬間だけ歩きアニメーションに切り替える
+		if (isMoving && !isWalkAnimation)
 		{
-			player.GetAnimation().PlayAnimation("Walk", true);
+			isWalkAnimation = true;
+			player.GetAnimation().PlayAnimation("Running", true);
 		}
-		//移動入力がないなら待機アニメーションにする
-		else
+		//止まった瞬間だけ待機アニメーションに切り替える
+		else if (!isMoving && isWalkAnimation)
 		{
+			isWalkAnimation = false;
 			player.GetAnimation().PlayAnimation("Idle", true);
 		}
-	}
-	//操作中でないなら、乗っている相手についていく
-	else
-	{
-		player.UpdateRiding(elapsedTime);
 
-		//操作していないときは待機アニメーションにする
-		player.GetAnimation().PlayAnimation("Idle", true);
+		return;
 	}
+
+	//操作中でないなら、乗っている相手についていく
+	player.UpdateRiding(elapsedTime);
 }

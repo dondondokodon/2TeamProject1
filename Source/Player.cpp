@@ -66,32 +66,35 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
-	//肩車解除後、すぐ再び肩車にならないようにする時間を減らす
+	//肩車解除後の再肩車禁止時間を更新する
 	if (rideTimer > 0.0f)
 	{
 		rideTimer -= elapsedTime;
 
-		//再肩車禁止時間が終わったら、乗っていた相手の情報を外す
+		//肩車していない状態で禁止時間が終わったら、乗っていた相手を外す
 		if (rideTimer <= 0.0f && !isRiding)
 		{
 			ridingTarget = nullptr;
 		}
 	}
 
-	//操作中、または肩車中のプレイヤーだけステートを更新する
+	//肩車中のPlayer1も更新するため、操作中または肩車中ならStateを更新する
 	if ((canControl || isRiding) && state)
 	{
 		state->Update(*this, elapsedTime, canControl);
 	}
 
-	//肩車中で上がりきってない場合playerupdateをおわらｓる
-	if (isRiding && !IsRideReady())
+	//重力で判定がずれないように、State更新後の肩車完了判定を保存する
+	bool rideReady = IsRideReady();
+
+	//肩車位置まで上がりきっていない間は、通常の移動更新を行わない
+	if (isRiding && !rideReady)
 	{
 		return;
 	}
 
-	//肩車中で操作していない場合は、RideStateで相手についていくだけにする
-	if (isRiding && !canControl)
+	//肩車中かつ操作中なら、Player2の上にいる間だけ足場扱いにする
+	if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 	{
 		return;
 	}
@@ -99,8 +102,8 @@ void Player::Update(float elapsedTime, bool canControl)
 	//重力や移動速度を反映する
 	UpdateVelocity(elapsedTime);
 
-	//肩車中で操作している場合は、相手の上にいる間だけ足場扱いにする
-	if (isRiding && ridingTarget != nullptr && canControl && IsRideReady())
+	//肩車中で操作している場合は、上がりきった後だけ足場扱いにする
+	if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 	{
 		DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
 
@@ -157,7 +160,7 @@ void Player::Update(float elapsedTime, bool canControl)
 
 	//弾丸と敵の衝突処理
 	CollisionProjectilesVsEnemies();
-
+	
 	//プレイヤーとステージオブジェクトの衝突処理
 	CollisionPlayerVsStage();
 
@@ -660,13 +663,16 @@ void Player::UpdateRiding(float elapsedTime)
 
 	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
 
-	// XZ座標は乗っている相手に合わせる
+	//乗っている相手の位置に合わせる
 	position.x = targetPosition.x;
 	position.z = targetPosition.z;
 
+	//肩車する高さを計算する
 	float targetY = targetPosition.y + ridingTarget->GetHeight();
 
+	//肩車位置まで上がる速さ
 	float riseSpeed = 5.0f;
+
 
 	if (position.y < targetY)
 	{
@@ -739,5 +745,5 @@ bool Player::IsRideReady() const
 
 	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight();
 
-	return position.y >= targetY;
+	return position.y >= targetY - 0.01f;
 }
