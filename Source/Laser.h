@@ -4,6 +4,7 @@
 #include"StageObjectManager.h"
 #include"BoxCollider.h"
 #include"CylinderCollider.h"
+#include"Effect.h"
 
 struct LaserSegment
 {
