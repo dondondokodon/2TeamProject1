@@ -93,13 +93,6 @@ if (isRiding && !rideReady)
 {
 	return;
 }
-
-// 肩車中で操作中なら、上にいる間だけ固定
-if (isRiding && ridingTarget != nullptr && canControl && rideReady)
-{
-	return;
-}
-
 // 速度更新
 UpdateVelocity(elapsedTime);
 
