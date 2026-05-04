@@ -4,11 +4,10 @@
 #include"EnemyManager.h"
 #include"EnemySlime.h"
 #include"Player.h"
+#include"Laser.h"
 #include "EffectManager.h"
-
 #include"StageObjectManager.h"
 #include"LaserManager.h"
-
 #include"System/Input.h"
 
 // 初期化
@@ -16,7 +15,7 @@ void SceneGame::Initialize()
 {
 
 	//ステージ初期化
-	stage = new Stage();
+	//stage = new Stage();
 
 	//ステージグリッド初期化
 	stageGrid = new StageGrid();
@@ -65,19 +64,29 @@ void SceneGame::Initialize()
 	LaserManager* laserManager = mng.GetLaserManager();
 	Laser* laser = new Laser();
 	laser->setManager(&mng);
-	laser->Initialize(DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 0, 1), 20.0f);
+	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
 	laserManager->Register(laser);
+
+	mng.Register(new Stage);
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
 	//ステージ終了化
-	if (stage != nullptr)
+	/*if (stage != nullptr)
 	{
 		delete stage;
 		stage = nullptr;
+	}*/
+
+	//ステージグリッド終了化
+	if (stageGrid != nullptr)
+	{
+		delete stageGrid;
+		stageGrid = nullptr;
 	}
+
 
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
@@ -112,16 +121,16 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	stage->Update(elapsedTime);
+	//stage->Update(elapsedTime);
 
 	// ★ 毎フレームリセット
 	stageGrid->isTouchingPlayer = false;
 
 	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	stageGrid->CollisionVsPlayer();
+	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
 
 	// 木箱の更新処理（isTouchingPlayer を使う）
-	stageGrid->Update(elapsedTime);
+	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
 
 	// カメラ更新
 	InputChangePlayer();
@@ -214,7 +223,7 @@ void SceneGame::Render()
 	// 3Dモデル描画
 	{
 		//ステージ描画
-		stage->Render(rc, modelRenderer);
+		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
 		stageGrid->Render(rc, modelRenderer);
@@ -255,7 +264,6 @@ void SceneGame::Render()
 		//ステージオブジェクトデバッグプリミティブ描画
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
-
 		//木箱用デバッグプリミティブ描画
 		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
 
@@ -271,6 +279,10 @@ void SceneGame::Render()
 void SceneGame::DrawGUI()
 {
 	//プレイヤーデバッグ描画
+	Player::Instance().DrawDebugGUI();
+
+	//ステージオブジェクトマネージャー
+	StageObjectManager::Instance().DrawDebugGUI();
 	//Player::Instance().DrawDebugGUI();
 	Player* controlPlayer = GetControlPlayer();
 

@@ -71,6 +71,17 @@ void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRend
 	laserManager->RenderDebugPrimitive(rc, renderer);
 }
 
+//デバッグ用GUI描画
+void StageObjectManager::DrawDebugGUI()
+{
+	for (auto& stageObject : stageObjects)
+	{
+		stageObject->DrawDebugGUI();
+	}
+
+	laserManager->DrawDebugGUI();
+}
+
 //レイキャスト
 bool StageObjectManager::RayCast(
 	const DirectX::XMFLOAT3& start,

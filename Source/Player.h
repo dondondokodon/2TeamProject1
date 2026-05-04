@@ -8,6 +8,7 @@
 #include"Effect.h"
 #include"AnimationController.h"
 #include"BoxCollider.h"	
+#include"CylinderCollider.h"
 
 #include"PlayerStates.h"
 
@@ -37,6 +38,9 @@ public:
 
 	//更新処理
 	void Update(float elapsedTime, bool canControl);
+
+	//コライダー更新処理
+	void UpdateCollider();
 
 	//描画処理
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
@@ -130,5 +134,7 @@ private:
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
-	BoxCollider bodyCollider;
+	//BoxCollider bodyCollider;
+	CylinderCollider bodyCylinderCollider;
+	DirectX::XMFLOAT3 bodyColliderOffset = { 0,0.55f,0 };
 };

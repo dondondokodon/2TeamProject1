@@ -1,4 +1,4 @@
-﻿#include"Player.h"
+#include"Player.h"
 #include"System/Input.h"
 #include"System/Audio.h"
 #include<imgui.h>
@@ -34,8 +34,10 @@ void Player::Initialize(const char* modelPath)
 	state->Initialize(*this);
 
 	//コライダーのセット
-	bodyCollider.SetCenter({ position.x, position.y, position.z });
-	bodyCollider.SetSize(scale);
+	//bodyCollider.SetCenter({ position.x, position.y, position.z });
+	//bodyCollider.SetSize(scale);
+
+	UpdateCollider();
 }
 
 //デストラクタ
@@ -66,75 +68,71 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
-	//肩車解除後の再肩車禁止時間を更新する
-	if (rideTimer > 0.0f)
+// 肩車タイマー更新
+if (rideTimer > 0.0f)
+{
+	rideTimer -= elapsedTime;
+
+	if (rideTimer <= 0.0f && !isRiding)
 	{
-		rideTimer -= elapsedTime;
-
-		//肩車していない状態で禁止時間が終わったら、乗っていた相手を外す
-		if (rideTimer <= 0.0f && !isRiding)
-		{
-			ridingTarget = nullptr;
-		}
+		ridingTarget = nullptr;
 	}
+}
 
-	//肩車中のPlayer1も更新するため、操作中または肩車中ならStateを更新する
-	if ((canControl || isRiding) && state)
+// ステート更新（操作中 または 肩車中）
+if ((canControl || isRiding) && state)
 	{
 		state->Update(*this, elapsedTime, canControl);
 	}
 
-	//重力で判定がずれないように、State更新後の肩車完了判定を保存する
-	bool rideReady = IsRideReady();
+// 肩車完了判定
+bool rideReady = IsRideReady();
 
-	//肩車位置まで上がりきっていない間は、通常の移動更新を行わない
-	if (isRiding && !rideReady)
+// 肩車位置まで上がるまでは通常更新しない
+if (isRiding && !rideReady)
+{
+	return;
+}
+
+// 肩車中で操作中なら、上にいる間だけ固定
+if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+{
+	return;
+}
+
+// 速度更新
+UpdateVelocity(elapsedTime);
+
+// 肩車中の位置固定処理
+if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+{
+	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+	float dx = position.x - targetPosition.x;
+	float dz = position.z - targetPosition.z;
+	float distanceSq = dx * dx + dz * dz;
+
+	float standRadius = radius + ridingTarget->GetRadius();
+
+	if (distanceSq < standRadius * standRadius)
 	{
-		return;
-	}
+		float targetY = targetPosition.y + ridingTarget->GetHeight();
 
-	//肩車中かつ操作中なら、Player2の上にいる間だけ足場扱いにする
-	if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+		position.y = targetY;
+		velocity.y = 0.0f;
+		isGround = true;
+	}
+	else
 	{
-		return;
+		isRiding = false;
+		ridingTarget = nullptr;
+		isGround = false;
 	}
+}
 
-	//重力や移動速度を反映する
-	UpdateVelocity(elapsedTime);
-
-	//肩車中で操作している場合は、上がりきった後だけ足場扱いにする
-	if (isRiding && ridingTarget != nullptr && canControl && rideReady)
-	{
-		DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
-
-		float dx = position.x - targetPosition.x;
-		float dz = position.z - targetPosition.z;
-		float distanceSq = dx * dx + dz * dz;
-
-		float standRadius = radius + ridingTarget->GetRadius();
-
-		//Player2の上にいる間だけ、高さを固定する
-		if (distanceSq < standRadius * standRadius)
-		{
-			float targetY = targetPosition.y + ridingTarget->GetHeight();
-
-			position.y = targetY;
-			velocity.y = 0.0f;
-			isGround = true;
-		}
-		//Player2の上から外れたら肩車を解除する
-		else
-		{
-			isRiding = false;
-			ridingTarget = nullptr;
-			isGround = false;
-		}
-	}
-
-
-	//コライダーを現在位置に合わせる
-	bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
-	bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
+// コライダー更新
+bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -152,15 +150,15 @@ void Player::Update(float elapsedTime, bool canControl)
 	//無敵時間更新
 	UpdateInvincibleTimer(elapsedTime);
 
-	//死んだら回復
-	if (health <= 0)	{ health = 100;}
+	//死んでほしくないので死んだら回復
+	if (health <= 0)	health = 100;
 
 	//プレイヤーと敵との衝突処理
 	CollisionPlayerVsEnemies();
 
 	//弾丸と敵の衝突処理
 	CollisionProjectilesVsEnemies();
-	
+
 	//プレイヤーとステージオブジェクトの衝突処理
 	CollisionPlayerVsStage();
 
@@ -169,6 +167,19 @@ void Player::Update(float elapsedTime, bool canControl)
 
 	//モデル行列更新
 	model->UpdateTransform();
+}
+
+//コライダー更新処理
+void Player::UpdateCollider()
+{
+	//コライダーのセット
+	//bodyCollider.SetCenter({ position.x + bodyColliderOffset.x, position.y + bodyColliderOffset.y, position.z + bodyColliderOffset.z });
+	//bodyCollider.SetSize({ 0.5f,0.5f,0.5f });
+
+	//円柱
+	bodyCylinderCollider.SetCenter({ position.x, position.y+0.5f, position.z });
+	bodyCylinderCollider.SetRadius(0.5f);
+	bodyCylinderCollider.SetHeight(0.7f);
 }
 
 //描画処理
@@ -184,13 +195,18 @@ void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
 	//基底クラスの関数の呼び出し
-	Character::RenderDebugPrimitive(rc, renderer);
+	//Character::RenderDebugPrimitive(rc, renderer);
 
 	//弾丸デバッグプリミティブ描画
 	projectileManager.RenderDebugPrimitive(rc, renderer);
 
 	//BoxColliderのデバッグプリミティブ描画
-	renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+	//renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
+
+	//円柱
+	DirectX::XMFLOAT3 position = bodyCylinderCollider.GetCenter();
+	position.y -= bodyCylinderCollider.GetHeight() * 0.5f;
+	renderer->RenderCylinder(rc, position, bodyCylinderCollider.GetRadius(), bodyCylinderCollider.GetHeight()*2, DirectX::XMFLOAT4(0, 1, 1, 1));
 }
 
 //デバッグ用GUI描画
@@ -286,7 +302,7 @@ DirectX::XMFLOAT3 Player::GetForward() const
 
 
 
-//���n�����Ƃ��ɌĂ΂��
+//???n?????????????
 void Player::OnLanding()
 {
 	JumpCount = 0;
@@ -437,43 +453,75 @@ void Player::CollisionProjectilesVsEnemies()
 void Player::CollisionPlayerVsStage()
 {
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
+	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 
-	//とりあえずレーザーだけ
-	LaserManager* laserManager = stageObjectManager.GetLaserManager();	
-
-	for (int i = 0;i < laserManager->GetLaserCount();++i)
+	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
 	{
 		Laser* laser = laserManager->GetLaser(i);
-		if (!laser)	continue;
-		//レーザーの当たり判定をプレイヤーのコライダーと衝突判定
+		if (!laser || !laser->IsActive()) continue;
 
-		CollisionResult result = bodyCollider.Intersect(laser->GetTopCollider());
+		bool isHit = false;
+		int loopCount = 0;
+		const float skinWidth = 0.002f;
 
-		if (result.hit&&velocity.y<=0)
-		{
-			// 上から乗った場合
-			if (result.normal.y > 0.5f)
+		LaserHit hit; // ← 外で宣言
+
+		do {
+			loopCount++;
+
+			hit = laser->GetBeam().CheckHitCylinder(bodyCylinderCollider);
+
+			if (!hit.hit)
+			{
+				isHit = false;
+				break;
+			}
+
+			isHit = true;
+
+			// 上に乗る処理
+			if (hit.normal.y > 0.7f && velocity.y <= 0)
 			{
 				velocity.y = 0.0f;
-				position.y += result.pushOut.y;
+
+				float halfHeight = bodyCylinderCollider.GetHeight() * 0.5f;
+				const float skinWidth = 0.002f;
+
+				position.y = hit.point.y + halfHeight -0.5f  + skinWidth;
+
 				isGround = true;
 				OnLanding();
 			}
-		}
+			else
+			{
+				// ? 押し出し（余裕付き）
+				float push = hit.penetration + 0.001f;
 
-		// 側面
-		result = bodyCollider.Intersect(laser->GetSideCollider());
+				position.x += hit.normal.x * push;
+				position.z += hit.normal.z * push;
 
-		if (result.hit)
-		{
-			position.x += result.pushOut.x;
-			position.z += result.pushOut.z;
-		}
+				// ? めり込み防止（速度殺し）
+				float dot =
+					velocity.x * hit.normal.x +
+					velocity.z * hit.normal.z;
+
+				if (dot < 0.0f)
+				{
+					velocity.x -= hit.normal.x * dot;
+					velocity.z -= hit.normal.z * dot;
+				}
+			}
+
+			UpdateCollider();
+
+		} while (isHit && loopCount < 10);
 	}
+
+
 }
 
-//プレイヤー同士の衝突処理
-//操作中のプレイヤーだけを押し戻し、待機中のプレイヤーは動かさない
+// プレイヤー同士の衝突処理
+// 肩車対応あり
 void Player::CollisionVsPlayer(Player& other, bool canRide)
 {
 	DirectX::XMFLOAT3 otherPosition = other.GetPosition();
@@ -485,30 +533,34 @@ void Player::CollisionVsPlayer(Player& other, bool canRide)
 	float distanceSq = dx * dx + dz * dz;
 	float minDistance = radius + other.GetRadius();
 
-	//距離が半径の合計以上なら衝突していないので、押し戻さない
-	if (distanceSq >= minDistance * minDistance)
+// 距離が離れていれば何もしない
+if (distanceSq >= minDistance * minDistance)
+{
+	return;
+}
+
+// 肩車可能なら肩車処理
+if (canRide)
+{
+	float otherTop = otherPosition.y + other.GetHeight();
+
+	bool isAboveOther = position.y >= otherTop - 0.2f;
+
+	if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
 	{
-		return;
+		StartRiding(other);
 	}
 
-	//肩車できる場合は肩車状態にする
-	if (canRide)
-	{
-		float otherTop = otherPosition.y + other.GetHeight();
+	return;
+}
 
-		//自分が相手の上にいる場合は、肩車にしない
-		bool isAboveOther = position.y >= otherTop - 0.2f; //判定(ゆるさ)
-
-		if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
-		{
-			StartRiding(other);
-		}
-
-		return;
-	}
-
-
-	//完全に同じ位置にいる場合は、X方向へ押し戻す
+// 完全に同じ位置にいる場合の押し出し（mainの安全処理）
+if (distanceSq <= 0.0001f)
+{
+	position.x += minDistance;
+	UpdateTransform();
+	return;
+}
 	if (distanceSq <= 0.0001f)
 	{
 		position.x += minDistance;
@@ -524,7 +576,7 @@ void Player::CollisionVsPlayer(Player& other, bool canRide)
 
 		dx /= distance;
 		dz /= distance;
-		//自分だけ押し戻す
+	  // 自分だけ押し戻す
 		position.x += dx * push;
 		position.z += dz * push;
 
@@ -635,23 +687,23 @@ void Player::StopControl()
 	ChangeState(std::make_unique<IdleState>());
 }
 
-//肩車開始処理
+// 肩車開始処理
 void Player::StartRiding(Player& target)
 {
-	//肩車中にする
+	// 肩車中にする
 	isRiding = true;
 
-	//乗る相手を保存する
+	// 乗る相手を保存
 	ridingTarget = &target;
 
-	//前の移動入力や速度を消す
+	// 移動や速度をリセット
 	ResetMove();
 
-	//肩車状態へ切り替える
+	// 肩車状態へ切り替える
 	ChangeState(std::make_unique<RideState>());
 }
 
-//肩車状態の更新処理
+// 肩車状態の更新処理
 void Player::UpdateRiding(float elapsedTime)
 {
 	if (ridingTarget == nullptr)
@@ -663,14 +715,14 @@ void Player::UpdateRiding(float elapsedTime)
 
 	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
 
-	//乗っている相手の位置に合わせる
+	// 相手プレイヤーの位置に合わせる
 	position.x = targetPosition.x;
 	position.z = targetPosition.z;
 
-	//肩車する高さを計算する
+	// 肩車する高さを計算
 	float targetY = targetPosition.y + ridingTarget->GetHeight();
 
-	//肩車位置まで上がる速さ
+	// 肩車位置まで上がる速度
 	float riseSpeed = 5.0f;
 
 
@@ -699,8 +751,7 @@ void Player::UpdateRiding(float elapsedTime)
 	model->UpdateTransform();
 }
 
-
-//肩車解除処理
+// 肩車処理更新
 void Player::StopRiding()
 {
 	isRiding = false;

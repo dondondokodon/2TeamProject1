@@ -21,6 +21,12 @@ public:
 		renderer->RenderBox(rc, position,angle, scale, DirectX::XMFLOAT4(0, 0, 1,1));
 	}
 
+	//デバッグ用GUI描画
+	virtual void DrawDebugGUI()
+	{
+
+	}
+
 	//トランスフォーム取得
 	DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
 

@@ -131,12 +131,14 @@
     <ClInclude Include="Source\CameraController.h" />
     <ClInclude Include="Source\Character.h" />
     <ClInclude Include="Source\Collision.h" />
+    <ClInclude Include="Source\CollisionResult.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\EnemySlime.h" />
     <ClInclude Include="Source\Framework.h" />
+    <ClInclude Include="Source\CylinderCollider.h" />
     <ClInclude Include="Source\IdleState.h" />
     <ClInclude Include="Source\JumpState.h" />
     <ClInclude Include="Source\Laser.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\EnemySlime.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
+    <ClCompile Include="Source\CylinderCollider.cpp" />
     <ClCompile Include="Source\IdleState.cpp" />
     <ClCompile Include="Source\JumpState.cpp" />
     <ClCompile Include="Source\Laser.cpp" />

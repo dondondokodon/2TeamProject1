@@ -19,7 +19,7 @@ StageGrid::~StageGrid()
     delete model;
 }
 
-void StageGrid::Update(float elapsedTime)
+void StageGrid::Update(float elapsedTime,Player& p)
 {
   
 
@@ -32,8 +32,8 @@ void StageGrid::Update(float elapsedTime)
     // ---------------------------------------------------------
     // ★ プレイヤーが木箱の正面を向いているか判定（毎フレーム）
     // ---------------------------------------------------------
-    auto playerPos = Player::Instance().GetPosition();
-    auto playerForward = Player::Instance().GetForward();
+    auto playerPos = p.GetPosition();
+    auto playerForward = p.GetForward();
 
     DirectX::XMFLOAT3 toBox = {
         pos.x - playerPos.x,
@@ -159,7 +159,7 @@ void StageGrid::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* ren
 }
 
 
-void StageGrid::CollisionVsPlayer()
+void StageGrid::CollisionVsPlayer(Player& p)
 {
     DirectX::XMFLOAT3 push;
 
@@ -167,18 +167,18 @@ void StageGrid::CollisionVsPlayer()
     // ★ プレイヤー（円柱） vs 木箱（AABB）の衝突判定
     // ---------------------------------------------------------
     if (Collision::IntersectCylinderVsAABB(
-        Player::Instance().GetPosition(),
-        Player::Instance().GetRadius(),
-        Player::Instance().GetHeight(),
+        p.GetPosition(),
+        p.GetRadius(),
+        p.GetHeight(),
         aabbMin,
         aabbMax,
         push))
     {
         // プレイヤーを押し戻す（めり込み補正）
-        DirectX::XMFLOAT3 pos = Player::Instance().GetPosition();
+        DirectX::XMFLOAT3 pos = p.GetPosition();
         pos.x += push.x;
         pos.z += push.z;
-        Player::Instance().SetPosition(pos);
+        p.SetPosition(pos);
 
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
