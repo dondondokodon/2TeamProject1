@@ -563,12 +563,6 @@ if (distanceSq <= 0.0001f)
 	UpdateTransform();
 	return;
 }
-	if (distanceSq <= 0.0001f)
-	{
-		position.x += minDistance;
-		UpdateTransform();
-		return;
-	}
 
 	//半径の合計より近い場合は、重ならない位置まで押し戻す
 	if (distanceSq < minDistance * minDistance)
