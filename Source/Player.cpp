@@ -21,7 +21,7 @@ void Player::Initialize(const char* modelPath)
 	scale.x = scale.y = scale.z = 0.01f;
 
 	//ヒットエフェクト読み込み
-	hitEffect = new Effect("Data/Effect/Hit.efk");
+	//hitEffect = new Effect("Data/Effect/Hit.efk");
 
 	//ヒットSE読み込み
 	hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
@@ -44,7 +44,7 @@ void Player::Initialize(const char* modelPath)
 void Player::Finalize()
 {
 	delete hitSE;
-	delete hitEffect;
+	//delete hitEffect;
 	//delete model;
 }
 
@@ -428,7 +428,7 @@ void Player::CollisionProjectilesVsEnemies()
 					{
 						DirectX::XMFLOAT3 e = enemy->GetPosition();
 						e.y += enemy->GetHeight() * 0.5f;
-						hitEffect->Play(e);
+						//hitEffect->Play(e);
 					}
 
 					//ヒットSE再生

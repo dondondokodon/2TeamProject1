@@ -35,6 +35,7 @@ public:
 	std::vector<LaserSegment> segments;
 
 	void Update(float elaspedTime);
+	void Render();
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
 	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
@@ -98,7 +99,15 @@ public:
 	//?f?o?b?O?pGUI?`??
 	void DrawDebugGUI();
 
+
+	void setEffect(const char* filename)
+	{
+		laserEffect = std::make_unique<Effect>(filename);
+	}
+
 private:
+	std::unique_ptr<Effect> laserEffect;
+	bool isEffectPlaying = false;
 };
 
 //???[?U?[??{??
