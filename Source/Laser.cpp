@@ -54,205 +54,74 @@ void LaserBeam::Update(float elapsedTime)
 
 void LaserBeam::Render()
 {
-	////回転中かすでにエフェクトが再生されている場合は描画しない
-	//if (isEffectPlaying||isRotating)
-	//	return;
- //   //全てのセグメントを描画
- //   for (auto& seg : segments)
- //   {
- //      DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
- //      DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-
- //      DirectX::XMVECTOR c = DirectX::XMVectorScale(DirectX::XMVectorAdd(s, e), 0.5f);
- //      DirectX::XMFLOAT3 center;
- //      DirectX::XMStoreFloat3(&center, c);
-
- //      float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(XMVectorSubtract(e, s)));
-
- //      DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
-
- //      
-
- //      //エフェクト
- //      Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
- //      Effekseer::Handle handle = laserEffect.get()->Play(seg.start, 1.0f);
- //      activeEffects.push_back(handle);
-
- //      // エフェクトのlaserの向きに合わせる
- //      dir = DirectX::XMVectorNegate(dir);
- //   
- //      // 1. 基底ベクトルから回転行列を構築
- //      DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
- //      if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
- //          worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
- //      }
- //      DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
- //      DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
-
- //      const float baseEffectSize = 28.0f;
-
- //      // 2. 最終的なトランスフォーム行列を作成
- //      DirectX::XMMATRIX mat = DirectX::XMMATRIX(
- //          DirectX::XMVectorScale(right, 1.0f),                // Xスケール（太さ）
- //          DirectX::XMVectorScale(up, 1.0f),                   // Yスケール（太さ）
- //          DirectX::XMVectorScale(dir, length / baseEffectSize), // Zスケール（ここで長さを正規化）
- //          DirectX::XMVectorSetW(s, 1.0f)                      // 始点座標
- //      );
-
- //      // 3. Matrix43への代入処理（ここは変更なし）
- //      Effekseer::Matrix43 effekMat;
- //      DirectX::XMFLOAT4X4 m;
- //      DirectX::XMStoreFloat4x4(&m, mat);
-
- //      effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
- //      effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
- //      effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
- //      effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
-
- //      effekseerManager->SetMatrix(handle, effekMat);
- //   }
-	//isEffectPlaying = true;
-
-
-    //// 1. 回転中は何もしない
-    //if (isRotating) {
-    //    // 回転が始まったらフラグを折って、古いエフェクトを止める
-    //    if (isEffectPlaying) {
-    //        StopEffect(); // activeEffectsのStopとclearを行う自作関数
-    //        isEffectPlaying = false;
-    //    }
-    //    return;
-    //}
-
-    //// 2. 全てのセグメントを描画
-    //for (size_t i = 0; i < segments.size(); ++i) {
-    //    auto& seg = segments[i];
-
-    //    DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
-    //    DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-    //    float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
-    //    DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
-
-    //    // エフェクトの再生処理
-    //    Effekseer::Handle handle;
-    //    Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
-
-    //    // 【重要】回転が終わった最初のフレームのみPlayする
-    //    if (!isEffectPlaying) {
-    //        handle = laserEffect.get()->Play(seg.start, 1.0f);
-    //        activeEffects.push_back(handle);
-    //    }
-    //    else {
-    //        // 既に再生中の場合は、管理しているハンドルを取得
-    //        if (i < activeEffects.size()) {
-    //            handle = activeEffects[i];
-    //        }
-    //        else {
-    //            continue;
-    //        }
-    //    }
-
-    //    // --- 行列計算 ---
-    //    dir = DirectX::XMVectorNegate(dir);
-    //    DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
-    //    if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
-    //        worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
-    //    }
-    //    DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
-    //    DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
-
-    //    const float baseEffectSize = 28.0f;
-    //    DirectX::XMMATRIX mat = DirectX::XMMATRIX(
-    //        DirectX::XMVectorScale(right, 1.0f),
-    //        DirectX::XMVectorScale(up, 1.0f),
-    //        DirectX::XMVectorScale(dir, length / baseEffectSize),
-    //        DirectX::XMVectorSetW(s, 1.0f)
-    //    );
-
-    //    Effekseer::Matrix43 effekMat;
-    //    DirectX::XMFLOAT4X4 m;
-    //    DirectX::XMStoreFloat4x4(&m, mat);
-
-    //    effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
-    //    effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
-    //    effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
-    //    effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
-
-    //    // 【解決の鍵】Playした直後のフレームでも、強制的に最新の行列をセットする
-    //    effekseerManager->SetMatrix(handle, effekMat);
-    //}
-
-    //isEffectPlaying = true;
-
-// 1. 回転中は何もしない
-if (isRotating) {
-    if (isEffectPlaying) {
-        StopEffect();
-        isEffectPlaying = false;
+    // 1. 回転中は何もしない
+    if (isRotating) {
+        if (isEffectPlaying) {
+            StopEffect();
+            isEffectPlaying = false;
+        }
+        return;
     }
-    return;
-}
-
-Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
-
-// --- 【追加】セグメント数とエフェクト数の同期 ---
-// 反射が減った場合：余分なエフェクトを止める
-while (activeEffects.size() > segments.size()) {
-    effekseerManager->StopEffect(activeEffects.back());
-    activeEffects.pop_back();
-}
-// ------------------------------------------
-
-for (size_t i = 0; i < segments.size(); ++i) {
-    auto& seg = segments[i];
-
-    DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
-    DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-    float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
-    DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
-
-    Effekseer::Handle handle;
-
-    // --- 【変更】足りない場合のみ新しくPlayする ---
-    if (i >= activeEffects.size()) {
-        handle = laserEffect.get()->Play(seg.start, 1.0f);
-        activeEffects.push_back(handle);
+    
+    Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+    
+    //セグメント数とエフェクト数の同期
+    //反射が減った場合：余分なエフェクトを止める
+    while (activeEffects.size() > segments.size()) {
+        effekseerManager->StopEffect(activeEffects.back());
+        activeEffects.pop_back();
     }
-    else {
-        handle = activeEffects[i];
+
+    for (size_t i = 0; i < segments.size(); ++i) {
+        auto& seg = segments[i];
+    
+        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+        float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+    
+        Effekseer::Handle handle;
+    
+        //足りない場合のみ新しくPlayする
+        if (i >= activeEffects.size()) {
+            handle = laserEffect.get()->Play(seg.start, 1.0f);
+            activeEffects.push_back(handle);
+        }
+        else {
+            handle = activeEffects[i];
+        }
+        
+    
+        //行列計算
+        dir = DirectX::XMVectorNegate(dir);
+        DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
+        if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
+            worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
+        }
+        DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
+        DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
+    
+        const float baseEffectSize = 28.0f;
+        DirectX::XMMATRIX mat = DirectX::XMMATRIX(
+            DirectX::XMVectorScale(right, 1.0f),
+            DirectX::XMVectorScale(up, 1.0f),
+            DirectX::XMVectorScale(dir, length / baseEffectSize),
+            DirectX::XMVectorSetW(s, 1.0f)
+        );
+    
+        Effekseer::Matrix43 effekMat;
+        DirectX::XMFLOAT4X4 m;
+        DirectX::XMStoreFloat4x4(&m, mat);
+        effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
+        effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
+        effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
+        effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
+    
+        // 毎フレーム、最新のセグメント行列をセット
+        effekseerManager->SetMatrix(handle, effekMat);
     }
-    // ------------------------------------------
-
-    // --- 行列計算（ここは変更なし） ---
-    dir = DirectX::XMVectorNegate(dir);
-    DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
-    if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
-        worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
-    }
-    DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
-    DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
-
-    const float baseEffectSize = 28.0f;
-    DirectX::XMMATRIX mat = DirectX::XMMATRIX(
-        DirectX::XMVectorScale(right, 1.0f),
-        DirectX::XMVectorScale(up, 1.0f),
-        DirectX::XMVectorScale(dir, length / baseEffectSize),
-        DirectX::XMVectorSetW(s, 1.0f)
-    );
-
-    Effekseer::Matrix43 effekMat;
-    DirectX::XMFLOAT4X4 m;
-    DirectX::XMStoreFloat4x4(&m, mat);
-    effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
-    effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
-    effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
-    effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
-
-    // 毎フレーム、最新のセグメント行列をセット
-    effekseerManager->SetMatrix(handle, effekMat);
-}
-
-isEffectPlaying = true;
+    
+    isEffectPlaying = true;
 }
 
 //?f?o?b?O?pGUI?`??

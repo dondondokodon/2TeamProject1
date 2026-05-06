@@ -35,7 +35,7 @@ public:
 	std::vector<LaserSegment> segments;
 
 	void Update(float elaspedTime);
-	void Render();
+	void Render();//役割ずれてるかも
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
 	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
@@ -122,7 +122,7 @@ public:
 private:
 	std::unique_ptr<Effect> laserEffect;
 	std::vector<Effekseer::Handle> activeEffects;
-	bool isEffectPlaying = false;
+	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
 };
 
 //???[?U?[??{??
