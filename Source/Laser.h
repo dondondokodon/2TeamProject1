@@ -105,8 +105,23 @@ public:
 		laserEffect = std::make_unique<Effect>(filename);
 	}
 
+	//一時的にエフェクト停止
+	void StopEffect()
+	{
+		if (isEffectPlaying)
+		{
+			for (auto handle : activeEffects)
+			{
+				laserEffect->Stop(handle);
+			}
+			activeEffects.clear();
+			isEffectPlaying = false;
+		}
+	}
+
 private:
 	std::unique_ptr<Effect> laserEffect;
+	std::vector<Effekseer::Handle> activeEffects;
 	bool isEffectPlaying = false;
 };
 
