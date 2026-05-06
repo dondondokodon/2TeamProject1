@@ -48,6 +48,9 @@ void SceneGame::Initialize()
 		1000.0f //クリップ距離(遠)
 	);
 
+	//エフェクトマネージャー初期化
+	EffectManager::Instance().Initialize();
+
 	//エネミー初期化
 	/*EnemyManager& enemyManager=EnemyManager::Instance();
 	for (int i = 0;i < 2;i++)
@@ -68,6 +71,7 @@ void SceneGame::Initialize()
 	laserManager->Register(laser);
 
 	mng.Register(new Stage);
+
 }
 
 // 終了化
@@ -109,6 +113,8 @@ void SceneGame::Finalize()
 
 	//エネミー終了化
 	//EnemyManager::Instance().Clear();
+
+	EffectManager::Instance().Finalize();
 
 	//ステージグリッド終了化
 	if (stageGrid != nullptr)

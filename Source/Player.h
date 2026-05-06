@@ -130,7 +130,7 @@ private:
 	float rideTimer = 0.0f;
 
 	ProjectileManager projectileManager;
-	Effect* hitEffect = nullptr;
+	//Effect* hitEffect = nullptr;
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
