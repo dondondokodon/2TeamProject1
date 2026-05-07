@@ -31,7 +31,7 @@ public:
 private:
 	//Stage* stage = nullptr;
 	StageGrid* stageGrid = nullptr;
-	Mirror* mirror = nullptr;
+	//Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
 
 	Player* players[2] = {};
