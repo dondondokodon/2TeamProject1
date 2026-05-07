@@ -3,10 +3,19 @@
 #include<set>
 #include"System/ShapeRenderer.h"
 #include "StageObject.h"
+#include"RayHitType.h"
 //#include"LaserManager.h"
 
 class LaserManager;
 
+
+struct RayHitResult
+{
+	bool hit;
+	StageObject* object;
+	RayHitType type;
+	DirectX::XMFLOAT3 hitPos;
+};
 class StageObjectManager
 {
 public:
@@ -41,7 +50,7 @@ public:
 	void DrawDebugGUI();
 
 	//レイキャスト
-	bool StageObjectManager::RayCast(
+	RayHitResult StageObjectManager::RayCast(
 		const DirectX::XMFLOAT3& start,
 		const DirectX::XMFLOAT3& end,
 		DirectX::XMFLOAT3& hitPos,

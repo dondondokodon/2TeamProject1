@@ -4,6 +4,7 @@
 #include"StageObjectManager.h"
 #include"BoxCollider.h"
 #include"CylinderCollider.h"
+#include"Effect.h"
 
 struct LaserSegment
 {
@@ -22,18 +23,19 @@ struct LaserHit
 class LaserBeam
 {
 public:
-	DirectX::XMFLOAT3 origin;
+	DirectX::XMFLOAT3 origin = {0,0,0};
 	DirectX::XMFLOAT3 direction;
 	float maxLength = 50.0f;
 	float isActive = true;
 	float radius = 0.5f;
-	int maxReflection = 3;
+	int maxReflection = 10;
 	bool isRotating = false;
 
 
 	std::vector<LaserSegment> segments;
 
 	void Update(float elaspedTime);
+	void Render();//役割ずれてるかも
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
 	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
@@ -97,14 +99,30 @@ public:
 	//?f?o?b?O?pGUI?`??
 	void DrawDebugGUI();
 
+
+	void setEffect(const char* filename)
+	{
+		laserEffect = std::make_unique<Effect>(filename);
+	}
+
+	//一時的にエフェクト停止
+	void StopEffect()
+	{
+		if (isEffectPlaying)
+		{
+			for (auto handle : activeEffects)
+			{
+				laserEffect->Stop(handle);
+			}
+			activeEffects.clear();
+			isEffectPlaying = false;
+		}
+	}
+
 private:
-	/*bool RayCastMesh(
-		const DirectX::XMFLOAT3& start,
-		const DirectX::XMFLOAT3& end,
-		const Model* model,
-		DirectX::XMFLOAT3& hitPos,
-		DirectX::XMFLOAT3& hitNormal
-	) const;*/
+	std::unique_ptr<Effect> laserEffect;
+	std::vector<Effekseer::Handle> activeEffects;
+	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
 };
 
 //???[?U?[??{??

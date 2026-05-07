@@ -31,7 +31,7 @@ public:
 	}
 
 	//初期化
-	void Initialize();
+	void Initialize(const char* modelPath);
 
 	//終了化
 	void Finalize();
@@ -64,7 +64,22 @@ public:
 	void StopControl();
 
 	//プレイヤー同士の衝突処理
-	void CollisionVsPlayer(Player& other);
+	void CollisionVsPlayer(Player& other, bool canRide);
+
+	//肩車開始処理
+	void StartRiding(Player& target);
+	//肩車更新処理
+	void UpdateRiding(float elapsedTime);
+	//移動入力をリセット
+	void ResetMove();
+	//肩車可能か
+	bool CanStartRiding() const { return rideTimer <= 0.0f; }
+	//肩車解除処理
+	void StopRiding();
+	//肩車中か
+	bool IsRiding() const { return isRiding; }
+	//肩車位置まで上がりきっているか
+	bool IsRideReady() const;
 
 	//ステート変更処理
 	void ChangeState(std::unique_ptr<PlayerState> newState);
@@ -107,8 +122,15 @@ private:
 	int JumpCount = 0;
 	int JumpLimit = 2;
 	
+	//乗っているか
+	bool isRiding = false;
+	//乗っている相手
+	Player* ridingTarget = nullptr;
+	//player1が降りるときの無効か時間
+	float rideTimer = 0.0f;
+
 	ProjectileManager projectileManager;
-	Effect* hitEffect = nullptr;
+	//Effect* hitEffect = nullptr;
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;

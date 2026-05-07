@@ -9,19 +9,19 @@
 #include"ProjectileHoming.h"
 #include"StageObjectManager.h"
 #include"LaserManager.h"
+#include"RideState.h"
 
 // コンストラクタ
-void Player::Initialize()
+void Player::Initialize(const char* modelPath)
 {
 	//model = new Model("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
-
-	model = std::make_unique<Model>("Data/Model/Jammo/Jammo.mdl");
+	model = std::make_unique<Model>(modelPath);
 
 	//モデルが大きいのでスケーリング
 	scale.x = scale.y = scale.z = 0.01f;
 
 	//ヒットエフェクト読み込み
-	hitEffect = new Effect("Data/Effect/Hit.efk");
+	//hitEffect = new Effect("Data/Effect/Hit.efk");
 
 	//ヒットSE読み込み
 	hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
@@ -44,7 +44,7 @@ void Player::Initialize()
 void Player::Finalize()
 {
 	delete hitSE;
-	delete hitEffect;
+	//delete hitEffect;
 	//delete model;
 }
 
@@ -68,24 +68,64 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
-	//ステートの更新処理
-	//操作中のプレイヤーだけ入力を受け付ける
-	if (canControl && state)
+// 肩車タイマー更新
+if (rideTimer > 0.0f)
+{
+	rideTimer -= elapsedTime;
+
+	if (rideTimer <= 0.0f && !isRiding)
 	{
-		state->Update(*this, elapsedTime);
+		ridingTarget = nullptr;
+	}
+}
+
+// ステート更新（操作中 または 肩車中）
+if ((canControl || isRiding) && state)
+	{
+		state->Update(*this, elapsedTime, canControl);
 	}
 
-	//移動入力処理
-	//InputMove(elapsedTime);
+// 肩車完了判定
+bool rideReady = IsRideReady();
 
-	//ジャンプ入力処理
-	//InputJump();
+// 肩車位置まで上がるまでは通常更新しない
+if (isRiding && !rideReady)
+{
+	return;
+}
+// 速度更新
+UpdateVelocity(elapsedTime);
 
-	//速力処理更新
-	UpdateVelocity(elapsedTime);
+// 肩車中の位置固定処理
+if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+{
+	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
 
-	//コライダー更新処理
-	UpdateCollider();
+	float dx = position.x - targetPosition.x;
+	float dz = position.z - targetPosition.z;
+	float distanceSq = dx * dx + dz * dz;
+
+	float standRadius = radius + ridingTarget->GetRadius();
+
+	if (distanceSq < standRadius * standRadius)
+	{
+		float targetY = targetPosition.y + ridingTarget->GetHeight();
+
+		position.y = targetY;
+		velocity.y = 0.0f;
+		isGround = true;
+	}
+	else
+	{
+		isRiding = false;
+		ridingTarget = nullptr;
+		isGround = false;
+	}
+}
+
+// コライダー更新
+//bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+//bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
 	//弾丸入力処理
 	//一応、操作中のプレイヤーだけ弾をてつ
@@ -105,6 +145,8 @@ void Player::Update(float elapsedTime, bool canControl)
 
 	//死んでほしくないので死んだら回復
 	if (health <= 0)	health = 100;
+
+	UpdateCollider();
 
 	//プレイヤーと敵との衝突処理
 	CollisionPlayerVsEnemies();
@@ -386,7 +428,7 @@ void Player::CollisionProjectilesVsEnemies()
 					{
 						DirectX::XMFLOAT3 e = enemy->GetPosition();
 						e.y += enemy->GetHeight() * 0.5f;
-						hitEffect->Play(e);
+						//hitEffect->Play(e);
 					}
 
 					//ヒットSE再生
@@ -470,12 +512,12 @@ void Player::CollisionPlayerVsStage()
 
 }
 
-//プレイヤー同士の衝突処理
-//操作中のプレイヤーだけを押し戻し、待機中のプレイヤーは動かさない
-void Player::CollisionVsPlayer(Player& other)
+// プレイヤー同士の衝突処理
+// 肩車対応あり
+void Player::CollisionVsPlayer(Player& other, bool canRide)
 {
 	DirectX::XMFLOAT3 otherPosition = other.GetPosition();
-
+		
 	float dx = position.x - otherPosition.x;
 	float dz = position.z - otherPosition.z;
 
@@ -483,13 +525,34 @@ void Player::CollisionVsPlayer(Player& other)
 	float distanceSq = dx * dx + dz * dz;
 	float minDistance = radius + other.GetRadius();
 
-	//完全に同じ位置にいる場合は、X方向へ押し戻す
-	if (distanceSq <= 0.0001f)
+// 距離が離れていれば何もしない
+if (distanceSq >= minDistance * minDistance)
+{
+	return;
+}
+
+// 肩車可能なら肩車処理
+if (canRide)
+{
+	float otherTop = otherPosition.y + other.GetHeight();
+
+	bool isAboveOther = position.y >= otherTop - 0.2f;
+
+	if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
 	{
-		position.x += minDistance;
-		UpdateTransform();
-		return;
+		StartRiding(other);
 	}
+
+	return;
+}
+
+// 完全に同じ位置にいる場合の押し出し（mainの安全処理）
+if (distanceSq <= 0.0001f)
+{
+	position.x += minDistance;
+	UpdateTransform();
+	return;
+}
 
 	//半径の合計より近い場合は、重ならない位置まで押し戻す
 	if (distanceSq < minDistance * minDistance)
@@ -499,7 +562,7 @@ void Player::CollisionVsPlayer(Player& other)
 
 		dx /= distance;
 		dz /= distance;
-
+	  // 自分だけ押し戻す
 		position.x += dx * push;
 		position.z += dz * push;
 
@@ -608,4 +671,116 @@ void Player::StopControl()
 	velocity.x = 0.0f;
 	velocity.z = 0.0f;
 	ChangeState(std::make_unique<IdleState>());
+}
+
+// 肩車開始処理
+void Player::StartRiding(Player& target)
+{
+	// 肩車中にする
+	isRiding = true;
+
+	// 乗る相手を保存
+	ridingTarget = &target;
+
+	// 移動や速度をリセット
+	ResetMove();
+
+	// 肩車状態へ切り替える
+	ChangeState(std::make_unique<RideState>());
+}
+
+// 肩車状態の更新処理
+void Player::UpdateRiding(float elapsedTime)
+{
+	if (ridingTarget == nullptr)
+	{
+		isRiding = false;
+		ChangeState(std::make_unique<IdleState>());
+		return;
+	}
+
+	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+	// 相手プレイヤーの位置に合わせる
+	position.x = targetPosition.x;
+	position.z = targetPosition.z;
+
+	// 肩車する高さを計算
+	float targetY = targetPosition.y + ridingTarget->GetHeight();
+
+	// 肩車位置まで上がる速度
+	float riseSpeed = 5.0f;
+
+
+	if (position.y < targetY)
+	{
+		position.y += riseSpeed * elapsedTime;
+
+		if (position.y > targetY)
+		{
+			position.y = targetY;
+		}
+	}
+	else
+	{
+		position.y = targetY;
+	}
+
+	ResetMove();
+
+	isGround = true;
+
+	//bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
+	//bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
+	UpdateCollider();
+	UpdateTransform();
+	model->UpdateTransform();
+}
+
+// 肩車処理更新
+void Player::StopRiding()
+{
+	isRiding = false;
+
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	velocity.z = 0.0f;
+
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+	maxMoveSpeed = 0.0f;
+
+	isGround = true;
+	OnLanding();
+
+	rideTimer = 3.0f;
+
+	ChangeState(std::make_unique<IdleState>());
+	UpdateCollider();
+	UpdateTransform();
+	model->UpdateTransform();
+}
+
+void Player::ResetMove()
+{
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+	velocity.z = 0.0f;
+
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+	maxMoveSpeed = 0.0f;
+}
+
+
+bool Player::IsRideReady() const
+{
+	if (ridingTarget == nullptr)
+	{
+		return false;
+	}
+
+	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight();
+
+	return position.y >= targetY - 0.01f;
 }

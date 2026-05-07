@@ -13,7 +13,8 @@ public:
 
 	virtual void Finalize(Player& player) = 0;
 
-	//更新処理
-	virtual void Update(Player& player, float elapsedTime) = 0;
+	//ステート更新処理
+	//canControl は、このプレイヤーが現在操作中かどうか
+	virtual void Update(Player& player, float elapsedTime, bool canControl) = 0;
 };
 

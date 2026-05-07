@@ -13,7 +13,7 @@ void WalkState::Finalize(Player& player)
 }
 
 //XVˆ—
-void WalkState::Update(Player& player, float elapsedTime)
+void WalkState::Update(Player& player, float elapsedTime, bool canControl)
 {
 	//ˆÚ“®“ü—Íˆ—
 	player.InputMove(elapsedTime);

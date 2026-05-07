@@ -10,6 +10,7 @@
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 #include"System/Input.h"
+#include"IrradiationDevice.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -26,12 +27,12 @@ void SceneGame::Initialize()
 
 	//プレイヤー初期化
 	players[0] = new Player();
-	players[0]->Initialize();
-	players[0]->SetPosition({ -5.0f, 0.0f, 0.0f });
+	players[0]->Initialize("Data/Model/Jammo/Jammo.mdl");
+	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
 
 	players[1] = new Player();
-	players[1]->Initialize();
-	players[1]->SetPosition({ 5.0f, 0.0f, 0.0f });
+	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
+	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
 
 	controlPlayerIndex = 0;
 	//カメラコントローラー初期化
@@ -52,15 +53,8 @@ void SceneGame::Initialize()
 		1000.0f //クリップ距離(遠)
 	);
 
-	//エネミー初期化
-	/*EnemyManager& enemyManager=EnemyManager::Instance();
-	for (int i = 0;i < 2;i++)
-	{
-		EnemySlime* slime = new EnemySlime();
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}*/
+	//エフェクトマネージャー初期化
+	EffectManager::Instance().Initialize();
 
 	//ステージオブジェクト初期化
 	StageObjectManager& mng=StageObjectManager::Instance();
@@ -72,6 +66,11 @@ void SceneGame::Initialize()
 	laserManager->Register(laser);
 
 	mng.Register(new Stage);
+
+
+	IrradiationDevice* device = new IrradiationDevice();
+	device->SetPosition({ 5, 0, 10 });
+	mng.Register(device);
 }
 
 // 終了化
@@ -164,8 +163,13 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		int otherIndex = 1 - controlPlayerIndex;
-		players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex]);
+		// プレイヤー同士の衝突処理
+		if (!players[0]->IsRiding())//どちらも肩車していないときだけ衝突処理を行う
+		{
+			int otherIndex = 1 - controlPlayerIndex;										
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//プレイヤ1が操作中でプレイヤ2が待機中のときだけ肩車可能
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//操作中のプレイヤだけを押し戻し、待機中のプレイヤーは動かさない
+		}
 	}
 
 
@@ -311,7 +315,11 @@ void SceneGame::InputChangePlayer()
 
 	if (gamePad.GetButtonDown() & GamePad::BTN_B)
 	{
-		players[controlPlayerIndex]->StopControl();
+		if (!players[controlPlayerIndex]->IsRiding())
+		{
+			players[controlPlayerIndex]->StopControl();
+		}
+
 		controlPlayerIndex = 1 - controlPlayerIndex;
 	}
 }

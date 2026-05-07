@@ -1,4 +1,4 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="External">
@@ -22,10 +22,10 @@
     <Filter Include="Source\PlayerState">
       <UniqueIdentifier>{0bffdc9a-cd4e-45c9-9c02-8336458d41cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\.cppãƒ•ã‚¡ã‚¤ãƒ«">
+    <Filter Include="Source\.cppƒtƒ@ƒCƒ‹">
       <UniqueIdentifier>{85cd51ec-ef97-4b06-b463-7cbfef585811}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\.hãƒ•ã‚¡ã‚¤ãƒ«">
+    <Filter Include="Source\.hƒtƒ@ƒCƒ‹">
       <UniqueIdentifier>{da47c7e6-964b-4458-b9b2-980b4f863115}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -55,73 +55,73 @@
       <Filter>External\imgui-docking</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\CameraController.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Character.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Collision.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Effect.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\EffectManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\EnemyManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\EnemySlime.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Framework.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\MathUtils.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Projectile.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\ProjectileHoming.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\ProjectileManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\ProjectileStraight.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneGame.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneLoading.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneTitle.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Stage.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\System\RenderState.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\System\Sprite.h">
       <Filter>Source\System</Filter>
@@ -154,25 +154,25 @@
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\WalkState.h" />
     <ClInclude Include="Source\StageGrid.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\BoxCollider.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Laser.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\StageObjectManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\LaserManager.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\CylinderCollider.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\CollisionResult.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\WalkState.h">
       <Filter>Source\System</Filter>
@@ -252,11 +252,41 @@
     <ClInclude Include="Source\System\ShapeRenderer.h">
       <Filter>Source\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageObject.h">
-      <Filter>Source\System</Filter>
+    <ClInclude Include="Source\BoxCollider.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Laser.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageObjectManager.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LaserManager.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RideState.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CylinderCollider.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mirror.h">
-      <Filter>Source\.hãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageGrid.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\IrradiationDevice.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RayHitType.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageData.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageData1.h">
+      <Filter>Source\.hƒtƒ@ƒCƒ‹</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -279,70 +309,70 @@
       <Filter>External\imgui-docking</Filter>
     </ClCompile>
     <ClCompile Include="Source\Camera.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\CameraController.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Character.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Collision.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Effect.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\EffectManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Enemy.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\EnemyManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\EnemySlime.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Framework.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\MathUtils.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Main.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Player.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Projectile.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\ProjectileHoming.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\ProjectileManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\ProjectileStraight.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneLoading.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneTitle.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Stage.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerState.cpp">
       <Filter>Source\PlayerState</Filter>
@@ -357,16 +387,16 @@
       <Filter>Source\PlayerState</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageObject.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\AnimationController.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\ImGuiRenderer.cpp">
       <Filter>External\imgui-docking</Filter>
     </ClCompile>
     <ClCompile Include="Source\ResourceManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Sprite.cpp">
       <Filter>Source\System</Filter>
@@ -417,25 +447,25 @@
       <Filter>Source\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\BoxCollider.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\Laser.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageObjectManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\LaserManager.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageGrid.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RideState.cpp">
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
     <ClCompile Include="Source\CylinderCollider.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mirror.cpp">
-      <Filter>Source\.cppãƒ•ã‚¡ã‚¤ãƒ«</Filter>
+      <Filter>Source\.cppƒtƒ@ƒCƒ‹</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
