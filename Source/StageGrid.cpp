@@ -5,87 +5,40 @@
 StageGrid::StageGrid(const char* filename)
 {
     // ステージモデル（木箱）を読み込み
-    model = new Model(filename);
+    model = std::make_unique<Model>(filename);
 
     aabbMin = { 0.0f, 0.0f, 0.0f };
     aabbMax = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f,1.0f,1.0f };
-    pos = { 0.5f, 0.5f, -5.5f };
+    position = { 0.5f, 0.5f, -5.5f };
 }
 
 StageGrid::StageGrid()
 {
     // ステージモデル（木箱）を読み込み
-    model = new Model("Data/Model/Objects/Box/Box_1cm.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Box/Box_1cm.mdl");
 
     aabbMin = { 0.0f, 0.0f, 0.0f };
     aabbMax = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f,1.0f,1.0f };
-    pos = { 0.5f, 0.5f, -5.5f };
+    position = { 0.5f, 0.5f, -5.5f };
 }
 
 StageGrid::~StageGrid()
 {
-    // モデル破棄
-    delete model;
 }
 
-void StageGrid::Update(float elapsedTime,Player& p)
+void StageGrid::Update(float elapsedTime)
 {
-  
-
     float moveSpeed = 2.0f;
-    float moveAmount = 1.0f;
 
     bool nowP = (GetAsyncKeyState('P') & 0x8000);
     bool trgP = (nowP && !prevP);
 
     // ---------------------------------------------------------
-    // ★ プレイヤーが木箱の正面を向いているか判定（毎フレーム）
-    // ---------------------------------------------------------
-    auto playerPos = p.GetPosition();
-    auto playerForward = p.GetForward();
-
-    DirectX::XMFLOAT3 toBox = {
-        pos.x - playerPos.x,
-        0,
-        pos.z - playerPos.z
-    };
-
-    float len = sqrtf(toBox.x * toBox.x + toBox.z * toBox.z);
-    if (len > 0.0001f) {
-        toBox.x /= len;
-        toBox.z /= len;
-    }
-
-    float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
-    bool isFacingBox = (dot > 0.7f);
-
-    // ★ 触れていて、正面を向いていて、P を押した瞬間に移動開始
-    if (isTouchingPlayer && isFacingBox && trgP && !isMoving)
-    {
-        float dx = playerPos.x - pos.x;
-        float dz = playerPos.z - pos.z;
-
-        if (fabs(dx) > fabs(dz))
-        {
-            moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
-        }
-        else
-        {
-            moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
-        }
-
-        isMoving = true;
-        moveRemain = moveAmount;
-    }
-
-
-
-    // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
-    if (isMoving)
+    if(isMoving)
     {
         float delta = moveSpeed * elapsedTime;  // 今フレームで動く量
 
@@ -94,8 +47,8 @@ void StageGrid::Update(float elapsedTime,Player& p)
             delta = moveRemain;
 
         // 実際に移動
-        pos.x += moveDir.x * delta;
-        pos.z += moveDir.z * delta;
+        position.x += moveDir.x * delta;
+        position.z += moveDir.z * delta;
 
         // 残り移動量を減らす
         moveRemain -= delta;
@@ -111,20 +64,21 @@ void StageGrid::Update(float elapsedTime,Player& p)
     // ★ AABB（当たり判定）の更新
     // ---------------------------------------------------------
     aabbMin = {
-        pos.x - 0.5f * scale.x,
-        pos.y - 0.5f * scale.y,
-        pos.z - 0.5f * scale.z
+        position.x - 0.5f * scale.x,
+        position.y - 0.5f * scale.y,
+        position.z - 0.5f * scale.z
     };
 
     aabbMax = {
-        pos.x + 0.5f * scale.x,
-        pos.y + 0.5f * scale.y,
-        pos.z + 0.5f * scale.z
+        position.x + 0.5f * scale.x,
+        position.y + 0.5f * scale.y,
+        position.z + 0.5f * scale.z
     };
 
     // Pキーの状態を保存
     prevP = nowP;
 
+    isTouchingPlayer = false;
 }
 
 
@@ -134,7 +88,7 @@ void StageGrid::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
     // スケールと位置を行列に変換
     DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
+    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
 
     DirectX::XMMATRIX M = S * T;
 
@@ -142,7 +96,7 @@ void StageGrid::Render(const RenderContext& rc, ModelRenderer* renderer)
     DirectX::XMStoreFloat4x4(&transform, M);
 
     // モデル描画
-    renderer->Render(rc, transform, model, ShaderId::Lambert);
+    renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
 }
 
 //デバッグプリミティブ描画
@@ -194,5 +148,54 @@ void StageGrid::CollisionVsPlayer(Player& p)
 
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
+
+        bool nowP = (GetAsyncKeyState('P') & 0x8000);
+        bool trgP = (nowP && !prevP);
+
+        auto playerPos = p.GetPosition();
+        auto playerForward = p.GetForward();
+
+
+        if (trgP && !isMoving&&p.GetIsControlling())
+        {
+            DirectX::XMFLOAT3 toBox = {
+            position.x - playerPos.x,
+            0,
+            position.z - playerPos.z
+            };
+
+            float len = sqrtf(toBox.x * toBox.x + toBox.z * toBox.z);
+            if (len > 0.0001f) {
+                toBox.x /= len;
+                toBox.z /= len;
+            }
+
+            float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
+            isFacingBox = (dot > 0.7f);
+            if (isTouchingPlayer && isFacingBox)
+            {
+                StartMove(p.GetPosition());
+            }
+        }
     }
+}
+
+void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
+{
+    float moveAmount = 1.0f;
+
+    float dx = targetPos.x - position.x;
+    float dz = targetPos.z - position.z;
+
+    if (fabs(dx) > fabs(dz))
+    {
+        moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
+    }
+    else
+    {
+        moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
+    }
+
+    isMoving = true;
+    moveRemain = moveAmount;
 }

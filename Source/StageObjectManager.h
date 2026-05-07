@@ -64,6 +64,9 @@ public:
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 
+	//ステージオブジェクトサイズ
+	int GetStageObjectSize() { return static_cast<int>(stageObjects.size()); };
+
 	//レーザーマネージャー取得
 	LaserManager* GetLaserManager();
 
