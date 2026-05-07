@@ -22,7 +22,7 @@ void SceneGame::Initialize()
 	//stage = new Stage();
 
 	//ステージグリッド初期化
-	stageGrid = new StageGrid();
+	//stageGrid = new StageGrid();
 
 
 
@@ -33,10 +33,12 @@ void SceneGame::Initialize()
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
 	players[0]->SetScale({ 0.5f,0.5f,0.5f });
+	players[0]->SetIsControlling(true);
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
 	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
+	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
 	//カメラコントローラー初期化
@@ -88,11 +90,11 @@ void SceneGame::Finalize()
 	}*/
 
 	//ステージグリッド終了化
-	if (stageGrid != nullptr)
+	/*if (stageGrid != nullptr)
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
-	}
+	}*/
 
 
 	//プレイヤー終了化
@@ -126,16 +128,6 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
 	//stage->Update(elapsedTime);
-
-	// ★ 毎フレームリセット
-	stageGrid->isTouchingPlayer = false;
-
-	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
-
-	// 木箱の更新処理（isTouchingPlayer を使う）
-	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
-	
 
 	// カメラ更新
 	InputChangePlayer();
@@ -231,7 +223,7 @@ void SceneGame::Render()
 		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
-		stageGrid->Render(rc, modelRenderer);
+		//stageGrid->Render(rc, modelRenderer);
 
 		//鏡描画
 
@@ -273,7 +265,7 @@ void SceneGame::Render()
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 		//木箱用デバッグプリミティブ描画
-		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+		//stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
 
 		
 
@@ -318,6 +310,7 @@ void SceneGame::InputChangePlayer()
 		}
 
 		controlPlayerIndex = 1 - controlPlayerIndex;
+		players[controlPlayerIndex]->SetIsControlling(true);
 	}
 }
 

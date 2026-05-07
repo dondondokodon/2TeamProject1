@@ -10,6 +10,7 @@
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 #include"RideState.h"
+#include"StageGrid.h"
 
 // コンストラクタ
 void Player::Initialize(const char* modelPath)
@@ -509,6 +510,19 @@ void Player::CollisionPlayerVsStage()
 		} while (isHit && loopCount < 10);
 	}
 
+	//ステージグリッド
+	// 全てのステージオブジェクトに対してループ
+	for (int i = 0; i < stageObjectManager.GetStageObjectSize(); ++i) {
+		StageObject* obj = stageObjectManager.GetStageObject(i);
+		if (!obj) continue;
+
+		// StageGrid（箱）へのキャストを試みる
+		StageGrid* grid = dynamic_cast<StageGrid*>(obj);
+		if (grid) {
+			// 内部で IsControlling() をチェックしているので、全員分呼んでOK
+			grid->CollisionVsPlayer(*this);
+		}
+	}
 
 }
 
@@ -670,6 +684,7 @@ void Player::StopControl()
 {
 	velocity.x = 0.0f;
 	velocity.z = 0.0f;
+	isControlling = false;
 	ChangeState(std::make_unique<IdleState>());
 }
 

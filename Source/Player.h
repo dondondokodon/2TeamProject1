@@ -90,6 +90,10 @@ public:
 	//ゲッター
 	AnimationController& GetAnimation() { return animation; }
 
+	void SetIsControlling(bool i) { isControlling = i; }
+
+	bool GetIsControlling() { return isControlling; }
+
 	//向き取得
 	DirectX::XMFLOAT3 GetForward() const;
 
@@ -103,6 +107,7 @@ private:
 
 
 
+	bool isControlling=false;
 
 	float moveSpeed = 5.0f;
 
