@@ -2,6 +2,7 @@
 #include "System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
 #include "memory"
+#include "RayHitType.h"
 
 class StageObject
 {
@@ -33,6 +34,36 @@ public:
 	//モデル取得
 	const Model* GetModel() const { return model.get(); }
 
+	//レイヒットタイプ取得
+	RayHitType GetRayHitType() const { return type; }
+
+	//ヒット通知のフック
+	virtual void OnHit(bool hit) {}
+
+	//セッター
+	void SetPosition(const DirectX::XMFLOAT3& pos)
+	{
+		position = pos;
+		UpdateTransform();
+	}
+
+	void SetAngle(const DirectX::XMFLOAT3& ang)
+	{
+		angle = ang;
+		UpdateTransform();
+	}
+
+	void SetScale(const DirectX::XMFLOAT3& sca)
+	{
+		scale = sca;
+		UpdateTransform();
+	}
+
+	void SetModel(const char* modelPath)
+	{
+		model = std::make_unique<Model>(modelPath);
+	}
+	
 protected:
 
 	//行列更新処理
@@ -48,5 +79,6 @@ protected:
 		0,0,1,0,
 		0,0,0,1
 	};
+	RayHitType type = RayHitType::Stop;
 };
 

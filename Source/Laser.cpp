@@ -27,14 +27,21 @@ void LaserBeam::Update(float elapsedTime)
         DirectX::XMFLOAT3 hitPos, hitNormal;
 
         //    StageObjectManager  Ƀ  C L   X g  ˗     
-        bool hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
+        RayHitResult hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
 
-        if (hit)
+        //反射
+        if (hit.object)   hit.object->OnHit(true); //ヒット通知
+        else
+        {
+             segments.push_back({ start, end });
+             break;
+        }
+       
+        if (hit.type==RayHitType::reflection)
         {
             segments.push_back({ start, hitPos });
 
-            //     
-            // ????
+           
             DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
             DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
             DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
@@ -42,11 +49,12 @@ void LaserBeam::Update(float elapsedTime)
 
             start = hitPos;
         }
-        else
-        {
-            segments.push_back({ start, end });
-            break;
-        }
+		else if (hit.type == RayHitType::Stop)
+		{
+			segments.push_back({ start, hitPos });
+			break;
+		}
+       
     }
 
   

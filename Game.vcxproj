@@ -140,6 +140,7 @@
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\CylinderCollider.h" />
     <ClInclude Include="Source\IdleState.h" />
+    <ClInclude Include="Source\IrradiationDevice.h" />
     <ClInclude Include="Source\JumpState.h" />
     <ClInclude Include="Source\Laser.h" />
     <ClInclude Include="Source\LaserManager.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\ProjectileStraight.h" />
+    <ClInclude Include="Source\RayHitType.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\RideState.h" />
     <ClInclude Include="Source\Scene.h" />
@@ -206,6 +208,7 @@
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\CylinderCollider.cpp" />
     <ClCompile Include="Source\IdleState.cpp" />
+    <ClCompile Include="Source\IrradiationDevice.cpp" />
     <ClCompile Include="Source\JumpState.cpp" />
     <ClCompile Include="Source\Laser.cpp" />
     <ClCompile Include="Source\LaserManager.cpp" />

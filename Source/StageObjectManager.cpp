@@ -83,12 +83,13 @@ void StageObjectManager::DrawDebugGUI()
 }
 
 //レイキャスト
-bool StageObjectManager::RayCast(
+RayHitResult StageObjectManager::RayCast(
 	const DirectX::XMFLOAT3& start,
 	const DirectX::XMFLOAT3& end,
 	DirectX::XMFLOAT3& hitPos,
 	DirectX::XMFLOAT3& normal)
 {
+	RayHitResult result = { false, nullptr, RayHitType::Stop,{0,0,0} };
 	for (auto& obj : stageObjects)
 	{
 		if (Collision::RayCast(
@@ -99,11 +100,15 @@ bool StageObjectManager::RayCast(
 			hitPos,
 			normal))
 		{
-			return true;
+			result.hit = true;
+			result.object = obj.get();
+			result.type = obj->GetRayHitType();
+			result.hitPos = hitPos;
+			return result;
 		}
 	}
 
-	return false;
+	return result;
 }
 
 LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
