@@ -50,8 +50,8 @@ void StageGrid::Update(float elapsedTime,Player& p)
     float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
     bool isFacingBox = (dot > 0.7f);
 
-    // ★ 触れていて、正面を向いていて、P を押した瞬間に移動開始
-    if (isTouchingPlayer && isFacingBox && trgP && !isMoving)
+    // ★ 触れていて、正面を向いていて、P を押した瞬間に移動開始 ↓player1のみ
+    if (isTouchingPlayer && isFacingBox && trgP && !isMoving && !p.GetIsRobot())
     {
         float dx = playerPos.x - pos.x;
         float dz = playerPos.z - pos.z;

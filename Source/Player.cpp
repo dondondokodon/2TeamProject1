@@ -109,7 +109,7 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 
 	if (distanceSq < standRadius * standRadius)
 	{
-		float targetY = targetPosition.y + ridingTarget->GetHeight();
+		float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
 
 		position.y = targetY;
 		velocity.y = 0.0f;
@@ -539,7 +539,8 @@ if (canRide)
 {
 	float otherTop = otherPosition.y + other.GetHeight();
 
-	bool isAboveOther = position.y >= otherTop - 0.2f;
+	// 大きくするほど吸い付かない
+	bool isAboveOther = position.y >= otherTop - 1.0f;
 
 	if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
 	{
@@ -709,7 +710,7 @@ void Player::UpdateRiding(float elapsedTime)
 	position.z = targetPosition.z;
 
 	// 肩車する高さを計算
-	float targetY = targetPosition.y + ridingTarget->GetHeight();
+	float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
 
 	// 肩車位置まで上がる速度
 	float riseSpeed = 5.0f;
@@ -783,7 +784,7 @@ bool Player::IsRideReady() const
 		return false;
 	}
 
-	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight();
+	float targetY = ridingTarget->GetPosition().y + ridingTarget->GetHeight() - rideOffsetY;
 
 	return position.y >= targetY - 0.01f;
 }

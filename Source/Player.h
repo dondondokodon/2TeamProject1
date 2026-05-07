@@ -137,6 +137,8 @@ private:
 	float rideTimer = 0.0f;
 	//ロボットかどうか（Player2はtrue）
 	bool isRobot = false;
+	//肩車時の高さオフセット
+	float rideOffsetY = 0.5f;
 
 	ProjectileManager projectileManager;
 	Effect* hitEffect = nullptr;
