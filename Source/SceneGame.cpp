@@ -14,7 +14,7 @@
 
 #include"StageData1.h"
 
-// 蛻晄悄蛹
+//
 void SceneGame::Initialize()
 {
 
@@ -69,24 +69,24 @@ void SceneGame::Initialize()
 
 	EffectManager::Instance().Initialize();
 
-	//繧ｹ繝��繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝亥�譛溷喧
-	/*StageObjectManager& mng=StageObjectManager::Instance();
-	mng.setLaserManager(new LaserManager());
-	LaserManager* laserManager = mng.GetLaserManager();
-	Laser* laser = new Laser();
-	laser->setManager(&mng);
-	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
-	laserManager->Register(laser);
+	// ステージオブジェクト初期化
+	//StageObjectManager& mng=StageObjectManager::Instance();
+	//mng.setLaserManager(new LaserManager());
+	//LaserManager* laserManager = mng.GetLaserManager();
+	//Laser* laser = new Laser();
+	//laser->setManager(&mng);
+	//laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
+	//laserManager->Register(laser);
 
-	mng.Register(new Stage);
+	//mng.Register(new Stage);
 
-	// 鏡初期化
-	mirror = new Mirror();
-	StageObjectManager::Instance().Register(mirror);
+	//// 鏡初期化
+	//mirror = new Mirror();
+	//StageObjectManager::Instance().Register(mirror);
 
-	IrradiationDevice* device = new IrradiationDevice();
-	device->SetPosition({ 5, 0, 10 });
-	mng.Register(device);*/
+	//IrradiationDevice* device = new IrradiationDevice();
+	//device->SetPosition({ 5, 0, 10 });
+	//mng.Register(device);
 
 	std::unique_ptr<StageData> stageData = std::make_unique<StageData1>(StageData1());
 	StageObjectManager& mng = StageObjectManager::Instance();
@@ -109,7 +109,7 @@ void SceneGame::Finalize()
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
-	}*/
+	}
 
 
 	//プレイヤー終了化
@@ -175,12 +175,12 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		// 繝励Ξ繧､繝､繝ｼ蜷悟｣ｫ縺ｮ陦晉ｪ∝・逅・
-		if (!players[0]->IsRiding())//縺ｩ縺｡繧峨ｂ閧ｩ霆翫＠縺ｦ縺・↑縺・→縺阪□縺題｡晉ｪ∝・逅・ｒ陦後≧
+		// プレイヤー同士の衝突判定
+		if (!players[0]->IsRiding())
 		{
 			int otherIndex = 1 - controlPlayerIndex;										
-			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//繝励Ξ繧､繝､1縺梧桃菴應ｸｭ縺ｧ繝励Ξ繧､繝､2縺悟ｾ・ｩ滉ｸｭ縺ｮ縺ｨ縺阪□縺題か霆雁庄閭ｽ
-			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//謫堺ｽ應ｸｭ縺ｮ繝励Ξ繧､繝､縺縺代ｒ謚ｼ縺玲綾縺励∝ｾ・ｩ滉ｸｭ縺ｮ繝励Ξ繧､繝､繝ｼ縺ｯ蜍輔°縺輔↑縺・
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	
 		}
 	}
 

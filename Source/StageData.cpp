@@ -2,6 +2,7 @@
 #include "Laser.h"
 #include "IrradiationDevice.h"
 #include "StageGrid.h"
+#include "Mirror.h"
 #include<memory>
 
 StageObject* ObjectData::CreateStageObject()const
@@ -14,6 +15,7 @@ StageObject* ObjectData::CreateStageObject()const
 		break;
 	case ObjectType::Mirror:
 		//ミラーオブジェクトの生成と初期化
+		obj = new Mirror();
 		break;
 	case ObjectType::Goal:
 		//ゴールオブジェクトの生成と初期化
