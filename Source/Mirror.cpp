@@ -1,9 +1,10 @@
 #include "Mirror.h"
+#include<imgui.h>
 
 Mirror::Mirror()
 {
    
-    model = new Model("Data/Model/Objects/Mirror/mirror.mdl");
+    SetModel("Data/Model/Objects/Mirror/mirror.mdl");
 
     // 初期トランスフォーム
     position = { 0.0f, 1.2f, 0.0f };
@@ -15,7 +16,7 @@ Mirror::Mirror()
 
 Mirror::~Mirror()
 {
-    delete model;
+    
 }
 
 void Mirror::Update(float elapsedTime)
@@ -33,18 +34,24 @@ void Mirror::Update(float elapsedTime)
 
     UpdateTransform();
 
-    // ★★★ AABB 更新（これが無いとクラッシュする） ★★★
+    // AABB の半径（モデルに合わせて調整）
+    const float halfX = 0.6f * scale.x;
+    const float halfY = 1.5f * scale.y;
+    const float halfZ = 0.2f * scale.z;
+
+    // AABB を position を中心に生成
     aabbMin = {
-        position.x - 0.6f * scale.x,
-        position.y - 1.5f * scale.y,
-        position.z - 0.2f * scale.z
+        position.x - halfX,
+        position.y - halfY,
+        position.z - halfZ
     };
 
     aabbMax = {
-        position.x + 0.6f * scale.x,
-        position.y + 1.5f * scale.y,
-        position.z + 0.3f * scale.z
+        position.x + halfX,
+        position.y + halfY,
+        position.z + halfZ
     };
+
 
     prevU = nowU;
     prevO = nowO;
@@ -89,31 +96,38 @@ void Mirror::Render(const RenderContext& rc, ModelRenderer* renderer)
     DirectX::XMFLOAT4X4 transform;
     DirectX::XMStoreFloat4x4(&transform, M);
 
-    renderer->Render(rc, transform, model, ShaderId::Lambert);
+    renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
 }
 
 void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
-    // AABB の中心
-    DirectX::XMFLOAT3 center = {
-        (aabbMin.x + aabbMax.x) * 0.5f,
-        (aabbMin.y + aabbMax.y) * 0.7f,
-        (aabbMin.z + aabbMax.z) * 0.1f
-    };
-
-    // AABB のサイズ
     DirectX::XMFLOAT3 size = {
-        0.6,
-        1.5,
-        0.2
+        0.6f ,
+        1.5f ,
+        0.2f 
     };
 
     renderer->RenderBox(
         rc,
-        center,   // ★ AABB の中心
-        angle,
-        size,     // ★ AABB の大きさ
+        position,   // ← モデルと同じ位置
+        angle,      // ← モデルと同じ回転
+        size,
         { 1, 0, 0, 1 }
     );
 }
 
+
+void Mirror::DrawDebugGUI()
+{
+    if (ImGui::Begin("mirror", nullptr, ImGuiWindowFlags_None))
+    {
+      
+        if (ImGui::CollapsingHeader("mirror", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+           
+            ImGui::InputFloat3("pos", &position.x);
+
+        }
+    }
+    ImGui::End();
+}

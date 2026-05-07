@@ -27,6 +27,7 @@ void StageObjectManager::Update(float elapsedTime)
 	}
 	removes.clear();
 
+	if (laserManager)
 	laserManager->Update(elapsedTime);
 }
 
@@ -38,6 +39,7 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 		stageObject->Render(rc, renderer);
 	}
 	
+	if (laserManager)
 	laserManager->Render(rc, renderer);
 }
 
@@ -68,6 +70,7 @@ void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRend
 		stageObject->RenderDebugPrimitive(rc, renderer);
 	}
 
+	if (laserManager)
 	laserManager->RenderDebugPrimitive(rc, renderer);
 }
 
@@ -79,6 +82,7 @@ void StageObjectManager::DrawDebugGUI()
 		stageObject->DrawDebugGUI();
 	}
 
+	if (laserManager)
 	laserManager->DrawDebugGUI();
 }
 
@@ -113,4 +117,12 @@ RayHitResult StageObjectManager::RayCast(
 
 LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
 
-void StageObjectManager::setLaserManager(LaserManager* mgr) { if (laserManager) delete laserManager;laserManager = mgr; }
+void StageObjectManager::setLaserManager(LaserManager* mgr)
+{
+	if (laserManager)
+	{
+		delete laserManager;
+		laserManager = nullptr;
+	}
+	laserManager = mgr;
+}

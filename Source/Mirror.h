@@ -13,10 +13,10 @@ public:
     void Render(const RenderContext& rc, ModelRenderer* renderer) override;
     void CollisionVsPlayer(Player& p);
     void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer) override;
+    void DrawDebugGUI();
 
 
 private:
-    Model* model;
     DirectX::XMFLOAT3 aabbMin;
     DirectX::XMFLOAT3 aabbMax;
 

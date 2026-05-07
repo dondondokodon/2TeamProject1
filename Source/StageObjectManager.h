@@ -67,7 +67,7 @@ public:
 	void setLaserManager(LaserManager* mgr);
 
 private:
-	StageObjectManager() {}
+	StageObjectManager() : laserManager(nullptr) {}
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;

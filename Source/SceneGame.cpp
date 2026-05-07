@@ -22,8 +22,9 @@ void SceneGame::Initialize()
 	//ステージグリッド初期化
 	stageGrid = new StageGrid();
 
-	// 鏡初期化
-	mirror = new Mirror();
+
+
+
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -66,6 +67,7 @@ void SceneGame::Initialize()
 	EffectManager::Instance().Initialize();
 
 
+
 	//ステージオブジェクト初期化
 	StageObjectManager& mng=StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
@@ -77,6 +79,9 @@ void SceneGame::Initialize()
 
 	mng.Register(new Stage);
 
+	// 鏡初期化
+	mirror = new Mirror();
+	StageObjectManager::Instance().Register(mirror);
 
 	IrradiationDevice* device = new IrradiationDevice();
 	device->SetPosition({ 5, 0, 10 });
@@ -100,12 +105,6 @@ void SceneGame::Finalize()
 		stageGrid = nullptr;
 	}
 
-	//鏡終了化
-	if (mirror != nullptr)
-	{
-		delete mirror;
-		mirror = nullptr;
-	}
 
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
@@ -117,7 +116,6 @@ void SceneGame::Finalize()
 			players[i] = nullptr;
 		}
 	}
-
 
 	//カメラコントローラー終了化
 	if (cameraController!=nullptr)
@@ -132,13 +130,6 @@ void SceneGame::Finalize()
 
 
 	EffectManager::Instance().Finalize();
-
-	//繧ｹ繝・・繧ｸ繧ｰ繝ｪ繝・ラ邨ゆｺ・喧
-	if (stageGrid != nullptr)
-	{
-		delete stageGrid;
-		stageGrid = nullptr;
-	}
 
 }
 
@@ -155,12 +146,7 @@ void SceneGame::Update(float elapsedTime)
 
 	// 木箱の更新処理（isTouchingPlayer を使う）
 	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
-
-	// 鏡の更新処理
-	mirror->Update(elapsedTime);
 	
-	// 鏡との当たり判定
-	mirror->CollisionVsPlayer(*players[controlPlayerIndex]);
 
 	// カメラ更新
 	InputChangePlayer();
@@ -259,7 +245,7 @@ void SceneGame::Render()
 		stageGrid->Render(rc, modelRenderer);
 
 		//鏡描画
-		mirror->Render(rc, modelRenderer);
+
 
 		//プレイヤー描画
 		for (int i = 0; i < 2; ++i)
@@ -300,8 +286,7 @@ void SceneGame::Render()
 		//木箱用デバッグプリミティブ描画
 		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
 
-		//鏡用デバッグプリミティブ描画
-		mirror->RenderDebugPrimitive(rc, shapeRenderer);
+		
 
 	}
 
@@ -319,6 +304,9 @@ void SceneGame::DrawGUI()
 
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
+
+
+
 	//Player::Instance().DrawDebugGUI();
 	Player* controlPlayer = GetControlPlayer();
 

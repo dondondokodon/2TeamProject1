@@ -470,13 +470,13 @@
     <ClCompile Include="Source\IrradiationDevice.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mirror.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\StageData.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageData1.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mirror.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
