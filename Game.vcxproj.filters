@@ -237,6 +237,12 @@
     <ClInclude Include="Source\RayHitType.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\StageData.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageData1.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -417,6 +423,12 @@
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\IrradiationDevice.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageData.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageData1.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>
