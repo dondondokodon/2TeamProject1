@@ -29,11 +29,15 @@ void LaserBeam::Update(float elapsedTime)
         //    StageObjectManager  Ƀ  C L   X g  ˗     
         RayHitResult hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
 
-        //ヒット通知
-        hit.object->OnHit(true);
-
         //反射
-        if (hit.hit&&hit.type==RayHitType::reflection)
+        if (hit.object)   hit.object->OnHit(true); //ヒット通知
+        else
+        {
+             segments.push_back({ start, end });
+             break;
+        }
+       
+        if (hit.type==RayHitType::reflection)
         {
             segments.push_back({ start, hitPos });
 
@@ -45,11 +49,12 @@ void LaserBeam::Update(float elapsedTime)
 
             start = hitPos;
         }
-        else
-        {
-            segments.push_back({ start, end });
-            break;
-        }
+		else if (hit.type == RayHitType::Stop)
+		{
+			segments.push_back({ start, hitPos });
+			break;
+		}
+       
     }
 
   

@@ -9,6 +9,7 @@
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 #include"System/Input.h"
+#include"IrradiationDevice.h"
 
 // 初期化
 void SceneGame::Initialize()
@@ -51,16 +52,6 @@ void SceneGame::Initialize()
 	//エフェクトマネージャー初期化
 	EffectManager::Instance().Initialize();
 
-	//エネミー初期化
-	/*EnemyManager& enemyManager=EnemyManager::Instance();
-	for (int i = 0;i < 2;i++)
-	{
-		EnemySlime* slime = new EnemySlime();
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}*/
-
 	//ステージオブジェクト初期化
 	StageObjectManager& mng=StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
@@ -72,6 +63,10 @@ void SceneGame::Initialize()
 
 	mng.Register(new Stage);
 
+
+	IrradiationDevice* device = new IrradiationDevice();
+	device->SetPosition({ 5, 0, 10 });
+	mng.Register(device);
 }
 
 // 終了化

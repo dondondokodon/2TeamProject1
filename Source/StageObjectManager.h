@@ -14,6 +14,7 @@ struct RayHitResult
 	bool hit;
 	StageObject* object;
 	RayHitType type;
+	DirectX::XMFLOAT3 hitPos;
 };
 class StageObjectManager
 {

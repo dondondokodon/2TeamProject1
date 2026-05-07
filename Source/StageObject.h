@@ -40,6 +40,30 @@ public:
 	//ヒット通知のフック
 	virtual void OnHit(bool hit) {}
 
+	//セッター
+	void SetPosition(const DirectX::XMFLOAT3& pos)
+	{
+		position = pos;
+		UpdateTransform();
+	}
+
+	void SetAngle(const DirectX::XMFLOAT3& ang)
+	{
+		angle = ang;
+		UpdateTransform();
+	}
+
+	void SetScale(const DirectX::XMFLOAT3& sca)
+	{
+		scale = sca;
+		UpdateTransform();
+	}
+
+	void SetModel(const char* modelPath)
+	{
+		model = std::make_unique<Model>(modelPath);
+	}
+	
 protected:
 
 	//行列更新処理

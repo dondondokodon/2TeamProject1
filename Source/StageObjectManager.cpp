@@ -89,7 +89,7 @@ RayHitResult StageObjectManager::RayCast(
 	DirectX::XMFLOAT3& hitPos,
 	DirectX::XMFLOAT3& normal)
 {
-	RayHitResult result = { false, nullptr, RayHitType::Stop };
+	RayHitResult result = { false, nullptr, RayHitType::Stop,{0,0,0} };
 	for (auto& obj : stageObjects)
 	{
 		if (Collision::RayCast(
@@ -103,6 +103,7 @@ RayHitResult StageObjectManager::RayCast(
 			result.hit = true;
 			result.object = obj.get();
 			result.type = obj->GetRayHitType();
+			result.hitPos = hitPos;
 			return result;
 		}
 	}

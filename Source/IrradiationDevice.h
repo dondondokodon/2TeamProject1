@@ -4,13 +4,25 @@
 class IrradiationDevice:public StageObject
 {
 public:
-	IrradiationDevice();
+	IrradiationDevice()
+	{
+		SetModel("Data/Model/Objects/IrradiationDevice/IrradiationDevice.mdl");
+	}
 	~IrradiationDevice() = default;
 
 	//更新処理
 	void Update(float elapsedTime);
 
-	//描画処理
-	void Render(const RenderContext& rc, ModelRenderer* renderer);
+	//ヒット通知
+	void OnHit(bool hit) override
+	{
+		isHit = hit;
+	}
+
+	//デバッグ用GUI描画
+	void DrawDebugGUI() override;
+
+private:
+	bool isHit = false;
 };
 
