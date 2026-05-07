@@ -21,7 +21,7 @@ void SceneGame::Initialize()
 	//stage = new Stage();
 
 	//ステージグリッド初期化
-	stageGrid = new StageGrid("Data/Model/Objects/Box/Box_1cm.mdl");
+	//stageGrid = new StageGrid("Data/Model/Objects/Box/Box_1cm.mdl");
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -70,10 +70,10 @@ void SceneGame::Initialize()
 	device->SetPosition({ 5, 0, 10 });
 	mng.Register(device);*/
 
-	StageData* stageData = new StageData1();
+	std::unique_ptr<StageData> stageData = std::make_unique<StageData1>(StageData1());
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
-	mng.LoadStageData(stageData);
+	mng.LoadStageData(stageData.get());
 }
 
 // 終了化
@@ -87,11 +87,11 @@ void SceneGame::Finalize()
 	}*/
 
 	//ステージグリッド終了化
-	if (stageGrid != nullptr)
+	/*if (stageGrid != nullptr)
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
-	}
+	}*/
 
 
 	//プレイヤー終了化
@@ -119,11 +119,11 @@ void SceneGame::Finalize()
 	EffectManager::Instance().Finalize();
 
 	//ステージグリッド終了化
-	if (stageGrid != nullptr)
+	/*if (stageGrid != nullptr)
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
-	}
+	}*/
 }
 
 // 更新処理
@@ -132,13 +132,13 @@ void SceneGame::Update(float elapsedTime)
 	//stage->Update(elapsedTime);
 
 	// ★ 毎フレームリセット
-	stageGrid->isTouchingPlayer = false;
+	//stageGrid->isTouchingPlayer = false;
 
 	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
+	//stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
 
 	// 木箱の更新処理（isTouchingPlayer を使う）
-	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
+	//stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
 
 	// カメラ更新
 	InputChangePlayer();
@@ -234,7 +234,7 @@ void SceneGame::Render()
 		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
-		stageGrid->Render(rc, modelRenderer);
+		//stageGrid->Render(rc, modelRenderer);
 
 		//プレイヤー描画
 		for (int i = 0; i < 2; ++i)
@@ -273,7 +273,7 @@ void SceneGame::Render()
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 		//木箱用デバッグプリミティブ描画
-		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+		//stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
 
 	}
 

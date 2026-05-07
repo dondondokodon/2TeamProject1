@@ -29,7 +29,7 @@ public:
 
 private:
 	//Stage* stage = nullptr;
-	StageGrid* stageGrid = nullptr;
+	//StageGrid* stageGrid = nullptr;
 	CameraController* cameraController = nullptr;
 
 	Player* players[2] = {};

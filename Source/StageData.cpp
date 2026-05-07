@@ -2,6 +2,7 @@
 #include "Laser.h"
 #include "IrradiationDevice.h"
 #include "StageGrid.h"
+#include<memory>
 
 StageObject* ObjectData::CreateStageObject()const
 {

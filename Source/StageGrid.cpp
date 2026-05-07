@@ -124,6 +124,7 @@ void StageGrid::Update(float elapsedTime,Player& p)
 
     // Pキーの状態を保存
     prevP = nowP;
+
 }
 
 
