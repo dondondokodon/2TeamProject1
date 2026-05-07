@@ -43,6 +43,28 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 	laserManager->Render(rc, renderer);
 }
 
+//ステージデータロード
+void StageObjectManager::LoadStageData(StageData* data)
+{
+	Clear();
+	laserManager->Clear();
+
+	for (auto& objData : data->objects)
+	{
+		StageObject* obj = objData.CreateStageObject();
+		if (objData.type == ObjectType::Laser)
+		{
+			Laser* laser = dynamic_cast<Laser*>(obj);
+			laser->setManager(this);
+			laserManager->Register(laser);
+		}
+		else
+		Register(obj);
+	}
+
+	Register(data->MyStage);
+}
+
 //ステージオブジェクト登録
 void StageObjectManager::Register(StageObject* stageObject)
 {

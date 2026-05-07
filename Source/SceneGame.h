@@ -6,26 +6,26 @@
 #include"CameraController.h"
 #include"Scene.h"
 #include"Player.h"
-// ƒQ[ƒ€ƒV[ƒ“
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
 class SceneGame:public Scene
 {
 public:
 	SceneGame(){}
 	~SceneGame()override {}
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize()override;
 
-	// I—¹‰»
+	// çµ‚äº†åŒ–
 	void Finalize()override;
 
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(float elapsedTime)override;
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Render()override;
 
-	// GUI•`‰æ
+	// GUIæç”»
 	void DrawGUI()override;
 
 private:

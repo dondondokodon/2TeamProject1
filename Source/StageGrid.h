@@ -14,6 +14,7 @@
 class StageGrid : public Stage
 {
 public:
+    StageGrid(const char* filename);
     StageGrid();
     ~StageGrid();
 
