@@ -1,7 +1,8 @@
-﻿#pragma once
+#pragma once
 
 #include"Stage.h"
 #include"StageGrid.h"
+#include"Mirror.h"
 #include"CameraController.h"
 #include"Scene.h"
 #include"Player.h"
@@ -29,7 +30,8 @@ public:
 
 private:
 	//Stage* stage = nullptr;
-	//StageGrid* stageGrid = nullptr;
+	StageGrid* stageGrid = nullptr;
+	Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
 
 	Player* players[2] = {};

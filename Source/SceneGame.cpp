@@ -1,10 +1,11 @@
-﻿#include "System/Graphics.h"
+#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"EnemyManager.h"
 #include"EnemySlime.h"
 #include"Player.h"
 #include"Laser.h"
+#include"Mirror.h"
 #include "EffectManager.h"
 #include"StageObjectManager.h"
 #include"LaserManager.h"
@@ -13,7 +14,7 @@
 
 #include"StageData1.h"
 
-// 初期化
+// 蛻晄悄蛹
 void SceneGame::Initialize()
 {
 
@@ -21,12 +22,17 @@ void SceneGame::Initialize()
 	//stage = new Stage();
 
 	//ステージグリッド初期化
-	//stageGrid = new StageGrid("Data/Model/Objects/Box/Box_1cm.mdl");
+	stageGrid = new StageGrid();
+
+
+
+
 
 	//プレイヤー初期化
 	players[0] = new Player();
-	players[0]->Initialize("Data/Model/Jammo/Jammo.mdl");
+	players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+	players[0]->SetScale({ 1,1,1 });
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
@@ -51,10 +57,19 @@ void SceneGame::Initialize()
 		1000.0f //クリップ距離(遠)
 	);
 
-	//エフェクトマネージャー初期化
+	//エネミー初期化
+	/*EnemyManager& enemyManager=EnemyManager::Instance();
+	for (int i = 0;i < 2;i++)
+	{
+		EnemySlime* slime = new EnemySlime();
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}*/
+
 	EffectManager::Instance().Initialize();
 
-	//ステージオブジェクト初期化
+	//繧ｹ繝��繧ｸ繧ｪ繝悶ず繧ｧ繧ｯ繝亥�譛溷喧
 	/*StageObjectManager& mng=StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
 	LaserManager* laserManager = mng.GetLaserManager();
@@ -65,6 +80,9 @@ void SceneGame::Initialize()
 
 	mng.Register(new Stage);
 
+	// 鏡初期化
+	mirror = new Mirror();
+	StageObjectManager::Instance().Register(mirror);
 
 	IrradiationDevice* device = new IrradiationDevice();
 	device->SetPosition({ 5, 0, 10 });
@@ -87,7 +105,7 @@ void SceneGame::Finalize()
 	}*/
 
 	//ステージグリッド終了化
-	/*if (stageGrid != nullptr)
+	if (stageGrid != nullptr)
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
@@ -105,7 +123,6 @@ void SceneGame::Finalize()
 		}
 	}
 
-
 	//カメラコントローラー終了化
 	if (cameraController!=nullptr)
 	{
@@ -116,14 +133,10 @@ void SceneGame::Finalize()
 	//エネミー終了化
 	//EnemyManager::Instance().Clear();
 
+
+
 	EffectManager::Instance().Finalize();
 
-	//ステージグリッド終了化
-	/*if (stageGrid != nullptr)
-	{
-		delete stageGrid;
-		stageGrid = nullptr;
-	}*/
 }
 
 // 更新処理
@@ -132,13 +145,14 @@ void SceneGame::Update(float elapsedTime)
 	//stage->Update(elapsedTime);
 
 	// ★ 毎フレームリセット
-	//stageGrid->isTouchingPlayer = false;
+	stageGrid->isTouchingPlayer = false;
 
 	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	//stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
+	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
 
 	// 木箱の更新処理（isTouchingPlayer を使う）
-	//stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
+	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
+	
 
 	// カメラ更新
 	InputChangePlayer();
@@ -161,12 +175,12 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		// プレイヤー同士の衝突処理
-		if (!players[0]->IsRiding())//どちらも肩車していないときだけ衝突処理を行う
+		// 繝励Ξ繧､繝､繝ｼ蜷悟｣ｫ縺ｮ陦晉ｪ∝・逅・
+		if (!players[0]->IsRiding())//縺ｩ縺｡繧峨ｂ閧ｩ霆翫＠縺ｦ縺・↑縺・→縺阪□縺題｡晉ｪ∝・逅・ｒ陦後≧
 		{
 			int otherIndex = 1 - controlPlayerIndex;										
-			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//プレイヤ1が操作中でプレイヤ2が待機中のときだけ肩車可能
-			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//操作中のプレイヤだけを押し戻し、待機中のプレイヤーは動かさない
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//繝励Ξ繧､繝､1縺梧桃菴應ｸｭ縺ｧ繝励Ξ繧､繝､2縺悟ｾ・ｩ滉ｸｭ縺ｮ縺ｨ縺阪□縺題か霆雁庄閭ｽ
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//謫堺ｽ應ｸｭ縺ｮ繝励Ξ繧､繝､縺縺代ｒ謚ｼ縺玲綾縺励∝ｾ・ｩ滉ｸｭ縺ｮ繝励Ξ繧､繝､繝ｼ縺ｯ蜍輔°縺輔↑縺・
 		}
 	}
 
@@ -234,7 +248,10 @@ void SceneGame::Render()
 		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
-		//stageGrid->Render(rc, modelRenderer);
+		stageGrid->Render(rc, modelRenderer);
+
+		//鏡描画
+
 
 		//プレイヤー描画
 		for (int i = 0; i < 2; ++i)
@@ -273,7 +290,9 @@ void SceneGame::Render()
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 		//木箱用デバッグプリミティブ描画
-		//stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+
+		
 
 	}
 
@@ -291,6 +310,9 @@ void SceneGame::DrawGUI()
 
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
+
+
+
 	//Player::Instance().DrawDebugGUI();
 	Player* controlPlayer = GetControlPlayer();
 
