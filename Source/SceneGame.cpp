@@ -53,8 +53,18 @@ void SceneGame::Initialize()
 		1000.0f //クリップ距離(遠)
 	);
 
-	//エフェクトマネージャー初期化
+	//エネミー初期化
+	/*EnemyManager& enemyManager=EnemyManager::Instance();
+	for (int i = 0;i < 2;i++)
+	{
+		EnemySlime* slime = new EnemySlime();
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}*/
+
 	EffectManager::Instance().Initialize();
+
 
 	//ステージオブジェクト初期化
 	StageObjectManager& mng=StageObjectManager::Instance();
@@ -119,7 +129,17 @@ void SceneGame::Finalize()
 	//エネミー終了化
 	//EnemyManager::Instance().Clear();
 
-	
+
+
+	EffectManager::Instance().Finalize();
+
+	//繧ｹ繝・・繧ｸ繧ｰ繝ｪ繝・ラ邨ゆｺ・喧
+	if (stageGrid != nullptr)
+	{
+		delete stageGrid;
+		stageGrid = nullptr;
+	}
+
 }
 
 // 更新処理
@@ -163,12 +183,12 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		// プレイヤー同士の衝突処理
-		if (!players[0]->IsRiding())//どちらも肩車していないときだけ衝突処理を行う
+		// 繝励Ξ繧､繝､繝ｼ蜷悟｣ｫ縺ｮ陦晉ｪ∝・逅・
+		if (!players[0]->IsRiding())//縺ｩ縺｡繧峨ｂ閧ｩ霆翫＠縺ｦ縺・↑縺・→縺阪□縺題｡晉ｪ∝・逅・ｒ陦後≧
 		{
 			int otherIndex = 1 - controlPlayerIndex;										
-			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//プレイヤ1が操作中でプレイヤ2が待機中のときだけ肩車可能
-			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//操作中のプレイヤだけを押し戻し、待機中のプレイヤーは動かさない
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//繝励Ξ繧､繝､1縺梧桃菴應ｸｭ縺ｧ繝励Ξ繧､繝､2縺悟ｾ・ｩ滉ｸｭ縺ｮ縺ｨ縺阪□縺題か霆雁庄閭ｽ
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//謫堺ｽ應ｸｭ縺ｮ繝励Ξ繧､繝､縺縺代ｒ謚ｼ縺玲綾縺励∝ｾ・ｩ滉ｸｭ縺ｮ繝励Ξ繧､繝､繝ｼ縺ｯ蜍輔°縺輔↑縺・
 		}
 	}
 
