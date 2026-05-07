@@ -231,6 +231,12 @@
     <ClInclude Include="Source\StageGrid.h">
       <Filter>Source\.hファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Source\IrradiationDevice.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RayHitType.h">
+      <Filter>Source\.hファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -408,6 +414,9 @@
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\CylinderCollider.cpp">
+      <Filter>Source\.cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IrradiationDevice.cpp">
       <Filter>Source\.cppファイル</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include "System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
 #include "memory"
+#include "RayHitType.h"
 
 class StageObject
 {
@@ -33,6 +34,12 @@ public:
 	//モデル取得
 	const Model* GetModel() const { return model.get(); }
 
+	//レイヒットタイプ取得
+	RayHitType GetRayHitType() const { return type; }
+
+	//ヒット通知のフック
+	virtual void OnHit(bool hit) {}
+
 protected:
 
 	//行列更新処理
@@ -48,5 +55,6 @@ protected:
 		0,0,1,0,
 		0,0,0,1
 	};
+	RayHitType type = RayHitType::Stop;
 };
 
