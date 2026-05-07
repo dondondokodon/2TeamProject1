@@ -1,35 +1,37 @@
-ï»¿#pragma once
+#pragma once
 
 #include"Stage.h"
 #include"StageGrid.h"
+#include"Mirror.h"
 #include"CameraController.h"
 #include"Scene.h"
 #include"Player.h"
-// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
+// ƒQ[ƒ€ƒV[ƒ“
 class SceneGame:public Scene
 {
 public:
 	SceneGame(){}
 	~SceneGame()override {}
 
-	// åˆæœŸåŒ–
+	// ‰Šú‰»
 	void Initialize()override;
 
-	// çµ‚äº†åŒ–
+	// I—¹‰»
 	void Finalize()override;
 
-	// æ›´æ–°å‡¦ç†
+	// XVˆ—
 	void Update(float elapsedTime)override;
 
-	// æç”»å‡¦ç†
+	// •`‰æˆ—
 	void Render()override;
 
-	// GUIæç”»
+	// GUI•`‰æ
 	void DrawGUI()override;
 
 private:
 	//Stage* stage = nullptr;
 	StageGrid* stageGrid = nullptr;
+	Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
 
 	Player* players[2] = {};
