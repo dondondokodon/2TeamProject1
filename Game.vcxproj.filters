@@ -132,7 +132,6 @@
     <ClInclude Include="Source\PlayerState.h" />
     <ClInclude Include="Source\PlayerStates.h" />
     <ClInclude Include="Source\ResourceManager.h" />
-    <ClInclude Include="Source\StageObject.h" />
     <ClInclude Include="Source\System\Audio.h" />
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
@@ -153,24 +152,6 @@
     <ClInclude Include="Source\System\Shader.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\WalkState.h" />
-    <ClInclude Include="Source\StageGrid.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BoxCollider.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Laser.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageObjectManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LaserManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CylinderCollider.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
     <ClInclude Include="Source\CollisionResult.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -286,6 +267,27 @@
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\StageData1.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoxCollider.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CylinderCollider.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Laser.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LaserManager.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageGrid.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageObjectManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>
@@ -468,16 +470,16 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\IrradiationDevice.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StageData.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StageData1.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mirror.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageData.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageData1.cpp">
+      <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,7 @@ void SceneGame::Initialize()
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
-	players[0]->SetScale({ 1,1,1 });
+	players[0]->SetScale({ 0.5f,0.5f,0.5f });
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
@@ -69,25 +69,8 @@ void SceneGame::Initialize()
 
 	EffectManager::Instance().Initialize();
 
-	// ステージオブジェクト初期化
-	//StageObjectManager& mng=StageObjectManager::Instance();
-	//mng.setLaserManager(new LaserManager());
-	//LaserManager* laserManager = mng.GetLaserManager();
-	//Laser* laser = new Laser();
-	//laser->setManager(&mng);
-	//laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
-	//laserManager->Register(laser);
-
-	//mng.Register(new Stage);
-
-	//// 鏡初期化
-	//mirror = new Mirror();
-	//StageObjectManager::Instance().Register(mirror);
-
-	//IrradiationDevice* device = new IrradiationDevice();
-	//device->SetPosition({ 5, 0, 10 });
-	//mng.Register(device);
-
+	
+	//ステージ初期化
 	std::unique_ptr<StageData> stageData = std::make_unique<StageData1>(StageData1());
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
