@@ -1,5 +1,6 @@
 #include "StageData1.h"
 
+
 StageData1::StageData1()
 {
 	//ステージオブジェクトの配置データを追加
