@@ -2,7 +2,18 @@
 #include"Collision.h"
 #include"Player.h"
 
-StageGrid::StageGrid()  
+StageGrid::StageGrid(const char* filename)
+{
+    // ステージモデル（木箱）を読み込み
+    model = new Model(filename);
+
+    aabbMin = { 0.0f, 0.0f, 0.0f };
+    aabbMax = { 0.0f, 0.0f, 0.0f };
+    scale = { 1.0f,1.0f,1.0f };
+    pos = { 0.5f, 0.5f, -5.5f };
+}
+
+StageGrid::StageGrid()
 {
     // ステージモデル（木箱）を読み込み
     model = new Model("Data/Model/Objects/Box/Box_1cm.mdl");

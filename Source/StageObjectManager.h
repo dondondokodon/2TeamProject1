@@ -4,6 +4,7 @@
 #include"System/ShapeRenderer.h"
 #include "StageObject.h"
 #include"RayHitType.h"
+#include"StageData.h"
 //#include"LaserManager.h"
 
 class LaserManager;
@@ -33,6 +34,9 @@ public:
 	
 	//描画処理
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
+
+	//ステージデータロード
+	void LoadStageData(StageData* data);
 
 	//ステージオブジェクト登録
 	void Register(StageObject* stageObject);

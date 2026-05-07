@@ -11,6 +11,8 @@
 #include"System/Input.h"
 #include"IrradiationDevice.h"
 
+#include"StageData1.h"
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -19,7 +21,7 @@ void SceneGame::Initialize()
 	//stage = new Stage();
 
 	//ステージグリッド初期化
-	stageGrid = new StageGrid();
+	stageGrid = new StageGrid("Data/Model/Objects/Box/Box_1cm.mdl");
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -53,7 +55,7 @@ void SceneGame::Initialize()
 	EffectManager::Instance().Initialize();
 
 	//ステージオブジェクト初期化
-	StageObjectManager& mng=StageObjectManager::Instance();
+	/*StageObjectManager& mng=StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
 	LaserManager* laserManager = mng.GetLaserManager();
 	Laser* laser = new Laser();
@@ -66,7 +68,12 @@ void SceneGame::Initialize()
 
 	IrradiationDevice* device = new IrradiationDevice();
 	device->SetPosition({ 5, 0, 10 });
-	mng.Register(device);
+	mng.Register(device);*/
+
+	StageData* stageData = new StageData1();
+	StageObjectManager& mng = StageObjectManager::Instance();
+	mng.setLaserManager(new LaserManager());
+	mng.LoadStageData(stageData);
 }
 
 // 終了化

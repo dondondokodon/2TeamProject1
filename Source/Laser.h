@@ -187,7 +187,5 @@ private:
 	bool isRotating = false;
 
 	float width = 0.6f; // Œ©‚½–Ú‚Ì‘¾‚³i’¼Œaj
-
-	void ResolvePlayerCollision();
 	StageObjectManager* manager = nullptr;
 };
