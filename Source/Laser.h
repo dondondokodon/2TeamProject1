@@ -28,7 +28,7 @@ public:
 	float maxLength = 50.0f;
 	float isActive = true;
 	float radius = 0.5f;
-	int maxReflection = 3;
+	int maxReflection = 10;
 	bool isRotating = false;
 
 
