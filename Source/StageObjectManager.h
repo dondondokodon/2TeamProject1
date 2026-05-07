@@ -47,7 +47,6 @@ public:
 		DirectX::XMFLOAT3& hitPos,
 		DirectX::XMFLOAT3& normal);
 
-
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 

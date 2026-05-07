@@ -23,7 +23,8 @@ void SceneGame::Initialize()
 	//プレイヤー初期化
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Jammo/Jammo.mdl");
-	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+	//players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+	players[0]->SetPosition({ 50.0f, 0.0f, -25.0f });
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");

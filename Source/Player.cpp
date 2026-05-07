@@ -447,7 +447,101 @@ void Player::CollisionProjectilesVsEnemies()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
+	//ステージ情報の取得（シングルトンから）
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
+
+	auto* stageObj = stageObjectManager.GetStageObject(0);
+	if (!stageObj) return;
+
+	const DirectX::XMFLOAT4X4& stageTransform = stageObj->GetTransform();
+	const Model* stageModel = stageObj->GetModel();
+
+	//接地判定（真下レイキャスト）
+	{
+		DirectX::XMFLOAT3 start = { 
+			position.x,
+			position.y + 0.5f, 
+			position.z
+		};
+		DirectX::XMFLOAT3 end = { 
+			position.x, 
+			position.y - 0.1f, 
+			position.z 
+		};
+
+		//前のフレームで接地していたら、少し長めに判定
+		if (isGround) end.y -= 0.2f;
+
+		DirectX::XMFLOAT3 hitPos, hitNormal;
+		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
+		{
+			position.y = hitPos.y;
+			velocity.y = 0.0f;
+			isGround = true;
+			OnLanding();
+		}
+		else
+		{
+			isGround = false;
+		}
+	}
+
+	// --- 3. 壁判定（めり込み防止＋壁ずり完全版） ---
+	{
+		float vx = velocity.x;
+		float vz = velocity.z;
+		float speedSq = vx * vx + vz * vz;
+
+		// 半径を定義（あなたのモデルのスケーリングに合わせて調整してください）
+		const float playerRadius = 0.5f;
+
+		// 移動していなくても、めり込み防止のために周囲をチェックする
+		// レイの方向は「現在の速度方向」か、止まっているなら「前方向」
+		DirectX::XMFLOAT3 rayDir;
+		if (speedSq > 0.0001f) {
+			float speed = sqrtf(speedSq);
+			rayDir = { vx / speed, 0.0f, vz / speed };
+		}
+		else {
+			rayDir = GetForward();
+		}
+
+		DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
+		// レイの長さ：半径(0.5f) + わずかな余裕(0.1f)
+		float rayLength = playerRadius + 0.1f;
+		DirectX::XMFLOAT3 end = {
+			start.x + rayDir.x * rayLength,
+			start.y,
+			start.z + rayDir.z * rayLength
+		};
+
+		DirectX::XMFLOAT3 hitPos, hitNormal;
+		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
+		{
+			// 1. 壁に向かっている速度成分を相殺（壁ずり）
+			float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
+			if (dot < 0.0f)
+			{
+				velocity.x -= hitNormal.x * dot;
+				velocity.z -= hitNormal.z * dot;
+			}
+
+			// 2. めり込み補正（ここが重要！）
+			// プレイヤーの中心から壁までの距離を計算
+			float dx = hitPos.x - position.x;
+			float dz = hitPos.z - position.z;
+			float distToWall = sqrtf(dx * dx + dz * dz);
+
+			// もし距離が半径(0.5f)より小さければ、めり込んでいる
+			if (distToWall < playerRadius)
+			{
+				float pushDist = playerRadius - distToWall;
+				// 壁の法線方向に、めり込んでいる分だけ押し戻す
+				position.x += hitNormal.x * (pushDist + 0.001f); // わずかな隙間(0.001f)を作る
+				position.z += hitNormal.z * (pushDist + 0.001f);
+			}
+		}
+	}
 	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 
 	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
