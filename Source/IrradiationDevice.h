@@ -23,7 +23,7 @@ public:
 	void DrawDebugGUI() override;
 
 	//ヒットの詳細判定
-	bool ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override;
+	RayHitResult ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override;
 
 	//デバッグプリミティブ描画
 	/*void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override

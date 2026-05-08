@@ -65,9 +65,10 @@ public:
 	}
 	
 	//ヒットがきちんとヒットしてるか
-	virtual bool ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
+	virtual RayHitResult ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
 	{
-		return true;	//基底クラスはとりあえずtrue
+		RayHitResult result{ true,this,type,hitPos };
+		return result;	//基底クラスはとりあえずtrue
 	}
 
 protected:
