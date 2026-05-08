@@ -33,6 +33,16 @@ public:
 
     //動かす
     void StartMove(DirectX::XMFLOAT3 targetPos);
+
+    RayHitResult StageGrid::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override {
+        // StageGrid は「絶対に」レーザーを止める存在であることを保証する
+        RayHitResult result;
+        result.hit = true;
+        result.object = this;
+        result.type = RayHitType::Stop; // 強制的に Stop を返す
+        result.hitPos = hitPos;
+        return result;
+    }
 private:
     // --------------------------------------------------------
     // ★ 木箱の移動状態管理

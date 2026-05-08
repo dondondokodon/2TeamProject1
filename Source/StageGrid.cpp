@@ -79,6 +79,7 @@ void StageGrid::Update(float elapsedTime)
     prevP = nowP;
 
     isTouchingPlayer = false;
+    UpdateTransform();
 }
 
 
