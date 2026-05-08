@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "StageObject.h"
 #include "Player.h"
 #include "Collision.h"
@@ -14,7 +14,7 @@ public:
     void CollisionVsPlayer(Player& p);
     void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer) override;
     void DrawDebugGUI();
-
+    bool ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override;
 
 private:
     DirectX::XMFLOAT3 aabbMin;
