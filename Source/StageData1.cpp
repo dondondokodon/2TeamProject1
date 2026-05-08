@@ -11,5 +11,6 @@ StageData1::StageData1()
 	objects.push_back({ ObjectType::Box,{0.5f, 0.5f, -5.5f },{ 0,0,0 },{ 1,1,1 } });
 
 	//自分自身のオブジェクト（ステージ）
-	MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");
+	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
+	MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
 }
