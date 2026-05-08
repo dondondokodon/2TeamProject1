@@ -7,7 +7,7 @@ void IrradiationDevice::Update(float elapsedTime)
 	isHit = false;	//毎フレームリセットして、ヒット通知があったフレームだけtrueになるようにする
 }
 
-bool IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
+RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
 {
     // ローカル座標に変換
     DirectX::XMMATRIX invWorld = DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&transform));    //逆行列
@@ -20,15 +20,17 @@ bool IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPo
     // これにより、中心を通る「透明な筒」にレーザーが触れていればOKになる
     float distSq = localPos.x * localPos.x + localPos.y * localPos.y;
 
-   
+    RayHitResult result{ true,this,type,hitPos };
+
     float radius = 1.0f;
     if (distSq < (radius * radius)) {
         // 前後の制限
          if (abs(localPos.z) < 1.0f) 
-        return true;
+        result.hit= true;
     }
-
-    return false;
+    else
+    result.hit = false;
+    return result;
 }
 
 void IrradiationDevice::DrawDebugGUI()

@@ -33,7 +33,8 @@ void LaserBeam::Update(float elapsedTime)
 		if (hit.object)
 		{
 			//それぞれのヒット条件と見比べる
-			if(hit.object->ReallyHit(dir,hitPos,hitNormal))
+			hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
+			if(hit.hit)
 				  hit.object->OnHit(true); //ヒット通知
 		}
 		else
