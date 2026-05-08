@@ -1,4 +1,4 @@
-#include "Laser.h"
+Ôªø#include "Laser.h"
 #include"Collision.h"
 #include <algorithm>
 #include<imgui.h>
@@ -10,360 +10,366 @@ using namespace DirectX;
 
 void LaserBeam::Update(float elapsedTime) 
 {
-    segments.clear();
+	segments.clear();
 
-    DirectX::XMFLOAT3 start = origin;
-    DirectX::XMFLOAT3 dir = direction;
+	DirectX::XMFLOAT3 start = origin;
+	DirectX::XMFLOAT3 dir = direction;
 
-    for (int i = 0; i < maxReflection; i++)
-    {
-        DirectX::XMFLOAT3 end =
-        {
-            start.x + dir.x * maxLength,
-            start.y + dir.y * maxLength,
-            start.z + dir.z * maxLength
-        };
+	for (int i = 0; i < maxReflection; i++)
+	{
+		DirectX::XMFLOAT3 end =
+		{
+			start.x + dir.x * maxLength,
+			start.y + dir.y * maxLength,
+			start.z + dir.z * maxLength
+		};
 
-        DirectX::XMFLOAT3 hitPos, hitNormal;
+		DirectX::XMFLOAT3 hitPos, hitNormal;
 
-        //    StageObjectManager  ?  C L   X g  ?     
-        RayHitResult hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
+		//    StageObjectManager  ?  C L   X g  ?     
+		RayHitResult hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
 
-        //îΩéÀ
-        if (hit.object)   hit.object->OnHit(true); //ÉqÉbÉgí ím
-        else
-        {
-             segments.push_back({ start, end });
-             break;
-        }
-       
-        if (hit.type==RayHitType::reflection)
-        {
-            segments.push_back({ start, hitPos });
+		//ÂèçÂ∞Ñ
+		if (hit.object)
+		{
+			//„Åù„Çå„Åû„Çå„ÅÆ„Éí„ÉÉ„ÉàÊù°‰ª∂„Å®Ë¶ãÊØî„Åπ„Çã
+			hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
+			if(hit.hit)
+				  hit.object->OnHit(true); //„Éí„ÉÉ„ÉàÈÄöÁü•
+		}
+		else
+		{
+			 segments.push_back({ start, end });
+			 break;
+		}
+	   
+		if (hit.type==RayHitType::reflection)
+		{
+			segments.push_back({ start, hitPos });
 
-           
-            DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
-            DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
-            DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
-            DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
+		   
+			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
+			DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
+			DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
+			DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
 
-            start = hitPos;
-        }
+			start = hitPos;
+		}
 		else if (hit.type == RayHitType::Stop)
 		{
 			segments.push_back({ start, hitPos });
 			break;
 		}
-       
-    }
+	   
+	}
 
   
 }
 
 void LaserBeam::Render()
 {
-    // 1. âÒì]íÜÇÕâΩÇ‡ÇµÇ»Ç¢
-    if (isRotating) {
-        if (isEffectPlaying) {
-            StopEffect();
-            isEffectPlaying = false;
-        }
-        return;
-    }
-    
-    Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
-    
-    //ÉZÉOÉÅÉìÉgêîÇ∆ÉGÉtÉFÉNÉgêîÇÃìØä˙
-    //îΩéÀÇ™å∏Ç¡ÇΩèÍçáÅFó]ï™Ç»ÉGÉtÉFÉNÉgÇé~ÇﬂÇÈ
-    while (activeEffects.size() > segments.size()) {
-        effekseerManager->StopEffect(activeEffects.back());
-        activeEffects.pop_back();
-    }
+	// 1. ÂõûËª¢‰∏≠„ÅØ‰Ωï„ÇÇ„Åó„Å™„ÅÑ
+	if (isRotating) {
+		if (isEffectPlaying) {
+			StopEffect();
+			isEffectPlaying = false;
+		}
+		return;
+	}
+	
+	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+	
+	//„Çª„Ç∞„É°„É≥„ÉàÊï∞„Å®„Ç®„Éï„Çß„ÇØ„ÉàÊï∞„ÅÆÂêåÊúü
+	//ÂèçÂ∞Ñ„ÅåÊ∏õ„Å£„ÅüÂ†¥ÂêàÔºö‰ΩôÂàÜ„Å™„Ç®„Éï„Çß„ÇØ„Éà„ÇíÊ≠¢„ÇÅ„Çã
+	while (activeEffects.size() > segments.size()) {
+		effekseerManager->StopEffect(activeEffects.back());
+		activeEffects.pop_back();
+	}
 
-    for (size_t i = 0; i < segments.size(); ++i) {
-        auto& seg = segments[i];
-    
-        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
-        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-        float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
-        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
-    
-        Effekseer::Handle handle;
-    
-        //ë´ÇËÇ»Ç¢èÍçáÇÃÇ›êVÇµÇ≠PlayÇ∑ÇÈ
-        if (i >= activeEffects.size()) {
-            handle = laserEffect.get()->Play(seg.start, 1.0f);
-            activeEffects.push_back(handle);
-        }
-        else {
-            handle = activeEffects[i];
-        }
-        
-    
-        //çsóÒåvéZ
-        dir = DirectX::XMVectorNegate(dir);
-        DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
-        if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
-            worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
-        }
-        DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
-        DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
-    
-        const float baseEffectSize = 28.0f;
-        DirectX::XMMATRIX mat = DirectX::XMMATRIX(
-            DirectX::XMVectorScale(right, 1.0f),
-            DirectX::XMVectorScale(up, 1.0f),
-            DirectX::XMVectorScale(dir, length / baseEffectSize),
-            DirectX::XMVectorSetW(s, 1.0f)
-        );
-    
-        Effekseer::Matrix43 effekMat;
-        DirectX::XMFLOAT4X4 m;
-        DirectX::XMStoreFloat4x4(&m, mat);
-        effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
-        effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
-        effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
-        effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
-    
-        // ñàÉtÉåÅ[ÉÄÅAç≈êVÇÃÉZÉOÉÅÉìÉgçsóÒÇÉZÉbÉg
-        effekseerManager->SetMatrix(handle, effekMat);
-    }
-    
-    isEffectPlaying = true;
+	for (size_t i = 0; i < segments.size(); ++i) {
+		auto& seg = segments[i];
+	
+		DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+		DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+		float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+		DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+	
+		Effekseer::Handle handle;
+	
+		//Ë∂≥„Çä„Å™„ÅÑÂ†¥Âêà„ÅÆ„ÅøÊñ∞„Åó„ÅèPlay„Åô„Çã
+		if (i >= activeEffects.size()) {
+			handle = laserEffect.get()->Play(seg.start, 1.0f);
+			activeEffects.push_back(handle);
+		}
+		else {
+			handle = activeEffects[i];
+		}
+		
+	
+		//Ë°åÂàóË®àÁÆó
+		dir = DirectX::XMVectorNegate(dir);
+		DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
+		if (fabsf(DirectX::XMVectorGetY(dir)) > 0.999f) {
+			worldUp = DirectX::XMVectorSet(0, 0, 1, 0);
+		}
+		DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, dir));
+		DirectX::XMVECTOR up = DirectX::XMVector3Cross(dir, right);
+	
+		const float baseEffectSize = 28.0f;
+		DirectX::XMMATRIX mat = DirectX::XMMATRIX(
+			DirectX::XMVectorScale(right, 1.0f),
+			DirectX::XMVectorScale(up, 1.0f),
+			DirectX::XMVectorScale(dir, length / baseEffectSize),
+			DirectX::XMVectorSetW(s, 1.0f)
+		);
+	
+		Effekseer::Matrix43 effekMat;
+		DirectX::XMFLOAT4X4 m;
+		DirectX::XMStoreFloat4x4(&m, mat);
+		effekMat.Value[0][0] = m._11; effekMat.Value[0][1] = m._12; effekMat.Value[0][2] = m._13;
+		effekMat.Value[1][0] = m._21; effekMat.Value[1][1] = m._22; effekMat.Value[1][2] = m._23;
+		effekMat.Value[2][0] = m._31; effekMat.Value[2][1] = m._32; effekMat.Value[2][2] = m._33;
+		effekMat.Value[3][0] = m._41; effekMat.Value[3][1] = m._42; effekMat.Value[3][2] = m._43;
+	
+		// ÊØé„Éï„É¨„Éº„É†„ÄÅÊúÄÊñ∞„ÅÆ„Çª„Ç∞„É°„É≥„ÉàË°åÂàó„Çí„Çª„ÉÉ„Éà
+		effekseerManager->SetMatrix(handle, effekMat);
+	}
+	
+	isEffectPlaying = true;
 }
 
 //?f?o?b?O?pGUI?`??
 void LaserBeam::DrawDebugGUI()
 {
-    if (ImGui::Begin("Beam", nullptr, ImGuiWindowFlags_None))
-    {
-        //?g?????X?t?H?[??
-        if (ImGui::CollapsingHeader("Item", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            //??u
-            ImGui::InputFloat3("dir", &direction.x);
+	if (ImGui::Begin("Beam", nullptr, ImGuiWindowFlags_None))
+	{
+		//?g?????X?t?H?[??
+		if (ImGui::CollapsingHeader("Item", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			//??u
+			ImGui::InputFloat3("dir", &direction.x);
 
-            //????
+			//????
 			ImGui::InputFloat("maxLength", &maxLength);
 
-            //????
+			//????
 			ImGui::InputFloat("radius", &radius);
-        }
-    }
-    ImGui::End();
+		}
+	}
+	ImGui::End();
 }
 
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
-    if (isRotating)
-        return LaserHit(); // ????????
+	if (isRotating)
+		return LaserHit(); // ????????
 
-    LaserHit result;
-    //float bestDist = FLT_MAX;
-
-
-    // AABB ?? min/max
-    DirectX::XMFLOAT3 bmin =
-    {
-        box.GetCenter().x - box.GetSize().x * 0.5f,
-        box.GetCenter().y - box.GetSize().y * 0.5f,
-        box.GetCenter().z - box.GetSize().z * 0.5f
-    };
-    DirectX::XMFLOAT3 bmax =
-    {
-        box.GetCenter().x + box.GetSize().x * 0.5f,
-        box.GetCenter().y + box.GetSize().y * 0.5f,
-        box.GetCenter().z + box.GetSize().z * 0.5f
-    };
-
-    // ?S???????????????
-    for (const auto& seg : segments)
-    {
-        DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
-        DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
-        DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e,s));
-
-        float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
-
-        // AABB ???S
-        DirectX::XMVECTOR boxCenter = DirectX::XMLoadFloat3(&box.GetCenter());
-        DirectX::XMVECTOR v = DirectX::XMVectorSubtract(boxCenter, s);
-
-        // ??????????_
-        float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(v, dir));
-        t = std::clamp(t, 0.0f, segLen);
-
-        DirectX::XMVECTOR closestOnRay = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
-
-        // AABB ??????_
-        DirectX::XMFLOAT3 rayPoint;
-        DirectX::XMStoreFloat3(&rayPoint, closestOnRay);
-
-        DirectX::XMFLOAT3 closestOnAABB =
-        {
-            std::clamp(rayPoint.x, bmin.x, bmax.x),
-            std::clamp(rayPoint.y, bmin.y, bmax.y),
-            std::clamp(rayPoint.z, bmin.z, bmax.z)
-        };
-
-        DirectX::XMVECTOR aabbP = DirectX::XMLoadFloat3(&closestOnAABB);
-
-        // ????
-        float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(aabbP , closestOnRay)));
+	LaserHit result;
+	//float bestDist = FLT_MAX;
 
 
-        float skin = 0.01f;
+	// AABB ?? min/max
+	DirectX::XMFLOAT3 bmin =
+	{
+		box.GetCenter().x - box.GetSize().x * 0.5f,
+		box.GetCenter().y - box.GetSize().y * 0.5f,
+		box.GetCenter().z - box.GetSize().z * 0.5f
+	};
+	DirectX::XMFLOAT3 bmax =
+	{
+		box.GetCenter().x + box.GetSize().x * 0.5f,
+		box.GetCenter().y + box.GetSize().y * 0.5f,
+		box.GetCenter().z + box.GetSize().z * 0.5f
+	};
 
-        if (dist <= radius - skin)
-        {
-            float hitDist = t;  //ÅEΩÅEΩÅEΩÅEΩÅEΩÅEΩÃãÔøΩÅEΩÅEΩ
-            result.hit = true;
+	// ?S???????????????
+	for (const auto& seg : segments)
+	{
+		DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+		DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+		DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e,s));
 
-            float depth = radius - dist;
+		float segLen = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
 
-            // âüÇµÇ∑Ç¨ñhé~
-            float push = depth * 0.7f;
+		// AABB ???S
+		DirectX::XMVECTOR boxCenter = DirectX::XMLoadFloat3(&box.GetCenter());
+		DirectX::XMVECTOR v = DirectX::XMVectorSubtract(boxCenter, s);
 
-            // ç≈è¨ï€èÿ
-            push = max(push, 0.01f);
+		// ??????????_
+		float t = DirectX::XMVectorGetX(DirectX::XMVector3Dot(v, dir));
+		t = std::clamp(t, 0.0f, segLen);
 
-            result.penetration = push;
+		DirectX::XMVECTOR closestOnRay = DirectX::XMVectorAdd(s, DirectX::XMVectorScale(dir, t));
 
-            // ñ@ê¸
-            DirectX::XMFLOAT3 dirOut =
-            {
-                box.GetCenter().x - rayPoint.x,
-                box.GetCenter().y - rayPoint.y,
-                box.GetCenter().z - rayPoint.z
-            };
+		// AABB ??????_
+		DirectX::XMFLOAT3 rayPoint;
+		DirectX::XMStoreFloat3(&rayPoint, closestOnRay);
 
-            DirectX::XMVECTOR n = DirectX::XMVector3Normalize(
-                DirectX::XMLoadFloat3(&dirOut)
-            );
+		DirectX::XMFLOAT3 closestOnAABB =
+		{
+			std::clamp(rayPoint.x, bmin.x, bmax.x),
+			std::clamp(rayPoint.y, bmin.y, bmax.y),
+			std::clamp(rayPoint.z, bmin.z, bmax.z)
+		};
 
-            DirectX::XMStoreFloat3(&result.normal, n);
+		DirectX::XMVECTOR aabbP = DirectX::XMLoadFloat3(&closestOnAABB);
 
-            return result;
-        }
-      
-    }
+		// ????
+		float dist = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(aabbP , closestOnRay)));
 
-    return result;
-    //return bestHit;
+
+		float skin = 0.01f;
+
+		if (dist <= radius - skin)
+		{
+			float hitDist = t;  //„ÉªÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩÔæåÂÖ∑ÔΩøÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩ
+			result.hit = true;
+
+			float depth = radius - dist;
+
+			// Êäº„Åó„Åô„ÅéÈò≤Ê≠¢
+			float push = depth * 0.7f;
+
+			// ÊúÄÂ∞è‰øùË®º
+			push = max(push, 0.01f);
+
+			result.penetration = push;
+
+			// Ê≥ïÁ∑ö
+			DirectX::XMFLOAT3 dirOut =
+			{
+				box.GetCenter().x - rayPoint.x,
+				box.GetCenter().y - rayPoint.y,
+				box.GetCenter().z - rayPoint.z
+			};
+
+			DirectX::XMVECTOR n = DirectX::XMVector3Normalize(
+				DirectX::XMLoadFloat3(&dirOut)
+			);
+
+			DirectX::XMStoreFloat3(&result.normal, n);
+
+			return result;
+		}
+	  
+	}
+
+	return result;
+	//return bestHit;
 }
 
-//ÅEΩ~ÅEΩÅEΩÅEΩ∆ÇÃîÔøΩÅEΩÅEΩ
+//„ÉªÔΩΩ~„ÉªÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩÔæÜ„ÅÆË≤ªÔΩøÔΩΩ„ÉªÔΩΩ„ÉªÔΩΩ
 LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 {
-    if (isRotating)
-        return LaserHit();
+	if (isRotating)
+		return LaserHit();
 
-    LaserHit result;
+	LaserHit result;
 
-    float halfH = cylinder.GetHeight() * 0.5f;
-    float cylR = cylinder.GetRadius();
-    DirectX::XMFLOAT3 center = cylinder.GetCenter();
+	float halfH = cylinder.GetHeight() * 0.5f;
+	float cylR = cylinder.GetRadius();
+	DirectX::XMFLOAT3 center = cylinder.GetCenter();
 
-    for (const auto& seg : segments)
-    {
-        DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
-        DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
+	for (const auto& seg : segments)
+	{
+		DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
+		DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
 
-        DirectX::XMVECTOR dir = XMVector3Normalize(XMVectorSubtract(e, s));
-        float segLen = XMVectorGetX(XMVector3Length(XMVectorSubtract(e, s)));
+		DirectX::XMVECTOR dir = XMVector3Normalize(XMVectorSubtract(e, s));
+		float segLen = XMVectorGetX(XMVector3Length(XMVectorSubtract(e, s)));
 
-        // ÉåÅ[ÉUÅ[è„ÇÃç≈ãﬂê⁄ì_ p
-        DirectX::XMVECTOR c = XMLoadFloat3(&center);
-        float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
-        t = std::clamp(t, 0.0f, segLen);
+		// „É¨„Éº„Ç∂„Éº‰∏ä„ÅÆÊúÄËøëÊé•ÁÇπ p
+		DirectX::XMVECTOR c = XMLoadFloat3(&center);
+		float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
+		t = std::clamp(t, 0.0f, segLen);
 
-        DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
+		DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
 
-        DirectX::XMFLOAT3 p;
-        XMStoreFloat3(&p, pVec);
+		DirectX::XMFLOAT3 p;
+		XMStoreFloat3(&p, pVec);
 
-        // Cylinder è„ÇÃç≈ãﬂê⁄ì_ q
-        DirectX::XMFLOAT3 q;
+		// Cylinder ‰∏ä„ÅÆÊúÄËøëÊé•ÁÇπ q
+		DirectX::XMFLOAT3 q;
 
-        // Y clamp
-        q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
+		// Y clamp
+		q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
 
-        // XZ â~
-        float dx = p.x - center.x;
-        float dz = p.z - center.z;
-        float len = sqrtf(dx * dx + dz * dz);
+		// XZ ÂÜÜ
+		float dx = p.x - center.x;
+		float dz = p.z - center.z;
+		float len = sqrtf(dx * dx + dz * dz);
 
-        if (len > cylR)
-        {
-            q.x = center.x + dx / len * cylR;
-            q.z = center.z + dz / len * cylR;
-        }
-        else
-        {
-            q.x = p.x;
-            q.z = p.z;
-        }
+		if (len > cylR)
+		{
+			q.x = center.x + dx / len * cylR;
+			q.z = center.z + dz / len * cylR;
+		}
+		else
+		{
+			q.x = p.x;
+			q.z = p.z;
+		}
 
-        DirectX::XMVECTOR qVec = XMLoadFloat3(&q);
+		DirectX::XMVECTOR qVec = XMLoadFloat3(&q);
 
-        // ãóó£
-        DirectX::XMVECTOR v = XMVectorSubtract(qVec, pVec);
-        float dist = XMVectorGetX(XMVector3Length(v));
+		// Ë∑ùÈõ¢
+		DirectX::XMVECTOR v = XMVectorSubtract(qVec, pVec);
+		float dist = XMVectorGetX(XMVector3Length(v));
 
-        float skin = 0.01f;
+		float skin = 0.01f;
 
-        if (dist <= radius - skin)
-        {
-            result.hit = true;
+		if (dist <= radius - skin)
+		{
+			result.hit = true;
 
-            float depth = radius - dist;
+			float depth = radius - dist;
 
-            // AABB Ç∆ìØÇ∂âüÇµó 
-            float push = depth * 0.7f;
-            push = max(push, 0.01f);
+			// AABB „Å®Âêå„ÅòÊäº„ÅóÈáè
+			float push = depth * 0.7f;
+			push = max(push, 0.01f);
 
-            result.penetration = push;
+			result.penetration = push;
 
-            // ? ñ@ê¸ÅiAABB Ç∆ìØÇ∂å¸Ç´Ç…ìùàÍÅj
-            DirectX::XMVECTOR n;
+			// ? Ê≥ïÁ∑öÔºàAABB „Å®Âêå„ÅòÂêë„Åç„Å´Áµ±‰∏ÄÔºâ
+			DirectX::XMVECTOR n;
 
-            if (dist > 0.0001f)
-            {
-                // AABB Ç∆ìØÇ∂å¸Ç´ÅFcenter - p
-                DirectX::XMFLOAT3 dirOut =
-                {
-                    center.x - p.x,
-                    center.y - p.y,
-                    center.z - p.z
-                };
-                n = XMVector3Normalize(XMLoadFloat3(&dirOut));
-            }
-            else
-            {
-                // fallbackÅFXZ ï˚å¸óDêÊ
-                DirectX::XMFLOAT3 fallback =
-                {
-                    center.x - p.x,
-                    0.0f,
-                    center.z - p.z
-                };
+			if (dist > 0.0001f)
+			{
+				// AABB „Å®Âêå„ÅòÂêë„ÅçÔºöcenter - p
+				DirectX::XMFLOAT3 dirOut =
+				{
+					center.x - p.x,
+					center.y - p.y,
+					center.z - p.z
+				};
+				n = XMVector3Normalize(XMLoadFloat3(&dirOut));
+			}
+			else
+			{
+				// fallbackÔºöXZ ÊñπÂêëÂÑ™ÂÖà
+				DirectX::XMFLOAT3 fallback =
+				{
+					center.x - p.x,
+					0.0f,
+					center.z - p.z
+				};
 
-                DirectX::XMVECTOR fb = XMLoadFloat3(&fallback);
+				DirectX::XMVECTOR fb = XMLoadFloat3(&fallback);
 
-                if (XMVector3Length(fb).m128_f32[0] < 0.0001f)
-                    fb = XMVectorSet(1, 0, 0, 0);
+				if (XMVector3Length(fb).m128_f32[0] < 0.0001f)
+					fb = XMVectorSet(1, 0, 0, 0);
 
-                n = XMVector3Normalize(fb);
-            }
+				n = XMVector3Normalize(fb);
+			}
 
-            XMStoreFloat3(&result.normal, n);
-            result.point = q;
+			XMStoreFloat3(&result.normal, n);
+			result.point = q;
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 
-    return result;
+	return result;
 
 
 }
@@ -372,139 +378,139 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
 void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 {
-    // origin ÇíÜêSäÓèÄÇ…à⁄ìÆ
-    DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&startPos);
-    DirectX::XMVECTOR c = DirectX::XMLoadFloat3(&center);
-    DirectX::XMVECTOR local = DirectX::XMVectorSubtract(pos, c);
+	// origin „Çí‰∏≠ÂøÉÂü∫Ê∫ñ„Å´ÁßªÂãï
+	DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&startPos);
+	DirectX::XMVECTOR c = DirectX::XMLoadFloat3(&center);
+	DirectX::XMVECTOR local = DirectX::XMVectorSubtract(pos, c);
 
-    // Yé≤âÒì]
-    DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(angleY);
-    local = DirectX::XMVector3Transform(local, rot);
+	// YËª∏ÂõûËª¢
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(angleY);
+	local = DirectX::XMVector3Transform(local, rot);
 
-    // íÜêSÇ…ñﬂÇ∑
-    DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(local, c);
-    DirectX::XMStoreFloat3(&startPos, newPos);
+	// ‰∏≠ÂøÉ„Å´Êàª„Åô
+	DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(local, c);
+	DirectX::XMStoreFloat3(&startPos, newPos);
 
-    // direction Ç‡âÒì]
-    DirectX::XMVECTOR dir = DirectX::XMLoadFloat3(&direction);
-    dir = DirectX::XMVector3TransformNormal(dir, rot);
-    DirectX::XMStoreFloat3(&direction, dir);
+	// direction „ÇÇÂõûËª¢
+	DirectX::XMVECTOR dir = DirectX::XMLoadFloat3(&direction);
+	dir = DirectX::XMVector3TransformNormal(dir, rot);
+	DirectX::XMStoreFloat3(&direction, dir);
 }
 
 void Laser::Initialize(
-    const DirectX::XMFLOAT3& emitterPos,
-    const DirectX::XMFLOAT3& dir,
-    float maxLen)
+	const DirectX::XMFLOAT3& emitterPos,
+	const DirectX::XMFLOAT3& dir,
+	float maxLen)
 {
    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
    //beam.setEffect("Data/Effect/laserOre.efkefc");
    beam.setEffect("Data/Effect/reizar.efkefc");
 
-    startPos = emitterPos;
-    direction = dir;
-    maxLength = maxLen;
+	startPos = emitterPos;
+	direction = dir;
+	maxLength = maxLen;
   
-    scale = { 0.5f,0.5f,0.5f };
+	scale = { 0.5f,0.5f,0.5f };
 
-    
-    DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
-    v = DirectX::XMVector3Normalize(v);
-    DirectX::XMStoreFloat3(&direction, v);
+	
+	DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
+	v = DirectX::XMVector3Normalize(v);
+	DirectX::XMStoreFloat3(&direction, v);
 
-    // LaserBeam
-    beam.origin = startPos;
-    beam.direction = direction;
-    beam.maxLength = maxLength;
-    beam.maxReflection = 5;
-    //beam.radius = 0.3f;
+	// LaserBeam
+	beam.origin = startPos;
+	beam.direction = direction;
+	beam.maxLength = maxLength;
+	beam.maxReflection = 5;
+	//beam.radius = 0.3f;
 
-   // OutputDebugStringA("laserÇ‚Ç¡ÇƒÇÈ\n");
+   // OutputDebugStringA("laser„ÇÑ„Å£„Å¶„Çã\n");
 }
 
 void Laser::Update(float elapsedTime)
 {
-    beam.isRotating = isRotating;
+	beam.isRotating = isRotating;
 
 
-    if (!isActive) return;
+	if (!isActive) return;
 
   /*  Shoot();
 
-    beam.SetPoints(startPos, endPos);
-    beam.SetAngle(angle);
-    beam.setDirection(direction);
-    beam.Update(elapsedTime);*/
+	beam.SetPoints(startPos, endPos);
+	beam.SetAngle(angle);
+	beam.setDirection(direction);
+	beam.Update(elapsedTime);*/
 
 	position = startPos;
 	direction = beam.direction;
 	position.x -= direction.x*0.5f;
 	angle.y = atan2f(direction.x, direction.z);
-    
-    
+	
+	
 
 	UpdateTransform();
-    //ResolvePlayerCollision();
+	//ResolvePlayerCollision();
 
-    if (!isActive) return;
+	if (!isActive) return;
 
-    // ÉXÉeÅ[ÉWíÜêSÅiïKóvÇ»ÇÁïœçXÅj
-    DirectX::XMFLOAT3 center = { 0, 0, 0 };
+	// „Çπ„ÉÜ„Éº„Ç∏‰∏≠ÂøÉÔºàÂøÖË¶Å„Å™„ÇâÂ§âÊõ¥Ôºâ
+	DirectX::XMFLOAT3 center = { 0, 0, 0 };
 
-    // Q/E Ç≈âÒì]
-    float step = DirectX::XM_PI / 4.0f;
+	// Q/E „ÅßÂõûËª¢
+	float step = DirectX::XM_PI / 4.0f;
 
-    if (!isRotating)
-    {
+	if (!isRotating)
+	{
 
-        if (GetAsyncKeyState('Q') & 0x0001)
-        {
-            targetAngleY -= step;
-            isRotating = true;   // Å© âÒì]äJén
-        }
-        if (GetAsyncKeyState('E') & 0x0001)
-        {
-            targetAngleY += step;
-            isRotating = true;   // Å© âÒì]äJén
-        }
-    }
+		if (GetAsyncKeyState('Q') & 0x0001)
+		{
+			targetAngleY -= step;
+			isRotating = true;   // ‚Üê ÂõûËª¢ÈñãÂßã
+		}
+		if (GetAsyncKeyState('E') & 0x0001)
+		{
+			targetAngleY += step;
+			isRotating = true;   // ‚Üê ÂõûËª¢ÈñãÂßã
+		}
+	}
 
-    float diff = targetAngleY - currentAngleY;
+	float diff = targetAngleY - currentAngleY;
 
-    if (fabs(diff) < 0.001f)
-    {
-        diff = 0.0f;
-        currentAngleY = targetAngleY;
-        isRotating = false;
-    }
-    else
-    {
-        float dir = (diff > 0.0f) ? 1.0f : -1.0f;
+	if (fabs(diff) < 0.001f)
+	{
+		diff = 0.0f;
+		currentAngleY = targetAngleY;
+		isRotating = false;
+	}
+	else
+	{
+		float dir = (diff > 0.0f) ? 1.0f : -1.0f;
 
-        // ìôë¨âÒì]Åió·ÅF1ïbÇ≈90ÅãÅj
-        float delta = (DirectX::XM_PI / 2.0f) * elapsedTime * dir;
+		// Á≠âÈÄüÂõûËª¢Ôºà‰æãÔºö1Áßí„Åß90¬∞Ôºâ
+		float delta = (DirectX::XM_PI / 2.0f) * elapsedTime * dir;
 
-        if (fabs(delta) > fabs(diff))
-            delta = diff;
+		if (fabs(delta) > fabs(diff))
+			delta = diff;
 
-        currentAngleY += delta;
+		currentAngleY += delta;
 
-        RotateAroundCenter(center, delta);
-    }
+		RotateAroundCenter(center, delta);
+	}
 
 
-    // ÉåÅ[ÉUÅ[ÇÃîΩéÀåvéZ
-    beam.origin = startPos;
-    beam.direction = direction;
-    // LaserBeam Ç™ÉåÅ[ÉUÅ[ÇåÇÇ¬ÅiîΩéÀä‹ÇﬁÅj
-    beam.Update(elapsedTime);
+	// „É¨„Éº„Ç∂„Éº„ÅÆÂèçÂ∞ÑË®àÁÆó
+	beam.origin = startPos;
+	beam.direction = direction;
+	// LaserBeam „Åå„É¨„Éº„Ç∂„Éº„ÇíÊíÉ„Å§ÔºàÂèçÂ∞ÑÂê´„ÇÄÔºâ
+	beam.Update(elapsedTime);
 }
 
 void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-    if (!isActive) return;
+	if (!isActive) return;
 
-    beam.Render();
+	beam.Render();
 
-    StageObject::Render(rc, renderer);
+	StageObject::Render(rc, renderer);
 }
