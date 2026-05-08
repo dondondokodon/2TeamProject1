@@ -11,7 +11,7 @@ Mirror::Mirror()
     angle = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f, 1.0f, 1.0f };
 
-    RayHitType type = RayHitType::reflection;
+    type = RayHitType::reflection;
 
     UpdateTransform();
 }
