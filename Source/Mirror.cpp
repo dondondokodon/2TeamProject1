@@ -23,6 +23,7 @@ Mirror::~Mirror()
 
 void Mirror::Update(float elapsedTime)
 {
+    type = RayHitType::reflection;
     const float step = DirectX::XM_PI / 4.0f;
 
     bool nowU = (GetAsyncKeyState('U') & 0x8000);
@@ -116,6 +117,27 @@ void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
         size,
         { 1, 0, 0, 1 }
     );
+}
+
+bool Mirror::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
+{
+    // 角度による判定 (内積)
+    // 鏡の正面ベクトル (forward) と レイの方向 (dir) が向かい合っているか
+    DirectX::XMVECTOR dirVec = DirectX::XMLoadFloat3(&dir);
+    DirectX::XMVECTOR normalVec = DirectX::XMLoadFloat3(&hitNormal);
+
+    // dot < 0 なら向かい合っている（正面から当たっている）
+    float dot = 0.0f;
+    DirectX::XMStoreFloat(&dot, DirectX::XMVector3Dot(dirVec, normalVec));
+
+    if (dot > -0.1f)
+    {
+        type = RayHitType::Stop;
+        return false; // 浅すぎる角度や裏からのヒットは無効
+    }
+
+ 
+    return true;
 }
 
 
