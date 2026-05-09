@@ -68,9 +68,9 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
-// 肩車タイマー更新
-if (rideTimer > 0.0f)
-{
+	//肩車タイマー更新
+	if (rideTimer > 0.0f)
+	{
 	rideTimer -= elapsedTime;
 
 	if (rideTimer <= 0.0f && !isRiding)
@@ -458,90 +458,116 @@ void Player::CollisionPlayerVsStage()
 
 	//接地判定（真下レイキャスト）
 	{
-		DirectX::XMFLOAT3 start = { 
+		//着地した瞬間だけ OnLanding を呼ぶため、前フレームの接地状態を保存
+		bool wasGround = isGround;
+
+		//プレイヤーの少し上から足元の少し下までレイを飛ばす
+		DirectX::XMFLOAT3 start = {
 			position.x,
-			position.y + 0.5f, 
+			position.y + 0.5f,
 			position.z
 		};
-		DirectX::XMFLOAT3 end = { 
-			position.x, 
-			position.y - 0.1f, 
-			position.z 
+		DirectX::XMFLOAT3 end = {
+			position.x,
+			position.y - 0.1f,
+			position.z
 		};
 
-		//前のフレームで接地していたら、少し長めに判定
+		//接地中は少し長めに判定して、段差や坂で接地が切れにくいようにする
 		if (isGround) end.y -= 0.2f;
 
 		DirectX::XMFLOAT3 hitPos, hitNormal;
 		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
 		{
+			//地面に当たった位置に高さを合わせる
 			position.y = hitPos.y;
+
+			//落下速度を止めて接地状態にする
 			velocity.y = 0.0f;
 			isGround = true;
-			OnLanding();
+
+			//空中から地面に着いた瞬間だけ着地処理を呼ぶ
+			if (!wasGround)
+			{
+				OnLanding();
+			}
 		}
 		else
 		{
+			//地面がなければ空中扱いにする
 			isGround = false;
 		}
 	}
 
-	// --- 3. 壁判定（めり込み防止＋壁ずり完全版） ---
+	//壁判定（移動方向のみ）
 	{
 		float vx = velocity.x;
 		float vz = velocity.z;
 		float speedSq = vx * vx + vz * vz;
 
-		// 半径を定義（あなたのモデルのスケーリングに合わせて調整してください）
-		const float playerRadius = 0.5f;
-
-		// 移動していなくても、めり込み防止のために周囲をチェックする
-		// レイの方向は「現在の速度方向」か、止まっているなら「前方向」
-		DirectX::XMFLOAT3 rayDir;
-		if (speedSq > 0.0001f) {
-			float speed = sqrtf(speedSq);
-			rayDir = { vx / speed, 0.0f, vz / speed };
-		}
-		else {
-			rayDir = GetForward();
-		}
-
-		DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
-		// レイの長さ：半径(0.5f) + わずかな余裕(0.1f)
-		float rayLength = playerRadius + 0.1f;
-		DirectX::XMFLOAT3 end = {
-			start.x + rayDir.x * rayLength,
-			start.y,
-			start.z + rayDir.z * rayLength
-		};
-
-		DirectX::XMFLOAT3 hitPos, hitNormal;
-		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
+		//移動していないときは壁判定をしない
+		if (speedSq > 0.0001f)
 		{
-			// 1. 壁に向かっている速度成分を相殺（壁ずり）
-			float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
-			if (dot < 0.0f)
-			{
-				velocity.x -= hitNormal.x * dot;
-				velocity.z -= hitNormal.z * dot;
-			}
+			//プレイヤーの半径
+			const float playerRadius = 0.5f;
 
-			// 2. めり込み補正（ここが重要！）
-			// プレイヤーの中心から壁までの距離を計算
-			float dx = hitPos.x - position.x;
-			float dz = hitPos.z - position.z;
-			float distToWall = sqrtf(dx * dx + dz * dz);
+			//壁にぴったり張り付かないようにする余白
+			const float skin = 0.02f;
 
-			// もし距離が半径(0.5f)より小さければ、めり込んでいる
-			if (distToWall < playerRadius)
+			//半径分 + 余白だけレイを飛ばす
+			const float rayLength = playerRadius + skin;
+
+			//速度ベクトルを正規化して、移動方向を求める
+			float speed = sqrtf(speedSq);
+			DirectX::XMFLOAT3 rayDir = {
+				vx / speed,
+				0.0f,
+				vz / speed
+			};
+
+			//腰あたりの高さから、移動方向へレイを飛ばす
+			DirectX::XMFLOAT3 start = {
+				position.x,
+				position.y + 0.5f,
+				position.z
+			};
+
+			DirectX::XMFLOAT3 end = {
+				start.x + rayDir.x * rayLength,
+				start.y,
+				start.z + rayDir.z * rayLength
+			};
+
+			DirectX::XMFLOAT3 hitPos, hitNormal;
+			if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
 			{
-				float pushDist = playerRadius - distToWall;
-				// 壁の法線方向に、めり込んでいる分だけ押し戻す
-				position.x += hitNormal.x * (pushDist + 0.001f); // わずかな隙間(0.001f)を作る
-				position.z += hitNormal.z * (pushDist + 0.001f);
+				//壁に向かう速度成分を求める
+				float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
+
+				//壁に向かう速度だけ消して、壁沿いには動けるようにする
+				if (dot < 0.0f)
+				{
+					velocity.x -= hitNormal.x * dot;
+					velocity.z -= hitNormal.z * dot;
+				}
+
+				//プレイヤー中心から壁までのXZ距離を求める
+				float dx = hitPos.x - position.x;
+				float dz = hitPos.z - position.z;
+				float distToWall = sqrtf(dx * dx + dz * dz);
+
+				//壁との距離が半径より近い場合は、めり込んでいる分だけ押し戻す
+				if (distToWall < playerRadius)
+				{
+					float pushDist = playerRadius - distToWall + skin;
+
+					position.x += hitNormal.x * pushDist;
+					position.z += hitNormal.z * pushDist;
+				}
 			}
 		}
 	}
+
 	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 
 	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
@@ -622,7 +648,7 @@ void Player::CollisionVsPlayer(Player& other, bool canRide)
 	float distanceSq = dx * dx + dz * dz;
 	float minDistance = radius + other.GetRadius();
 
-// 距離が離れていれば何もしない
+//距離が離れていれば何もしない
 if (distanceSq >= minDistance * minDistance)
 {
 	return;
@@ -835,7 +861,7 @@ void Player::UpdateRiding(float elapsedTime)
 	model->UpdateTransform();
 }
 
-// 肩車処理更新
+//肩車解除処理
 void Player::StopRiding()
 {
 	isRiding = false;
