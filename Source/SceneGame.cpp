@@ -32,12 +32,13 @@ void SceneGame::Initialize()
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
-	players[0]->SetScale({ 0.5f,0.5f,0.5f });
+	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
 	players[0]->SetIsControlling(true);
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
 	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
+	players[1]->SetIsRobot(true);
 	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;

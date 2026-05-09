@@ -36,6 +36,46 @@ void StageGrid::Update(float elapsedTime)
     bool trgP = (nowP && !prevP);
 
     // ---------------------------------------------------------
+    // ★ プレイヤーが木箱の正面を向いているか判定（毎フレーム）
+    // ---------------------------------------------------------
+    auto playerPos = p.GetPosition();
+    auto playerForward = p.GetForward();
+
+    DirectX::XMFLOAT3 toBox = {
+        pos.x - playerPos.x,
+        0,
+        pos.z - playerPos.z
+    };
+
+    float len = sqrtf(toBox.x * toBox.x + toBox.z * toBox.z);
+    if (len > 0.0001f) {
+        toBox.x /= len;
+        toBox.z /= len;
+    }
+
+    float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
+    bool isFacingBox = (dot > 0.7f);
+
+    // ★ 触れていて、正面を向いていて、P を押した瞬間に移動開始 ↓player1のみ
+    if (isTouchingPlayer && isFacingBox && trgP && !isMoving && !p.GetIsRobot())
+    {
+        float dx = playerPos.x - pos.x;
+        float dz = playerPos.z - pos.z;
+
+        if (fabs(dx) > fabs(dz))
+        {
+            moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
+        }
+        else
+        {
+            moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
+        }
+
+        isMoving = true;
+        moveRemain = moveAmount;
+    }
+
+    // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
     if(isMoving)
