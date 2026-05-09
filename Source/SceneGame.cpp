@@ -1,16 +1,20 @@
-﻿#include "System/Graphics.h"
+#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"EnemyManager.h"
 #include"EnemySlime.h"
 #include"Player.h"
 #include"Laser.h"
+#include"Mirror.h"
 #include "EffectManager.h"
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 #include"System/Input.h"
+#include"IrradiationDevice.h"
 
-// 初期化
+#include"StageData1.h"
+
+//
 void SceneGame::Initialize()
 {
 
@@ -18,18 +22,24 @@ void SceneGame::Initialize()
 	//stage = new Stage();
 
 	//ステージグリッド初期化
-	stageGrid = new StageGrid();
+	//stageGrid = new StageGrid();
+
+
+
+
 
 	//プレイヤー初期化
 	players[0] = new Player();
-	players[0]->Initialize("Data/Model/Jammo/Jammo.mdl");
-	//players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
-	players[0]->SetPosition({ 50.0f, 0.0f, -25.0f });
+	players[0]->Initialize("Data/Model/Player/Player.mdl");
+	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
+	players[0]->SetIsControlling(true);
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
 	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
 	players[1]->SetIsRobot(true);
+	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
 	//カメラコントローラー初期化
@@ -60,16 +70,14 @@ void SceneGame::Initialize()
 		enemyManager.Register(slime);
 	}*/
 
-	//ステージオブジェクト初期化
-	StageObjectManager& mng=StageObjectManager::Instance();
-	mng.setLaserManager(new LaserManager());
-	LaserManager* laserManager = mng.GetLaserManager();
-	Laser* laser = new Laser();
-	laser->setManager(&mng);
-	laser->Initialize(DirectX::XMFLOAT3(5, 1, 0), DirectX::XMFLOAT3(1, 0, 1), 30.0f);
-	laserManager->Register(laser);
+	EffectManager::Instance().Initialize();
 
-	mng.Register(new Stage);
+	
+	//ステージ初期化
+	std::unique_ptr<StageData> stageData = std::make_unique<StageData1>(StageData1());
+	StageObjectManager& mng = StageObjectManager::Instance();
+	mng.setLaserManager(new LaserManager());
+	mng.LoadStageData(stageData.get());
 }
 
 // 終了化
@@ -83,11 +91,11 @@ void SceneGame::Finalize()
 	}*/
 
 	//ステージグリッド終了化
-	if (stageGrid != nullptr)
+	/*if (stageGrid != nullptr)
 	{
 		delete stageGrid;
 		stageGrid = nullptr;
-	}
+	}*/
 
 
 	//プレイヤー終了化
@@ -101,7 +109,6 @@ void SceneGame::Finalize()
 		}
 	}
 
-
 	//カメラコントローラー終了化
 	if (cameraController!=nullptr)
 	{
@@ -112,27 +119,16 @@ void SceneGame::Finalize()
 	//エネミー終了化
 	//EnemyManager::Instance().Clear();
 
-	//ステージグリッド終了化
-	if (stageGrid != nullptr)
-	{
-		delete stageGrid;
-		stageGrid = nullptr;
-	}
+
+
+	EffectManager::Instance().Finalize();
+
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
 	//stage->Update(elapsedTime);
-
-	// ★ 毎フレームリセット
-	stageGrid->isTouchingPlayer = false;
-
-	// 木箱との当たり判定（isTouchingPlayer が true になる）
-	stageGrid->CollisionVsPlayer(*players[controlPlayerIndex]);
-
-	// 木箱の更新処理（isTouchingPlayer を使う）
-	stageGrid->Update(elapsedTime, * players[controlPlayerIndex]);
 
 	// カメラ更新
 	InputChangePlayer();
@@ -155,12 +151,12 @@ void SceneGame::Update(float elapsedTime)
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
-		// プレイヤー同士の衝突処理
-		if (!players[0]->IsRiding())//どちらも肩車していないときだけ衝突処理を行う
+		// プレイヤー同士の衝突判定
+		if (!players[0]->IsRiding())
 		{
 			int otherIndex = 1 - controlPlayerIndex;										
-			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					//プレイヤ1が操作中でプレイヤ2が待機中のときだけ肩車可能
-			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	//操作中のプレイヤだけを押し戻し、待機中のプレイヤーは動かさない
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	
 		}
 	}
 
@@ -228,7 +224,10 @@ void SceneGame::Render()
 		//stage->Render(rc, modelRenderer);
 
 		//ステージグリッド(今は木箱を出す用)描画
-		stageGrid->Render(rc, modelRenderer);
+		//stageGrid->Render(rc, modelRenderer);
+
+		//鏡描画
+
 
 		//プレイヤー描画
 		for (int i = 0; i < 2; ++i)
@@ -267,7 +266,9 @@ void SceneGame::Render()
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 
 		//木箱用デバッグプリミティブ描画
-		stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+		//stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
+
+		
 
 	}
 
@@ -285,6 +286,9 @@ void SceneGame::DrawGUI()
 
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
+
+
+
 	//Player::Instance().DrawDebugGUI();
 	Player* controlPlayer = GetControlPlayer();
 
@@ -307,6 +311,7 @@ void SceneGame::InputChangePlayer()
 		}
 
 		controlPlayerIndex = 1 - controlPlayerIndex;
+		players[controlPlayerIndex]->SetIsControlling(true);
 	}
 }
 

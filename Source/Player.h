@@ -97,6 +97,10 @@ public:
 	//ゲッター
 	AnimationController& GetAnimation() { return animation; }
 
+	void SetIsControlling(bool i) { isControlling = i; }
+
+	bool GetIsControlling() { return isControlling; }
+
 	//向き取得
 	DirectX::XMFLOAT3 GetForward() const;
 
@@ -110,6 +114,7 @@ private:
 
 
 
+	bool isControlling=false;
 
 	float moveSpeed = 5.0f;
 
@@ -141,7 +146,7 @@ private:
 	float rideOffsetY = 0.5f;
 
 	ProjectileManager projectileManager;
-	Effect* hitEffect = nullptr;
+	//Effect* hitEffect = nullptr;
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;

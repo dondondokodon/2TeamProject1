@@ -140,10 +140,12 @@
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\CylinderCollider.h" />
     <ClInclude Include="Source\IdleState.h" />
+    <ClInclude Include="Source\IrradiationDevice.h" />
     <ClInclude Include="Source\JumpState.h" />
     <ClInclude Include="Source\Laser.h" />
     <ClInclude Include="Source\LaserManager.h" />
     <ClInclude Include="Source\MathUtils.h" />
+    <ClInclude Include="Source\Mirror.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerState.h" />
     <ClInclude Include="Source\PlayerStates.h" />
@@ -151,6 +153,7 @@
     <ClInclude Include="Source\ProjectileHoming.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\ProjectileStraight.h" />
+    <ClInclude Include="Source\RayHitType.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\RideState.h" />
     <ClInclude Include="Source\Scene.h" />
@@ -159,6 +162,8 @@
     <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\Stage.h" />
+    <ClInclude Include="Source\StageData.h" />
+    <ClInclude Include="Source\StageData1.h" />
     <ClInclude Include="Source\StageGrid.h" />
     <ClInclude Include="Source\StageObject.h" />
     <ClInclude Include="Source\StageObjectManager.h" />
@@ -206,11 +211,13 @@
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\CylinderCollider.cpp" />
     <ClCompile Include="Source\IdleState.cpp" />
+    <ClCompile Include="Source\IrradiationDevice.cpp" />
     <ClCompile Include="Source\JumpState.cpp" />
     <ClCompile Include="Source\Laser.cpp" />
     <ClCompile Include="Source\LaserManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MathUtils.cpp" />
+    <ClCompile Include="Source\Mirror.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayerState.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
@@ -224,6 +231,8 @@
     <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
+    <ClCompile Include="Source\StageData.cpp" />
+    <ClCompile Include="Source\StageData1.cpp" />
     <ClCompile Include="Source\StageGrid.cpp" />
     <ClCompile Include="Source\StageObject.cpp" />
     <ClCompile Include="Source\StageObjectManager.cpp" />

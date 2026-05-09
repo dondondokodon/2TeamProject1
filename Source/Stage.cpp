@@ -1,10 +1,10 @@
 #include"Stage.h"
 
 //コンストラクタ
-Stage::Stage()
+Stage::Stage(const char* filename)
 {
 	//ステージモデルを読み込み
-	model = std::make_unique<Model>(Model("Data/Model/Stage/ExampleStage.mdl"));
+	model = std::make_unique<Model>(Model(filename));
 }
 
 Stage::~Stage()

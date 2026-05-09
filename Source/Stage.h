@@ -7,7 +7,8 @@
 class Stage:public StageObject
 {
 public:
-	Stage();
+	Stage(const char* filename);
+	Stage() {}
 	~Stage();
 
 	//XVˆ—

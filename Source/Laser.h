@@ -4,6 +4,7 @@
 #include"StageObjectManager.h"
 #include"BoxCollider.h"
 #include"CylinderCollider.h"
+#include"Effect.h"
 
 struct LaserSegment
 {
@@ -27,13 +28,14 @@ public:
 	float maxLength = 50.0f;
 	float isActive = true;
 	float radius = 0.5f;
-	int maxReflection = 3;
+	int maxReflection = 10;
 	bool isRotating = false;
 
 
 	std::vector<LaserSegment> segments;
 
 	void Update(float elaspedTime);
+	void Render();//役割ずれてるかも
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
 	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
 
@@ -97,7 +99,30 @@ public:
 	//?f?o?b?O?pGUI?`??
 	void DrawDebugGUI();
 
+
+	void setEffect(const char* filename)
+	{
+		laserEffect = std::make_unique<Effect>(filename);
+	}
+
+	//一時的にエフェクト停止
+	void StopEffect()
+	{
+		if (isEffectPlaying)
+		{
+			for (auto handle : activeEffects)
+			{
+				laserEffect->Stop(handle);
+			}
+			activeEffects.clear();
+			isEffectPlaying = false;
+		}
+	}
+
 private:
+	std::unique_ptr<Effect> laserEffect;
+	std::vector<Effekseer::Handle> activeEffects;
+	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
 };
 
 //???[?U?[??{??
@@ -162,7 +187,5 @@ private:
 	bool isRotating = false;
 
 	float width = 0.6f; // 見た目の太さ（直径）
-
-	void ResolvePlayerCollision();
 	StageObjectManager* manager = nullptr;
 };
