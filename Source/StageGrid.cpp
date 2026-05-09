@@ -33,52 +33,11 @@ void StageGrid::Update(float elapsedTime)
     float moveSpeed = 2.0f;
 
     bool nowP = (GetAsyncKeyState('P') & 0x8000);
-    bool trgP = (nowP && !prevP);
-
-    // ---------------------------------------------------------
-    // ★ プレイヤーが木箱の正面を向いているか判定（毎フレーム）
-    // ---------------------------------------------------------
-    auto playerPos = p.GetPosition();
-    auto playerForward = p.GetForward();
-
-    DirectX::XMFLOAT3 toBox = {
-        pos.x - playerPos.x,
-        0,
-        pos.z - playerPos.z
-    };
-
-    float len = sqrtf(toBox.x * toBox.x + toBox.z * toBox.z);
-    if (len > 0.0001f) {
-        toBox.x /= len;
-        toBox.z /= len;
-    }
-
-    float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
-    bool isFacingBox = (dot > 0.7f);
-
-    // ★ 触れていて、正面を向いていて、P を押した瞬間に移動開始 ↓player1のみ
-    if (isTouchingPlayer && isFacingBox && trgP && !isMoving && !p.GetIsRobot())
-    {
-        float dx = playerPos.x - pos.x;
-        float dz = playerPos.z - pos.z;
-
-        if (fabs(dx) > fabs(dz))
-        {
-            moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
-        }
-        else
-        {
-            moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
-        }
-
-        isMoving = true;
-        moveRemain = moveAmount;
-    }
 
     // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
-    if(isMoving)
+    if (isMoving)
     {
         float delta = moveSpeed * elapsedTime;  // 今フレームで動く量
 
@@ -196,8 +155,8 @@ void StageGrid::CollisionVsPlayer(Player& p)
         auto playerPos = p.GetPosition();
         auto playerForward = p.GetForward();
 
-
-        if (trgP && !isMoving&&p.GetIsControlling())
+        // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
+        if (trgP && !isMoving && p.GetIsControlling() && !p.GetIsRobot())
         {
             DirectX::XMFLOAT3 toBox = {
             position.x - playerPos.x,

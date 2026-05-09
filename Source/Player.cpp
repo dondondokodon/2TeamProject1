@@ -1,4 +1,4 @@
-#include"Player.h"
+﻿#include"Player.h"
 #include"System/Input.h"
 #include"System/Audio.h"
 #include<imgui.h>
@@ -298,7 +298,7 @@ DirectX::XMFLOAT3 Player::GetForward() const
 
 
 
-//???n?????????????
+//着地したときの処理
 void Player::OnLanding()
 {
 	JumpCount = 0;
@@ -450,7 +450,7 @@ void Player::CollisionProjectilesVsEnemies()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
-	//繧ｹ繝��繧ｸ諠�ｱ縺ｮ蜿門ｾ暦ｼ医す繝ｳ繧ｰ繝ｫ繝医Φ縺九ｉ�
+	//ステージオブジェクト情報を取得
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
 
 	auto* stageObj = stageObjectManager.GetStageObject(0);
@@ -459,12 +459,12 @@ void Player::CollisionPlayerVsStage()
 	const DirectX::XMFLOAT4X4& stageTransform = stageObj->GetTransform();
 	const Model* stageModel = stageObj->GetModel();
 
-	//謗･蝨ｰ蛻､螳夲ｼ育悄荳九Ξ繧､繧ｭ繝｣繧ｹ繝茨ｼ
+	//接地判定（真下レイキャスト）
 	{
-		//逹蝨ｰ縺励◆迸ｬ髢薙□縺 OnLanding 繧貞他縺ｶ縺溘ａ縲∝燕繝輔Ξ繝ｼ繝縺ｮ謗･蝨ｰ迥ｶ諷九ｒ菫晏ｭ
+		//着地した瞬間だけ OnLanding を呼ぶため、前フレームの接地状態を保存
 		bool wasGround = isGround;
 
-		//繝励Ξ繧､繝､繝ｼ縺ｮ蟆代＠荳翫°繧芽ｶｳ蜈��蟆代＠荳九∪縺ｧ繝ｬ繧､繧帝｣帙�縺
+		//プレイヤーの少し上から足元の少し下までレイを飛ばす
 		DirectX::XMFLOAT3 start = {
 			position.x,
 			position.y + 0.5f,
@@ -476,20 +476,20 @@ void Player::CollisionPlayerVsStage()
 			position.z
 		};
 
-		//謗･蝨ｰ荳ｭ縺ｯ蟆代＠髟ｷ繧√↓蛻､螳壹＠縺ｦ縲∵ｮｵ蟾ｮ繧�揩縺ｧ謗･蝨ｰ縺悟�繧後↓縺上＞繧医≧縺ｫ縺吶ｋ
+		//接地中は少し長めに判定して、段差や坂で接地が切れにくいようにする
 		if (isGround) end.y -= 0.2f;
 
 		DirectX::XMFLOAT3 hitPos, hitNormal;
 		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
 		{
-			//蝨ｰ髱｢縺ｫ蠖薙◆縺｣縺滉ｽ咲ｽｮ縺ｫ鬮倥＆繧貞粋繧上○繧
+			//地面に当たった位置に高さを合わせる
 			position.y = hitPos.y;
 
-			//關ｽ荳矩溷ｺｦ繧呈ｭ｢繧√※謗･蝨ｰ迥ｶ諷九↓縺吶ｋ
+			//落下速度を止めて接地状態にする
 			velocity.y = 0.0f;
 			isGround = true;
 
-			//遨ｺ荳ｭ縺九ｉ蝨ｰ髱｢縺ｫ逹縺�◆迸ｬ髢薙□縺醍捩蝨ｰ蜃ｦ逅�ｒ蜻ｼ縺ｶ
+			//空中から地面に着いた瞬間だけ着地処理を呼ぶ
 			if (!wasGround)
 			{
 				OnLanding();
@@ -497,30 +497,30 @@ void Player::CollisionPlayerVsStage()
 		}
 		else
 		{
-			//蝨ｰ髱｢縺後↑縺代ｌ縺ｰ遨ｺ荳ｭ謇ｱ縺�↓縺吶ｋ
+			//地面がなければ空中扱いにする
 			isGround = false;
 		}
 	}
 
-	//螢∝愛螳夲ｼ育ｧｻ蜍墓婿蜷代�縺ｿ�
+	//壁判定（移動方向のみ）
 	{
 		float vx = velocity.x;
 		float vz = velocity.z;
 		float speedSq = vx * vx + vz * vz;
 
-		//遘ｻ蜍輔＠縺ｦ縺�↑縺�→縺阪�螢∝愛螳壹ｒ縺励↑縺
+		//移動していないときは壁判定をしない
 		if (speedSq > 0.0001f)
 		{
-			//繝励Ξ繧､繝､繝ｼ縺ｮ蜊雁ｾ
+			//プレイヤーの半径
 			const float playerRadius = 0.5f;
 
-			//螢√↓縺ｴ縺｣縺溘ｊ蠑ｵ繧贋ｻ倥°縺ｪ縺�ｈ縺�↓縺吶ｋ菴咏區
+			//壁にぴったり張り付かないようにする余白
 			const float skin = 0.02f;
 
-			//蜊雁ｾ�� + 菴咏區縺縺代Ξ繧､繧帝｣帙�縺
+			//半径分 + 余白だけレイを飛ばす
 			const float rayLength = playerRadius + skin;
 
-			//騾溷ｺｦ繝吶け繝医Ν繧呈ｭ｣隕丞喧縺励※縲∫ｧｻ蜍墓婿蜷代ｒ豎ゅａ繧
+			//速度ベクトルを正規化して、移動方向を求める
 			float speed = sqrtf(speedSq);
 			DirectX::XMFLOAT3 rayDir = {
 				vx / speed,
@@ -528,7 +528,7 @@ void Player::CollisionPlayerVsStage()
 				vz / speed
 			};
 
-			//閻ｰ縺ゅ◆繧翫�鬮倥＆縺九ｉ縲∫ｧｻ蜍墓婿蜷代∈繝ｬ繧､繧帝｣帙�縺
+			//腰あたりの高さから、移動方向へレイを飛ばす
 			DirectX::XMFLOAT3 start = {
 				position.x,
 				position.y + 0.5f,
@@ -544,22 +544,22 @@ void Player::CollisionPlayerVsStage()
 			DirectX::XMFLOAT3 hitPos, hitNormal;
 			if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
 			{
-				//螢√↓蜷代°縺�溷ｺｦ謌仙�繧呈ｱゅａ繧
+				//壁に向かう速度成分を求める
 				float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
 
-				//螢√↓蜷代°縺�溷ｺｦ縺縺第ｶ医＠縺ｦ縲∝｣∵ｲｿ縺�↓縺ｯ蜍輔￠繧九ｈ縺�↓縺吶ｋ
+				//壁に向かう速度だけ消して、壁沿いには動けるようにする
 				if (dot < 0.0f)
 				{
 					velocity.x -= hitNormal.x * dot;
 					velocity.z -= hitNormal.z * dot;
 				}
 
-				//繝励Ξ繧､繝､繝ｼ荳ｭ蠢�°繧牙｣√∪縺ｧ縺ｮXZ霍晞屬繧呈ｱゅａ繧
+				//プレイヤー中心から壁までのXZ距離を求める
 				float dx = hitPos.x - position.x;
 				float dz = hitPos.z - position.z;
 				float distToWall = sqrtf(dx * dx + dz * dz);
 
-				//螢√→縺ｮ霍晞屬縺悟濠蠕�ｈ繧願ｿ代＞蝣ｴ蜷医�縲√ａ繧願ｾｼ繧薙〒縺�ｋ蛻�□縺第款縺玲綾縺
+				//壁との距離が半径より近い場合は、めり込んでいる分だけ押し戻す
 				if (distToWall < playerRadius)
 				{
 					float pushDist = playerRadius - distToWall + skin;
@@ -672,7 +672,7 @@ if (canRide)
 {
 	float otherTop = otherPosition.y + other.GetHeight();
 
-	// 螟ｧ縺阪￥縺吶ｋ縺ｻ縺ｩ蜷ｸ縺�ｻ倥°縺ｪ縺
+	//値を大きくするほど、肩車判定で吸い付きにくくなる
 	bool isAboveOther = position.y >= otherTop - 1.0f;
 
 	if (!isAboveOther && !isRiding && rideTimer <= 0.0f)
@@ -923,14 +923,14 @@ bool Player::IsRideReady() const
 	return position.y >= targetY - 0.01f;
 }
 
-//蝗櫁ｻ｢蜈･蜉帛�逅�ｼ医Ο繝懊ャ繝亥ｰら畑�
+//操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
 void Player::InputRotate()
 {
 	if (!isRobot) return;
 
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
-	//Q/E��B/RB�峨〒45蠎ｦ蛻ｻ縺ｿ縺ｧ蝗櫁ｻ｢
+	//LB/RBで45度ずつ回転
 	const float step = DirectX::XMConvertToRadians(45.0f);
 
 	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
