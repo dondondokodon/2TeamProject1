@@ -11,6 +11,7 @@
 #include"LaserManager.h"
 #include"RideState.h"
 #include"StageGrid.h"
+#include"GoalObject.h"
 
 // コンストラクタ
 void Player::Initialize(const char* modelPath)
@@ -632,7 +633,7 @@ void Player::CollisionPlayerVsStage()
 		} while (isHit && loopCount < 10);
 	}
 
-	//ステージグリッド
+	//ステージグリッドとゴールオブジェクト
 	// 全てのステージオブジェクトに対してループ
 	for (int i = 0; i < stageObjectManager.GetStageObjectSize(); ++i) {
 		StageObject* obj = stageObjectManager.GetStageObject(i);
@@ -640,9 +641,16 @@ void Player::CollisionPlayerVsStage()
 
 		// StageGrid（箱）へのキャストを試みる
 		StageGrid* grid = dynamic_cast<StageGrid*>(obj);
+
+		// GoalObject（ゴール）へのキャストを試みる
+		GoalObject* goal = dynamic_cast<GoalObject*>(obj);
 		if (grid) {
 			// 内部で IsControlling() をチェックしているので、全員分呼んでOK
 			grid->CollisionVsPlayer(*this);
+		}
+		if (goal)
+		{
+			goal->CollisionVsPlayer(*this);
 		}
 	}
 
@@ -933,11 +941,11 @@ void Player::InputRotate()
 	//LB/RBで45度ずつ回転
 	const float step = DirectX::XMConvertToRadians(45.0f);
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
 	{
 		angle.y -= step;
 	}
-	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER)
+	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
 	{
 		angle.y += step;
 	}

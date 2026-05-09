@@ -34,8 +34,6 @@ void Mirror::Update(float elapsedTime)
     if (trgU) angle.y += step;
     if (trgO) angle.y -= step;
 
-    UpdateTransform();
-
     // AABB の半径（モデルに合わせて調整）
     const float halfX = 0.6f * scale.x;
     const float halfY = 1.5f * scale.y;
@@ -59,6 +57,8 @@ void Mirror::Update(float elapsedTime)
     prevO = nowO;
 
     isTouchingPlayer = false;
+
+    UpdateTransform();
 }
 
 void Mirror::CollisionVsPlayer(Player& p)

@@ -3,6 +3,7 @@
 #include "IrradiationDevice.h"
 #include "StageGrid.h"
 #include "Mirror.h"
+#include "GoalObject.h"
 #include<memory>
 
 StageObject* ObjectData::CreateStageObject()const
@@ -19,6 +20,7 @@ StageObject* ObjectData::CreateStageObject()const
 		break;
 	case ObjectType::Goal:
 		//ゴールオブジェクトの生成と初期化
+		obj = new GoalObject();
 		break;
 	case ObjectType::IrradiationDevice:
 		//照射装置オブジェクトの生成と初期化

@@ -1,10 +1,16 @@
 ﻿#include "IrradiationDevice.h"
 #include<imgui.h>
+#include"Flag.h"
 
 void IrradiationDevice::Update(float elapsedTime)
 {
+    //フラグの更新
+    Flag::Instance().SetFlag(Flag::Instance().openGoal,isHit);
+
 	//オブジェクトの更新処理
 	isHit = false;	//毎フレームリセットして、ヒット通知があったフレームだけtrueになるようにする
+
+    UpdateTransform();
 }
 
 RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
