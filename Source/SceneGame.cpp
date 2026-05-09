@@ -1,4 +1,4 @@
-#include "System/Graphics.h"
+﻿#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"EnemyManager.h"
@@ -11,6 +11,11 @@
 #include"LaserManager.h"
 #include"System/Input.h"
 #include"IrradiationDevice.h"
+#include"Flag.h"
+
+#include"SceneManager.h"
+#include"SceneLoading.h"
+#include"SceneTitle.h"
 
 #include"StageData1.h"
 
@@ -23,9 +28,6 @@ void SceneGame::Initialize()
 
 	//ステージグリッド初期化
 	//stageGrid = new StageGrid();
-
-
-
 
 
 	//プレイヤー初期化
@@ -123,6 +125,8 @@ void SceneGame::Finalize()
 
 	EffectManager::Instance().Finalize();
 
+	
+	Flag::Instance().ClearFlag();
 }
 
 // 更新処理
@@ -172,6 +176,12 @@ void SceneGame::Update(float elapsedTime)
 
 	// エフェクト更新
 	EffectManager::Instance().Update(elapsedTime);
+
+	//ゴールしたか
+	if (Flag::Instance().getFlag(Flag::IsGoal))
+	{
+		Goal();
+	}
 }
 
 // 描画処理
@@ -318,4 +328,10 @@ void SceneGame::InputChangePlayer()
 Player* SceneGame::GetControlPlayer()
 {
 	return players[controlPlayerIndex];
+}
+
+void SceneGame::Goal()
+{
+	//シーン切り替え
+	SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 }
