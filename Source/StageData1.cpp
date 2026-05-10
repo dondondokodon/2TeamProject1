@@ -12,7 +12,7 @@ StageData1::StageData1()
 	objects.push_back({ ObjectType::Goal,{5, 1.5, 25.5f },{ 0,0,0 },{ 0.01f,0.01f,0.01f } });
 
 	//自分自身のオブジェクト（ステージ）
-	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
-	MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
+	MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
+	//MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
 	MyStage->SetScale({ 0.5f,0.5f,0.5f });
 }

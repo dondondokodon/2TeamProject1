@@ -10,6 +10,7 @@ struct LaserSegment
 {
 	DirectX::XMFLOAT3 start;
 	DirectX::XMFLOAT3 end;
+	bool hit = false;
 };
 
 struct LaserHit
@@ -43,7 +44,7 @@ public:
 
 	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 	{
-		// LaserBeam ???????`??
+		// ?e?B?u?`??
 		for (auto& seg : segments)
 		{
 			// start ?? end ??x?N?g??
@@ -100,10 +101,11 @@ public:
 	void DrawDebugGUI();
 
 
-	void setEffect(const char* filename,const char* file)
+	void setEffect(const char* filename,const char* file,const char* name)
 	{
 		laserEffect = std::make_unique<Effect>(filename);
 		laserBackEffect = std::make_unique<Effect>(file);
+		beamReflectEffect = std::make_unique<Effect>(name);
 	}
 
 	//一時的にエフェクト停止
@@ -115,8 +117,13 @@ public:
 			{
 				laserEffect->Stop(handle);
 			}
+			for (auto handle : activeReflectEffects)
+			{
+				beamReflectEffect->Stop(handle);
+			}
 			laserBackEffect->Stop(BackEffectHandle);
 			activeEffects.clear();
+			activeReflectEffects.clear();
 			isEffectPlaying = false;
 		}
 	}
@@ -124,7 +131,9 @@ public:
 private:
 	std::unique_ptr<Effect> laserEffect;
 	std::unique_ptr<Effect> laserBackEffect;	//laserの装置にだけつける
+	std::unique_ptr<Effect> beamReflectEffect;
 	std::vector<Effekseer::Handle> activeEffects;
+	std::vector<Effekseer::Handle> activeReflectEffects;
 	Effekseer::Handle BackEffectHandle;
 	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
 };
