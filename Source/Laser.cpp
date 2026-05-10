@@ -78,6 +78,20 @@ void LaserBeam::Render()
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	if (!isEffectPlaying)
+	{
+		BackEffectHandle = laserBackEffect->Play(origin, 0.5f);
+
+		// 1. 方向ベクトルから角度を計算
+		float yaw = atan2f(direction.x, direction.z);
+		float xzLen = sqrtf(direction.x * direction.x + direction.z * direction.z);
+		float pitch = -atan2f(direction.y, xzLen);
+
+		// 2. 素材が元々逆を向いているなら、180度（XM_PI）回転させて相殺する
+		// yaw に対して XM_PI を加算する
+		effekseerManager->SetRotation(BackEffectHandle, pitch, yaw + DirectX::XM_PI, 0.0f);
+	}
 	
 	//セグメント数とエフェクト数の同期
 	//反射が減った場合：余分なエフェクトを止める
@@ -405,7 +419,7 @@ void Laser::Initialize(
    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
    //beam.setEffect("Data/Effect/laserOre.efkefc");
-   beam.setEffect("Data/Effect/reizar.efkefc");
+   beam.setEffect("Data/Effect/reizar.efkefc","Data/Effect/laser_back.efkefc");
 
 	startPos = emitterPos;
 	direction = dir;
