@@ -251,6 +251,21 @@
     <ClInclude Include="Source\StageData1.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\StageObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoxCollider.h" />
+    <ClInclude Include="Source\CylinderCollider.h" />
+    <ClInclude Include="Source\Laser.h" />
+    <ClInclude Include="Source\LaserManager.h" />
+    <ClInclude Include="Source\StageGrid.h" />
+    <ClInclude Include="Source\StageObjectManager.h" />
+    <ClInclude Include="Source\GoalObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Flag.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
     <ClInclude Include="Source\BoxCollider.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -266,22 +281,7 @@
     <ClInclude Include="Source\StageGrid.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageObject.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
     <ClInclude Include="Source\StageObjectManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BoxCollider.h" />
-    <ClInclude Include="Source\CylinderCollider.h" />
-    <ClInclude Include="Source\Laser.h" />
-    <ClInclude Include="Source\LaserManager.h" />
-    <ClInclude Include="Source\StageGrid.h" />
-    <ClInclude Include="Source\StageObjectManager.h" />
-    <ClInclude Include="Source\GoalObject.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Flag.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>

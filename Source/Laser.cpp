@@ -39,13 +39,13 @@ void LaserBeam::Update(float elapsedTime)
 		}
 		else
 		{
-			 segments.push_back({ start, end });
+			 segments.push_back({ start, end,hitNormal,false });
 			 break;
 		}
 	   
 		if (hit.type==RayHitType::reflection)
 		{
-			segments.push_back({ start, hitPos });
+			segments.push_back({ start, hitPos ,hitNormal,true});
 
 		   
 			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
@@ -57,7 +57,7 @@ void LaserBeam::Update(float elapsedTime)
 		}
 		else if (hit.type == RayHitType::Stop)
 		{
-			segments.push_back({ start, hitPos });
+			segments.push_back({ start, hitPos,hitNormal,true });
 			break;
 		}
 	   
@@ -78,9 +78,24 @@ void LaserBeam::Render()
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	if (!isEffectPlaying)
+	{
+		BackEffectHandle = laserBackEffect->Play(origin, 0.5f);
+
+		// 1. 方向ベクトルから角度を計算
+		float yaw = atan2f(direction.x, direction.z);
+		float xzLen = sqrtf(direction.x * direction.x + direction.z * direction.z);
+		float pitch = -atan2f(direction.y, xzLen);
+
+		// 2. 素材が元々逆を向いているなら、180度（XM_PI）回転させて相殺する
+		// yaw に対して XM_PI を加算する
+		effekseerManager->SetRotation(BackEffectHandle, pitch, yaw + DirectX::XM_PI, 0.0f);
+	}
 	
 	//セグメント数とエフェクト数の同期
 	//反射が減った場合：余分なエフェクトを止める
+
 	while (activeEffects.size() > segments.size()) {
 		effekseerManager->StopEffect(activeEffects.back());
 		activeEffects.pop_back();
@@ -134,6 +149,54 @@ void LaserBeam::Render()
 		// 毎フレーム、最新のセグメント行列をセット
 		effekseerManager->SetMatrix(handle, effekMat);
 	}
+
+	//反射エフェクト
+	//セグメント数とエフェクト数の同期
+	int refrectionCount = segments.size();
+	if (refrectionCount > 0 && segments[refrectionCount-1].hit == false)
+		refrectionCount--;
+
+	while(activeReflectEffects.size() > refrectionCount) {
+		effekseerManager->StopEffect(activeReflectEffects.back());
+		activeReflectEffects.pop_back();
+	}
+
+	for (size_t i = 0; i < refrectionCount; ++i) {
+		auto& seg = segments[i];
+		if (!seg.hit)break;
+
+		DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+		DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+		float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+		DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+		DirectX::XMFLOAT3 Direction;
+		DirectX::XMStoreFloat3(&Direction, dir);
+
+		Effekseer::Handle handle;
+
+		//足りない場合のみ新しくPlayする
+		if (i >= activeReflectEffects.size()) {
+			handle = beamReflectEffect.get()->Play(seg.end, 1.0f);
+			activeReflectEffects.push_back(handle);
+		}
+		else {
+			handle = activeReflectEffects[i];
+		}
+
+		//角度計算
+		// 1. 方向ベクトルから角度を計算
+		float yaw = atan2f(seg.normal.x, seg.normal.z);
+		float xzLen = sqrtf(seg.normal.x * seg.normal.x + seg.normal.z * seg.normal.z);
+		float pitch = -atan2f(seg.normal.y, xzLen);
+
+		// 座標を最新のヒット地点(seg.end)に更新する
+		effekseerManager->SetLocation(handle, seg.end.x, seg.end.y, seg.end.z);
+
+		// 2. 素材が元々逆を向いているなら、180度（XM_PI）回転させて相殺する
+		// yaw に対して XM_PI を加算する
+		effekseerManager->SetRotation(activeReflectEffects[i], pitch, yaw + DirectX::XM_PI, 0.0f);
+	}
+
 	
 	isEffectPlaying = true;
 }
@@ -286,7 +349,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 		DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
 
 		DirectX::XMFLOAT3 p;
-		XMStoreFloat3(&p, pVec);
+		DirectX::XMStoreFloat3(&p, pVec);
 
 		// Cylinder 上の最近接点 q
 		DirectX::XMFLOAT3 q;
@@ -362,7 +425,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 				n = XMVector3Normalize(fb);
 			}
 
-			XMStoreFloat3(&result.normal, n);
+			DirectX::XMStoreFloat3(&result.normal, n);
 			result.point = q;
 
 			return result;
@@ -405,7 +468,7 @@ void Laser::Initialize(
    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
    //beam.setEffect("Data/Effect/laserOre.efkefc");
-   beam.setEffect("Data/Effect/reizar.efkefc");
+   beam.setEffect("Data/Effect/reizar.efkefc","Data/Effect/laser_back.efkefc","Data/Effect/hansya.efkefc");
 
 	startPos = emitterPos;
 	direction = dir;

@@ -72,7 +72,7 @@ void SceneGame::Initialize()
 		enemyManager.Register(slime);
 	}*/
 
-	EffectManager::Instance().Initialize();
+	//EffectManager::Instance().Initialize();
 
 	
 	//ステージ初期化
@@ -118,12 +118,15 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
+	//ステージ終了化
+	StageObjectManager::Instance().Clear();
+
 	//エネミー終了化
 	//EnemyManager::Instance().Clear();
 
 
 
-	EffectManager::Instance().Finalize();
+	//EffectManager::Instance().Finalize();
 
 	
 	Flag::Instance().ClearFlag();
