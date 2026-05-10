@@ -33,12 +33,11 @@ void StageGrid::Update(float elapsedTime)
     float moveSpeed = 2.0f;
 
     bool nowP = (GetAsyncKeyState('P') & 0x8000);
-    bool trgP = (nowP && !prevP);
 
     // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
-    if(isMoving)
+    if (isMoving)
     {
         float delta = moveSpeed * elapsedTime;  // 今フレームで動く量
 
@@ -156,8 +155,8 @@ void StageGrid::CollisionVsPlayer(Player& p)
         auto playerPos = p.GetPosition();
         auto playerForward = p.GetForward();
 
-
-        if (trgP && !isMoving&&p.GetIsControlling())
+        // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
+        if (trgP && !isMoving && p.GetIsControlling() && !p.GetIsRobot())
         {
             DirectX::XMFLOAT3 toBox = {
             position.x - playerPos.x,

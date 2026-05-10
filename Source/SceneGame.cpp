@@ -1,4 +1,4 @@
-#include "System/Graphics.h"
+﻿#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"EnemyManager.h"
@@ -11,6 +11,11 @@
 #include"LaserManager.h"
 #include"System/Input.h"
 #include"IrradiationDevice.h"
+#include"Flag.h"
+
+#include"SceneManager.h"
+#include"SceneLoading.h"
+#include"SceneTitle.h"
 
 #include"StageData1.h"
 
@@ -25,19 +30,17 @@ void SceneGame::Initialize()
 	//stageGrid = new StageGrid();
 
 
-
-
-
 	//プレイヤー初期化
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
-	players[0]->SetScale({ 0.5f,0.5f,0.5f });
+	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
 	players[0]->SetIsControlling(true);
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Jammo/Jammo.mdl");
 	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
+	players[1]->SetIsRobot(true);
 	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
@@ -122,6 +125,8 @@ void SceneGame::Finalize()
 
 	EffectManager::Instance().Finalize();
 
+	
+	Flag::Instance().ClearFlag();
 }
 
 // 更新処理
@@ -171,6 +176,12 @@ void SceneGame::Update(float elapsedTime)
 
 	// エフェクト更新
 	EffectManager::Instance().Update(elapsedTime);
+
+	//ゴールしたか
+	if (Flag::Instance().getFlag(Flag::IsGoal))
+	{
+		Goal();
+	}
 }
 
 // 描画処理
@@ -317,4 +328,10 @@ void SceneGame::InputChangePlayer()
 Player* SceneGame::GetControlPlayer()
 {
 	return players[controlPlayerIndex];
+}
+
+void SceneGame::Goal()
+{
+	//シーン切り替え
+	SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 }

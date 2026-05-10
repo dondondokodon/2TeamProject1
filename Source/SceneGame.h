@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include"Stage.h"
 #include"StageGrid.h"
@@ -28,6 +28,8 @@ public:
 	// GUI描画
 	void DrawGUI()override;
 
+	// ゴールの処理
+	void Goal();
 private:
 	//Stage* stage = nullptr;
 	//StageGrid* stageGrid = nullptr;

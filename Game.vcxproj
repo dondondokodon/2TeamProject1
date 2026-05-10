@@ -137,8 +137,10 @@
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\EnemySlime.h" />
+    <ClInclude Include="Source\Flag.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\CylinderCollider.h" />
+    <ClInclude Include="Source\GoalObject.h" />
     <ClInclude Include="Source\IdleState.h" />
     <ClInclude Include="Source\IrradiationDevice.h" />
     <ClInclude Include="Source\JumpState.h" />
@@ -208,8 +210,10 @@
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\EnemySlime.cpp" />
+    <ClCompile Include="Source\Flag.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\CylinderCollider.cpp" />
+    <ClCompile Include="Source\GoalObject.cpp" />
     <ClCompile Include="Source\IdleState.cpp" />
     <ClCompile Include="Source\IrradiationDevice.cpp" />
     <ClCompile Include="Source\JumpState.cpp" />

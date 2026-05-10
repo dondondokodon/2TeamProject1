@@ -233,29 +233,11 @@
     <ClInclude Include="Source\System\ShapeRenderer.h">
       <Filter>Source\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\BoxCollider.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Laser.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageObjectManager.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LaserManager.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
     <ClInclude Include="Source\RideState.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CylinderCollider.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mirror.h">
       <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageGrid.h">
-      <Filter>Source\.h�t�@�C��</Filter>
     </ClInclude>
     <ClInclude Include="Source\IrradiationDevice.h">
       <Filter>Source\.h</Filter>
@@ -288,6 +270,18 @@
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\StageObjectManager.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoxCollider.h" />
+    <ClInclude Include="Source\CylinderCollider.h" />
+    <ClInclude Include="Source\Laser.h" />
+    <ClInclude Include="Source\LaserManager.h" />
+    <ClInclude Include="Source\StageGrid.h" />
+    <ClInclude Include="Source\StageObjectManager.h" />
+    <ClInclude Include="Source\GoalObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Flag.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>
@@ -479,6 +473,12 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageData1.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GoalObject.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Flag.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>
