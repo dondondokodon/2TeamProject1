@@ -11,6 +11,7 @@ Mirror::Mirror()
     angle = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f, 1.0f, 1.0f };
 
+
     type = RayHitType::reflection;
 
     UpdateTransform();
@@ -23,7 +24,8 @@ Mirror::~Mirror()
 
 void Mirror::Update(float elapsedTime)
 {
-    const float step = DirectX::XM_PI / 4.0f;
+    const float step = DirectX::XM_PI / 4.0f; // 45°
+    const float rotateSpeed = 6.0f;           // 補間速度（大きいほど速い）
 
     bool nowU = (GetAsyncKeyState('U') & 0x8000);
     bool nowO = (GetAsyncKeyState('O') & 0x8000);
@@ -31,17 +33,32 @@ void Mirror::Update(float elapsedTime)
     bool trgU = (nowU && !prevU);
     bool trgO = (nowO && !prevO);
 
-    if (trgU) angle.y += step;
-    if (trgO) angle.y -= step;
+    // ★ 目標角度だけを変える
+    if (trgU) {
+        targetAngleY += step;
+        isRotating = true;
+    }
+    if (trgO) {
+        targetAngleY -= step;
+        isRotating = true;
+    }
+
+    // ★ 現在角度 → 目標角度へゆっくり補間
+    angle.y += (targetAngleY - angle.y) * rotateSpeed * elapsedTime;
+
+    // ★ 回転完了判定（誤差許容）
+    if (fabs(targetAngleY - angle.y) < 0.01f) {
+        angle.y = targetAngleY;
+        isRotating = false;
+    }
 
     UpdateTransform();
 
-    // AABB の半径（モデルに合わせて調整）
+    // AABB の半径
     const float halfX = 0.6f * scale.x;
     const float halfY = 1.5f * scale.y;
     const float halfZ = 0.2f * scale.z;
 
-    // AABB を position を中心に生成
     aabbMin = {
         position.x - halfX,
         position.y - halfY,
@@ -54,11 +71,11 @@ void Mirror::Update(float elapsedTime)
         position.z + halfZ
     };
 
-
     prevU = nowU;
     prevO = nowO;
 
     isTouchingPlayer = false;
+
 }
 
 void Mirror::CollisionVsPlayer(Player& p)
@@ -120,6 +137,12 @@ void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 
 RayHitResult Mirror::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
 {
+
+    if (isRotating)
+    {
+        return RayHitResult{ true, this, RayHitType::Stop, hitPos };
+    }
+
     // 角度による判定 (内積)
     // 鏡の正面ベクトル (forward) と レイの方向 (dir) が向かい合っているか
     DirectX::XMFLOAT3 forward = { transform._31,transform._32,transform._33 };
