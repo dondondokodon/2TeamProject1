@@ -72,7 +72,7 @@ void SceneGame::Initialize()
 		enemyManager.Register(slime);
 	}*/
 
-	EffectManager::Instance().Initialize();
+	//EffectManager::Instance().Initialize();
 
 	
 	//ステージ初期化
@@ -123,7 +123,7 @@ void SceneGame::Finalize()
 
 
 
-	EffectManager::Instance().Finalize();
+	//EffectManager::Instance().Finalize();
 
 	
 	Flag::Instance().ClearFlag();
