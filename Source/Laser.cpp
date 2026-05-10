@@ -39,13 +39,13 @@ void LaserBeam::Update(float elapsedTime)
 		}
 		else
 		{
-			 segments.push_back({ start, end,false });
+			 segments.push_back({ start, end,hitNormal,false });
 			 break;
 		}
 	   
 		if (hit.type==RayHitType::reflection)
 		{
-			segments.push_back({ start, hitPos ,true});
+			segments.push_back({ start, hitPos ,hitNormal,true});
 
 		   
 			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
@@ -57,7 +57,7 @@ void LaserBeam::Update(float elapsedTime)
 		}
 		else if (hit.type == RayHitType::Stop)
 		{
-			segments.push_back({ start, hitPos,true });
+			segments.push_back({ start, hitPos,hitNormal,true });
 			break;
 		}
 	   
@@ -185,9 +185,9 @@ void LaserBeam::Render()
 
 		//角度計算
 		// 1. 方向ベクトルから角度を計算
-		float yaw = atan2f(Direction.x, Direction.z);
-		float xzLen = sqrtf(Direction.x * Direction.x + Direction.z * Direction.z);
-		float pitch = -atan2f(Direction.y, xzLen);
+		float yaw = atan2f(seg.normal.x, seg.normal.z);
+		float xzLen = sqrtf(seg.normal.x * seg.normal.x + seg.normal.z * seg.normal.z);
+		float pitch = -atan2f(seg.normal.y, xzLen);
 
 		// 座標を最新のヒット地点(seg.end)に更新する
 		effekseerManager->SetLocation(handle, seg.end.x, seg.end.y, seg.end.z);

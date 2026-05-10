@@ -10,6 +10,7 @@ struct LaserSegment
 {
 	DirectX::XMFLOAT3 start;
 	DirectX::XMFLOAT3 end;
+	DirectX::XMFLOAT3 normal={0,0,0};
 	bool hit = false;
 };
 
