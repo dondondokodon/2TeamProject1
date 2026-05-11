@@ -6,7 +6,7 @@ StageData1::StageData1()
 	//ステージオブジェクトの配置データを追加
 	//オブジェクトの種類、位置、回転、大きさ、レーザーの向き（レーザー以外は無視される）
 	objects.push_back({ ObjectType::Laser,{   7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
-	objects.push_back({ ObjectType::Laser,{  -6.0f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
+	objects.push_back({ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
 	objects.push_back({ ObjectType::Laser,{  25.0f, 1.0f,   7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} });
 	objects.push_back({ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} });
 	objects.push_back({ ObjectType::IrradiationDevice,{ -5.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}});
