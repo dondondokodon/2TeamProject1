@@ -437,7 +437,27 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
 }
 
+void Laser::UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY)
+{
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(totalAngleY);
+	DirectX::XMVECTOR c = DirectX::XMLoadFloat3(&center);
 
+	// 1. ポジション：常に baseStartPos から計算
+	DirectX::XMVECTOR basePos = DirectX::XMLoadFloat3(&baseStartPos);
+	DirectX::XMVECTOR local = DirectX::XMVectorSubtract(basePos, c);
+	local = DirectX::XMVector3Transform(local, rot);
+	DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(local, c);
+	DirectX::XMStoreFloat3(&startPos, newPos);
+
+	// 2. 方向：常に baseDirection から計算
+	DirectX::XMVECTOR baseDir = DirectX::XMLoadFloat3(&baseDirection);
+	DirectX::XMVECTOR newDir = DirectX::XMVector3TransformNormal(baseDir, rot);
+	DirectX::XMStoreFloat3(&direction, newDir);
+
+	// 3. Beam(LaserBeam) に最新の値を伝える
+	beam.origin = startPos;
+	beam.direction = direction;
+}
 
 void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 {
@@ -473,6 +493,9 @@ void Laser::Initialize(
 	startPos = emitterPos;
 	direction = dir;
 	maxLength = maxLen;
+
+	baseDirection = dir;
+	baseStartPos = emitterPos;
   
 	scale = { 0.5f,0.5f,0.5f };
 
@@ -512,7 +535,7 @@ void Laser::Update(float elapsedTime)
 
 	UpdateTransform();
 
-	// レーザーの反射計算
+	// レーザーの位置
 	beam.origin = startPos;
 	beam.direction = direction;
 	// LaserBeam がレーザーを撃つ（反射含む）

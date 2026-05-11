@@ -188,11 +188,18 @@ public:
 	
 	const LaserBeam& GetBeam() const { return beam; }
 
+	//laserの回転　オリジンを中心として回転させる
+	void UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY);
+
 private:
 	LaserBeam beam;  // ?? ???????[?U?[??{??
 
 	DirectX::XMFLOAT3 startPos;
 	DirectX::XMFLOAT3 direction;
+
+	DirectX::XMFLOAT3 baseStartPos;	//初期座標（不変）
+	DirectX::XMFLOAT3 baseDirection;//初期方向（不変）
+
 	float maxLength = 20.0f;
 
 	bool isActive = true;

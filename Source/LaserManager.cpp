@@ -45,7 +45,7 @@ void LaserManager::Update(float elapsedTime)
         DirectX::XMFLOAT3 center = { 0,0,0 };
         for (auto& laser : Lasers)
         {
-            laser->RotateAroundCenter(center, delta);
+            laser->UpdateTransformByAngle(center, currentAngleY);
             laser->SetRotating(true);
         }
     }
