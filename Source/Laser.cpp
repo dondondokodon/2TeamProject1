@@ -437,7 +437,29 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
 }
 
+void Laser::UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY)
+{
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(totalAngleY);
+	DirectX::XMVECTOR c = DirectX::XMLoadFloat3(&center);
 
+	// 1. ポジション：常に baseStartPos から計算
+	DirectX::XMVECTOR basePos = DirectX::XMLoadFloat3(&baseStartPos);
+	DirectX::XMVECTOR local = DirectX::XMVectorSubtract(basePos, c);
+	local = DirectX::XMVector3Transform(local, rot);
+	DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(local, c);
+	DirectX::XMStoreFloat3(&startPos, newPos);
+
+	// 2. 方向：常に baseDirection から計算
+	DirectX::XMVECTOR baseDir = DirectX::XMLoadFloat3(&baseDirection);
+	DirectX::XMVECTOR newDir = DirectX::XMVector3TransformNormal(baseDir, rot);
+	DirectX::XMStoreFloat3(&direction, newDir);
+
+
+	currentAngleY = totalAngleY;
+	// 3. Beam(LaserBeam) に最新の値を伝える
+	beam.origin = startPos;
+	beam.direction = direction;
+}
 
 void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 {
@@ -470,16 +492,23 @@ void Laser::Initialize(
    //beam.setEffect("Data/Effect/laserOre.efkefc");
    beam.setEffect("Data/Effect/reizar.efkefc","Data/Effect/laser_back.efkefc","Data/Effect/hansya.efkefc");
 
+   // 最初に dir を正規化したものを baseDirection に入れる
+   XMVECTOR v = XMVector3Normalize(XMLoadFloat3(&dir));
+   XMStoreFloat3(&baseDirection, v); // ここで保存！
+
+	baseStartPos = emitterPos;
+
 	startPos = emitterPos;
-	direction = dir;
+	direction = baseDirection;
 	maxLength = maxLen;
   
 	scale = { 0.5f,0.5f,0.5f };
 
 	
-	DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
-	v = DirectX::XMVector3Normalize(v);
-	DirectX::XMStoreFloat3(&direction, v);
+	//DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
+	//v = DirectX::XMVector3Normalize(v);
+	//DirectX::XMStoreFloat3(&direction, v);
+
 
 	// LaserBeam
 	beam.origin = startPos;
@@ -507,11 +536,12 @@ void Laser::Update(float elapsedTime)
 
 	position = startPos;
 
+	//position.x -= direction.x*0.5f;
 	angle.y = atan2f(direction.x, direction.z);
 
 	UpdateTransform();
 
-	// レーザーの反射計算
+	// レーザーの位置
 	beam.origin = startPos;
 	beam.direction = direction;
 	// LaserBeam がレーザーを撃つ（反射含む）

@@ -20,6 +20,10 @@ StageData1::StageData1()
 	objects.push_back({ ObjectType::Box,{-13.5f, 0.5f,   3.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
 	objects.push_back({ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } });
 
+	//デバッグ用
+	objects.push_back({ ObjectType::Box,{0.5f, 0.5f, -5.5f },{ 0,0,0 },{ 1,1,1 } });
+	objects.push_back({ ObjectType::Laser,{ 5,1,0 },{ 0 ,0 ,0 },{ 0.5f,0.5f,0.5f },{0, 0, 1} });
+
 	//自分自身のオブジェクト（ステージ）
 	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
 	MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
