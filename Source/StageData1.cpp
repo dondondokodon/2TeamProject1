@@ -15,4 +15,5 @@ StageData1::StageData1()
 	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
 	MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
 	MyStage->SetScale({ 0.5f,0.5f,0.5f });
+	//MyStage->SetScale({ 1.0f,1.0f,1.0f });
 }

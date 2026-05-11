@@ -462,6 +462,7 @@ void Player::CollisionPlayerVsStage()
 
 	//接地判定（真下レイキャスト）
 	{
+		
 		//着地した瞬間だけ OnLanding を呼ぶため、前フレームの接地状態を保存
 		bool wasGround = isGround;
 
@@ -483,6 +484,8 @@ void Player::CollisionPlayerVsStage()
 		DirectX::XMFLOAT3 hitPos, hitNormal;
 		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
 		{
+			
+			
 			//地面に当たった位置に高さを合わせる
 			position.y = hitPos.y;
 
