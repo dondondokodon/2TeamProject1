@@ -145,7 +145,7 @@ void SceneGame::Update(float elapsedTime)
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
 	//cameraController->SetTarget(target);
-	//cameraController->Update(elapsedTime);
+	//zcameraController->Update(elapsedTime);
 
 	for (int i = 0; i < 2; ++i)
 	{
