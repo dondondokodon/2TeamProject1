@@ -1,19 +1,22 @@
 ﻿#include "LaserManager.h"
+#include "System/GamePad.h"
+#include "System/Input.h"
 
 //更新処理
 void LaserManager::Update(float elapsedTime)
 {
+    GamePad& gamePad = Input::Instance().GetGamePad();
     // --- 回転入力処理 ---
     float step = DirectX::XM_PI / 4.0f;
 
     if (!isRotating)
     {
-        if (GetAsyncKeyState('Q') & 0x0001)
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
         {
             targetAngleY -= step;
             isRotating = true;
         }
-        if (GetAsyncKeyState('E') & 0x0001)
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER)
         {
             targetAngleY += step;
             isRotating = true;
