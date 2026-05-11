@@ -9,9 +9,10 @@ StageData1::StageData1()
 	objects.push_back({ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
 	objects.push_back({ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} });
 	objects.push_back({ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} });
-	objects.push_back({ ObjectType::IrradiationDevice,{ -5.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}});
+	objects.push_back({ ObjectType::IrradiationDevice,{ -6.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}});
 	objects.push_back({ ObjectType::Mirror,{  -1.0f, 1.2f, -7.5f },{ 0.0f,0.0f,0.0f },{ 0.5f,0.5f,0.5f } });
 	objects.push_back({ ObjectType::Mirror,{ -2.0f, 1.2f,  2.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } });
+	objects.push_back({ ObjectType::Mirror,{ 5.5f, 1.2f,  4.5f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } });
 	objects.push_back({ ObjectType::Box,{  3.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
 	objects.push_back({ ObjectType::Box,{ 11.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
 	objects.push_back({ ObjectType::Box,{ 10.5f, 0.5f,   7.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
