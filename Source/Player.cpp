@@ -157,7 +157,7 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 	CollisionProjectilesVsEnemies();
 
 	//プレイヤーとステージオブジェクトの衝突処理
-	CollisionPlayerVsStage();
+	//CollisionPlayerVsStage();
 
 	//オブジェクト行列を更新
 	UpdateTransform();
@@ -466,6 +466,7 @@ void Player::CollisionPlayerVsStage()
 
 		if (result.hit)
 		{
+			//地面に当たった位置に高さを合わせる
 			position.y = hitPos.y;
 			velocity.y = 0.0f;
 			isGround = true;
