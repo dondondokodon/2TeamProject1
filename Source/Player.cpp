@@ -451,94 +451,50 @@ void Player::CollisionProjectilesVsEnemies()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
-	//ステージオブジェクト情報を取得
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
 
-	auto* stageObj = stageObjectManager.GetStageObject(0);
-	if (!stageObj) return;
-
-	const DirectX::XMFLOAT4X4& stageTransform = stageObj->GetTransform();
-	const Model* stageModel = stageObj->GetModel();
-
-	//接地判定（真下レイキャスト）
+	// 接地判定（真下レイキャスト）
 	{
-		
-		//着地した瞬間だけ OnLanding を呼ぶため、前フレームの接地状態を保存
 		bool wasGround = isGround;
 
-		//プレイヤーの少し上から足元の少し下までレイを飛ばす
-		DirectX::XMFLOAT3 start = {
-			position.x,
-			position.y + 0.5f,
-			position.z
-		};
-		DirectX::XMFLOAT3 end = {
-			position.x,
-			position.y - 0.1f,
-			position.z
-		};
-
-		//接地中は少し長めに判定して、段差や坂で接地が切れにくいようにする
+		DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
+		DirectX::XMFLOAT3 end = { position.x, position.y - 0.1f, position.z };
 		if (isGround) end.y -= 0.2f;
 
 		DirectX::XMFLOAT3 hitPos, hitNormal;
-		if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
+		RayHitResult result = stageObjectManager.RayCast(start, end, hitPos, hitNormal);
+
+		if (result.hit)
 		{
-			
-			
 			//地面に当たった位置に高さを合わせる
 			position.y = hitPos.y;
-
-			//落下速度を止めて接地状態にする
 			velocity.y = 0.0f;
 			isGround = true;
 
-			//空中から地面に着いた瞬間だけ着地処理を呼ぶ
-			if (!wasGround)
-			{
-				OnLanding();
-			}
+			if (!wasGround) OnLanding();
 		}
 		else
 		{
-			//地面がなければ空中扱いにする
 			isGround = false;
 		}
 	}
 
-	//壁判定（移動方向のみ）
+	// 壁判定（移動方向のみ）
 	{
 		float vx = velocity.x;
 		float vz = velocity.z;
 		float speedSq = vx * vx + vz * vz;
 
-		//移動していないときは壁判定をしない
 		if (speedSq > 0.0001f)
 		{
-			//プレイヤーの半径
 			const float playerRadius = 0.5f;
-
-			//壁にぴったり張り付かないようにする余白
 			const float skin = 0.02f;
-
-			//半径分 + 余白だけレイを飛ばす
 			const float rayLength = playerRadius + skin;
 
-			//速度ベクトルを正規化して、移動方向を求める
 			float speed = sqrtf(speedSq);
-			DirectX::XMFLOAT3 rayDir = {
-				vx / speed,
-				0.0f,
-				vz / speed
-			};
+			DirectX::XMFLOAT3 rayDir = { vx / speed, 0.0f, vz / speed };
 
-			//腰あたりの高さから、移動方向へレイを飛ばす
-			DirectX::XMFLOAT3 start = {
-				position.x,
-				position.y + 0.5f,
-				position.z
-			};
-
+			DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
 			DirectX::XMFLOAT3 end = {
 				start.x + rayDir.x * rayLength,
 				start.y,
@@ -546,28 +502,24 @@ void Player::CollisionPlayerVsStage()
 			};
 
 			DirectX::XMFLOAT3 hitPos, hitNormal;
-			if (Collision::RayCast(start, end, stageTransform, stageModel, hitPos, hitNormal))
-			{
-				//壁に向かう速度成分を求める
-				float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
+			RayHitResult result = stageObjectManager.RayCast(start, end, hitPos, hitNormal);
 
-				//壁に向かう速度だけ消して、壁沿いには動けるようにする
+			if (result.hit)
+			{
+				float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
 				if (dot < 0.0f)
 				{
 					velocity.x -= hitNormal.x * dot;
 					velocity.z -= hitNormal.z * dot;
 				}
 
-				//プレイヤー中心から壁までのXZ距離を求める
 				float dx = hitPos.x - position.x;
 				float dz = hitPos.z - position.z;
 				float distToWall = sqrtf(dx * dx + dz * dz);
 
-				//壁との距離が半径より近い場合は、めり込んでいる分だけ押し戻す
 				if (distToWall < playerRadius)
 				{
 					float pushDist = playerRadius - distToWall + skin;
-
 					position.x += hitNormal.x * pushDist;
 					position.z += hitNormal.z * pushDist;
 				}
