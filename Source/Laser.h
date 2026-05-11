@@ -144,10 +144,6 @@ class Laser :public StageObject
 {
 	public:
 
-		float currentAngleY = 0.0f;   // 現在の角度
-		float targetAngleY = 0.0f;   // 目標の角度
-		float rotateSpeed = 4.0f;   // 1フレームあたりの回転速度（度）
-
 		//?f?o?b?O?v???~?e?B?u?`??
 		void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override
 		{
@@ -176,6 +172,8 @@ public:
 	void Update(float elapsedTime) override;
 	void Render(const RenderContext& rc, ModelRenderer* renderer) override;
 
+	void SetRotating(bool flag);
+
 	void SetActive(bool flag) { isActive = flag; }
 	bool IsActive() const { return isActive; }
 
@@ -200,6 +198,11 @@ private:
 	bool isActive = true;
 	bool isRotating = false;
 
+	float currentAngleY = 0.0f;
+	float targetAngleY = 0.0f;
+
+
 	float width = 0.6f; // 見た目の太さ（直径）
 	StageObjectManager* manager = nullptr;
+
 };

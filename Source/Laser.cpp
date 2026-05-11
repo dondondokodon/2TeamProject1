@@ -506,61 +506,11 @@ void Laser::Update(float elapsedTime)
 	beam.Update(elapsedTime);*/
 
 	position = startPos;
-	direction = beam.direction;
+
 	position.x -= direction.x*0.5f;
 	angle.y = atan2f(direction.x, direction.z);
-	
-	
 
 	UpdateTransform();
-	//ResolvePlayerCollision();
-
-
-
-	// ステージ中心（必要なら変更）
-	DirectX::XMFLOAT3 center = { 0, 0, 0 };
-
-	// Q/E で回転
-	float step = DirectX::XM_PI / 4.0f;
-
-	if (!isRotating)
-	{
-
-		if (GetAsyncKeyState('Q') & 0x0001)
-		{
-			targetAngleY -= step;
-			isRotating = true;   // ← 回転開始
-		}
-		if (GetAsyncKeyState('E') & 0x0001)
-		{
-			targetAngleY += step;
-			isRotating = true;   // ← 回転開始
-		}
-	}
-
-	float diff = targetAngleY - currentAngleY;
-
-	if (fabs(diff) < 0.001f)
-	{
-		diff = 0.0f;
-		currentAngleY = targetAngleY;
-		isRotating = false;
-	}
-	else
-	{
-		float dir = (diff > 0.0f) ? 1.0f : -1.0f;
-
-		// 等速回転（例：1秒で90°）
-		float delta = (DirectX::XM_PI / 2.0f) * elapsedTime * dir;
-
-		if (fabs(delta) > fabs(diff))
-			delta = diff;
-
-		currentAngleY += delta;
-
-		RotateAroundCenter(center, delta);
-	}
-
 
 	// レーザーの反射計算
 	beam.origin = startPos;
@@ -576,4 +526,9 @@ void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 	beam.Render();
 
 	StageObject::Render(rc, renderer);
+}
+
+void Laser::SetRotating(bool flag)
+{
+	isRotating = flag;
 }
