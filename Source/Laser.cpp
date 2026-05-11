@@ -506,7 +506,6 @@ void Laser::Update(float elapsedTime)
 	beam.Update(elapsedTime);*/
 
 	position = startPos;
-
 	position.x -= direction.x*0.5f;
 	angle.y = atan2f(direction.x, direction.z);
 

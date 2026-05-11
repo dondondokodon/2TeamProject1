@@ -8,12 +8,12 @@ void LaserManager::Update(float elapsedTime)
 
     if (!isRotating)
     {
-        if (GetAsyncKeyState('Q') & 0x0001)
+        if (GetAsyncKeyState('Q'))
         {
             targetAngleY -= step;
             isRotating = true;
         }
-        if (GetAsyncKeyState('E') & 0x0001)
+        if (GetAsyncKeyState('E'))
         {
             targetAngleY += step;
             isRotating = true;
