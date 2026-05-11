@@ -148,14 +148,18 @@ void SceneGame::Update(float elapsedTime)
 	//cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	for (int i = 0; i < 2; ++i)
+	if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
-		if (players[i] != nullptr)
+		for (int i = 0; i < 2; ++i)
 		{
-			bool canControl = (i == controlPlayerIndex);
-			players[i]->Update(elapsedTime, canControl);
+			if (players[i] != nullptr)
+			{
+				bool canControl = (i == controlPlayerIndex);
+				players[i]->Update(elapsedTime, canControl);
+			}
 		}
 	}
+	
 
 	if (players[0] != nullptr && players[1] != nullptr)
 	{
