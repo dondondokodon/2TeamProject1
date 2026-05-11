@@ -452,7 +452,7 @@ void Laser::Update(float elapsedTime)
 	UpdateTransform();
 	//ResolvePlayerCollision();
 
-	if (!isActive) return;
+
 
 	// ステージ中心（必要なら変更）
 	DirectX::XMFLOAT3 center = { 0, 0, 0 };
