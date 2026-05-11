@@ -51,12 +51,12 @@ void SceneGame::Initialize()
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
-		DirectX::XMFLOAT3(0, 10, -10),//視点
-		DirectX::XMFLOAT3(0, 0, 0),	//注視点
+		DirectX::XMFLOAT3(0, 18.0f, -40.0f),//視点
+		DirectX::XMFLOAT3(0.0f, 0, 0.0f),	//注視点
 		DirectX::XMFLOAT3(0, 1, 0)	//上方向
 	);
 	camera.SetPerspectiveFov(
-		DirectX::XMConvertToRadians(45),	//視野角
+		DirectX::XMConvertToRadians(60),	//視野角
 		graphics.GetScreenWidth() / graphics.GetScreenHeight(),//画面アスペクト比
 		0.1f,	//クリップ距離(近)
 		1000.0f //クリップ距離(遠)
@@ -144,8 +144,8 @@ void SceneGame::Update(float elapsedTime)
 
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
-	cameraController->SetTarget(target);
-	cameraController->Update(elapsedTime);
+	//cameraController->SetTarget(target);
+	//cameraController->Update(elapsedTime);
 
 	for (int i = 0; i < 2; ++i)
 	{
