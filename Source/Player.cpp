@@ -478,54 +478,108 @@ void Player::CollisionPlayerVsStage()
 		}
 	}
 
-	// 壁判定（移動方向のみ）
+	// 壁判定（3本レイ）
 	{
 		float vx = velocity.x;
 		float vz = velocity.z;
+
 		float speedSq = vx * vx + vz * vz;
 
+		// 移動していないときは壁判定をしない
 		if (speedSq > 0.0001f)
 		{
+			// プレイヤーの半径
 			const float playerRadius = 0.5f;
+
+			// 壁にぴったり張り付かないようにする余白
 			const float skin = 0.02f;
+
+			// 半径分 + 余白だけレイを飛ばす
 			const float rayLength = playerRadius + skin;
 
+			// 速度ベクトルを正規化して移動方向を求める
 			float speed = sqrtf(speedSq);
-			DirectX::XMFLOAT3 rayDir = { vx / speed, 0.0f, vz / speed };
-
-			DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
-			DirectX::XMFLOAT3 end = {
-				start.x + rayDir.x * rayLength,
-				start.y,
-				start.z + rayDir.z * rayLength
+			DirectX::XMFLOAT3 rayDir = {
+				vx / speed,
+				0.0f,
+				vz / speed
 			};
 
-			DirectX::XMFLOAT3 hitPos, hitNormal;
-			RayHitResult result = stageObjectManager.RayCast(start, end, hitPos, hitNormal);
+			// 移動方向に対して垂直な横方向ベクトル（左右レイのオフセットに使う）
+			// XZ平面で90度回転させるだけなので (-Z, 0, X) になる
+			DirectX::XMFLOAT3 sideDir = {
+				-rayDir.z,
+				0.0f,
+				rayDir.x
+			};
 
-			if (result.hit)
+			// 横レイのずらし量（半径より少し小さめにして角が引っかかりにくくする）
+			const float sideOffset = playerRadius * 0.8f;
+
+			// 3本のレイの発射起点
+			// 腰あたりの高さ(+0.5f)から飛ばす
+			DirectX::XMFLOAT3 origins[3] = {
+				// 中央
+				{ 
+				position.x, 
+				position.y + 0.5f,
+				position.z
+				},
+				// 左
+				{ 
+				position.x + sideDir.x * sideOffset, 
+				position.y + 0.5f,
+				position.z + sideDir.z * sideOffset 
+				},
+				// 右
+				{
+				position.x - sideDir.x * sideOffset, 
+				position.y + 0.5f, 
+				position.z - sideDir.z * sideOffset 
+				},
+			};
+
+			// 3本それぞれ判定する
+			for (const auto& origin : origins)
 			{
-				float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
-				if (dot < 0.0f)
-				{
-					velocity.x -= hitNormal.x * dot;
-					velocity.z -= hitNormal.z * dot;
-				}
+				// 移動方向へレイを伸ばす
+				DirectX::XMFLOAT3 end = {
+					origin.x + rayDir.x * rayLength,
+					origin.y,
+					origin.z + rayDir.z * rayLength
+				};
 
-				float dx = hitPos.x - position.x;
-				float dz = hitPos.z - position.z;
-				float distToWall = sqrtf(dx * dx + dz * dz);
+				DirectX::XMFLOAT3 hitPos, hitNormal;
+				RayHitResult result = stageObjectManager.RayCast(origin, end, hitPos, hitNormal);
 
-				if (distToWall < playerRadius)
+				if (result.hit)
 				{
-					float pushDist = playerRadius - distToWall + skin;
-					position.x += hitNormal.x * pushDist;
-					position.z += hitNormal.z * pushDist;
+					// 壁の法線方向への速度成分を求める
+					float dot = velocity.x * hitNormal.x + velocity.z * hitNormal.z;
+
+					// 壁に向かう成分だけ消して、壁沿いに動けるようにする
+					if (dot < 0.0f)
+					{
+						velocity.x -= hitNormal.x * dot;
+						velocity.z -= hitNormal.z * dot;
+					}
+
+					// プレイヤー中心から壁ヒット地点までのXZ距離を求める
+					float dx = hitPos.x - position.x;
+					float dz = hitPos.z - position.z;
+					float distToWall = sqrtf(dx * dx + dz * dz);
+
+					// 壁との距離が半径より近い（めり込んでいる）場合は押し戻す
+					if (distToWall < playerRadius)
+					{
+						float pushDist = playerRadius - distToWall + skin;
+						position.x += hitNormal.x * pushDist;
+						position.z += hitNormal.z * pushDist;
+					}
 				}
 			}
 		}
 	}
-
 	LaserManager* laserManager = stageObjectManager.GetLaserManager();
 
 	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
