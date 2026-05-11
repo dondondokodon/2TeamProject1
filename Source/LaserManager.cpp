@@ -27,9 +27,33 @@ void LaserManager::Update(float elapsedTime)
 
     if (fabs(diff) < 0.001f)
     {
-        diff = 0.0f;
+        float snap = DirectX::XM_PI / 4.0f;
+        int index = (int)round(targetAngleY / snap);
+
+        // 角度を 0 ～ 2PI の範囲に正規化する
+        // 8ステップで一周(2PI)なので、8の剰余を取る
+        // index がマイナスになっても正の数になるように計算
+        index = (index % 8 + 8) % 8;
+
+        // 正しく 0, 0.5PI, 1.0PI... とカチッとした角度を再生成
+        targetAngleY = (float)index * snap;
         currentAngleY = targetAngleY;
         isRotating = false;
+
+        DirectX::XMFLOAT3 center = { 0,0,0 };
+        for (auto& laser : Lasers) {
+            laser->UpdateTransformByAngle(center, currentAngleY);
+
+            // 念のため、座標自体を小数点第3位で丸めてしまう
+            auto& pos = laser->GetStartPos();
+            pos.x = round(pos.x * 1000.0f) / 1000.0f;
+            pos.y = round(pos.y * 1000.0f) / 1000.0f;
+            pos.z = round(pos.z * 1000.0f) / 1000.0f;
+
+            // 向き(beam.direction)も更新されるように反映
+            laser->GetBeam().origin = pos;
+        }
+
     }
     else
     {
@@ -92,6 +116,9 @@ void LaserManager::Register(Laser* stageObject)
 //ステージオブジェクト全削除
 void LaserManager::Clear()
 {
+    targetAngleY = 0.0f;
+    currentAngleY = 0.0f;
+    isRotating = false;
 	for (auto& laser : Lasers)
 	{
 		laser->GetBeam().StopEffect();

@@ -5,6 +5,7 @@
 #include"BoxCollider.h"
 #include"CylinderCollider.h"
 #include"Effect.h"
+#include<imgui.h>
 
 struct LaserSegment
 {
@@ -158,6 +159,13 @@ class Laser :public StageObject
 		void DrawDebugGUI()
 		{
 			beam.DrawDebugGUI();
+
+			// デバッグ：現在の計算された座標と向きを ImGui か何かで出す
+			if (ImGui::Begin("Laser Debug")) {
+				ImGui::Text("Current Angle: %f", currentAngleY);
+				ImGui::Text("StartPos: %f, %f, %f", startPos.x, startPos.y, startPos.z);
+				ImGui::End();
+			}
 		}
 
 public:
@@ -187,6 +195,8 @@ public:
 	bool IsRotating() const { return isRotating; }
 	
 	const LaserBeam& GetBeam() const { return beam; }
+
+	DirectX::XMFLOAT3& GetStartPos() { return startPos; }
 
 	//laserの回転　オリジンを中心として回転させる
 	void UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY);
