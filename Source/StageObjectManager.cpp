@@ -3,7 +3,12 @@
 
 #include"LaserManager.h"
 
-StageObjectManager::~StageObjectManager() { Clear();delete laserManager; }
+StageObjectManager::~StageObjectManager() 
+{
+	Clear();
+	laserManager->Clear();
+	delete laserManager; 
+}
 
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
@@ -74,6 +79,7 @@ void StageObjectManager::Register(StageObject* stageObject)
 //ステージオブジェクト全削除
 void StageObjectManager::Clear()
 {
+	laserManager->Clear();
 	stageObjects.clear();
 }
 
