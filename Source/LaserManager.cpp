@@ -30,12 +30,12 @@ void LaserManager::Update(float elapsedTime)
 		float snap = DirectX::XM_PI / 4.0f;
 		int index = (int)round(targetAngleY / snap);
 
-		// 隗貞ｺｦ繧・0 ・・2PI 縺ｮ遽・峇縺ｫ豁｣隕丞喧縺吶ｋ
-		// 8繧ｹ繝・ャ繝励〒荳蜻ｨ(2PI)縺ｪ縺ｮ縺ｧ縲・縺ｮ蜑ｰ菴吶ｒ蜿悶ｋ
-		// index 縺後・繧､繝翫せ縺ｫ縺ｪ縺｣縺ｦ繧よｭ｣縺ｮ謨ｰ縺ｫ縺ｪ繧九ｈ縺・↓險育ｮ・
+		// 角度を 0 ～ 2PI の範囲に正規化する
+		// 8ステップで一周(2PI)なので、8の剰余を取る
+		// index がマイナスになっても正の数になるように計算
 		index = (index % 8 + 8) % 8;
 
-		// 豁｣縺励￥ 0, 0.5PI, 1.0PI... 縺ｨ繧ｫ繝√ャ縺ｨ縺励◆隗貞ｺｦ繧貞・逕滓・
+		// 正しく 0, 0.5PI, 1.0PI... とカチッとした角度を再生成
 		targetAngleY = (float)index * snap;
 		currentAngleY = targetAngleY;
 		isRotating = false;
@@ -44,13 +44,13 @@ void LaserManager::Update(float elapsedTime)
 		for (auto& laser : Lasers) {
 			laser->UpdateTransformByAngle(center, currentAngleY);
 
-			// 蠢ｵ縺ｮ縺溘ａ縲∝ｺｧ讓呵・菴薙ｒ蟆乗焚轤ｹ隨ｬ3菴阪〒荳ｸ繧√※縺励∪縺・
+			// 念のため、座標自体を小数点第3位で丸めてしまう
 			auto& pos = laser->GetStartPos();
 			pos.x = round(pos.x * 1000.0f) / 1000.0f;
 			pos.y = round(pos.y * 1000.0f) / 1000.0f;
 			pos.z = round(pos.z * 1000.0f) / 1000.0f;
 
-			// 蜷代″(beam.direction)繧よ峩譁ｰ縺輔ｌ繧九ｈ縺・↓蜿肴丐
+			// 向き(beam.direction)も更新されるように反映
 			laser->GetBeam().origin = pos;
 		}
 

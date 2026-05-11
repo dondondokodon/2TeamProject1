@@ -160,12 +160,12 @@ class Laser :public StageObject
 		{
 			beam.DrawDebugGUI();
 
-			// デバッグ：現在の計算された座標と向きを ImGui か何かで出す
-			if (ImGui::Begin("Laser Debug")) {
-				ImGui::Text("Current Angle: %f", currentAngleY);
-				ImGui::Text("StartPos: %f, %f, %f", startPos.x, startPos.y, startPos.z);
-				ImGui::End();
-			}
+			//// デバッグ：現在の計算された座標と向きを ImGui か何かで出す
+			//if (ImGui::Begin("Laser Debug")) {
+			//	ImGui::Text("Current Angle: %f", currentAngleY);
+			//	ImGui::Text("StartPos: %f, %f, %f", startPos.x, startPos.y, startPos.z);
+			//	ImGui::End();
+			//}
 		}
 
 public:

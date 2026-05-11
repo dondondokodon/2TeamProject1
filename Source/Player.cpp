@@ -157,7 +157,7 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 	CollisionProjectilesVsEnemies();
 
 	//プレイヤーとステージオブジェクトの衝突処理
-	//CollisionPlayerVsStage();
+	CollisionPlayerVsStage();
 
 	//オブジェクト行列を更新
 	UpdateTransform();

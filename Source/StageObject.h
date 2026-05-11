@@ -47,7 +47,7 @@ public:
 		UpdateTransform();
 	}
 
-	void SetAngle(const DirectX::XMFLOAT3& ang)
+	virtual void SetAngle(const DirectX::XMFLOAT3& ang)
 	{
 		angle = ang;
 		UpdateTransform();

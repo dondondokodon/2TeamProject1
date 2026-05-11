@@ -51,16 +51,17 @@ void SceneGame::Initialize()
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
-		DirectX::XMFLOAT3(0, 18.0f, -40.0f),//視点
+		DirectX::XMFLOAT3(0, 25.0f, -40.0f),//視点
 		DirectX::XMFLOAT3(0.0f, 0, 0.0f),	//注視点
 		DirectX::XMFLOAT3(0, 1, 0)	//上方向
 	);
 	camera.SetPerspectiveFov(
-		DirectX::XMConvertToRadians(60),	//視野角
+		DirectX::XMConvertToRadians(65),	//視野角
 		graphics.GetScreenWidth() / graphics.GetScreenHeight(),//画面アスペクト比
 		0.1f,	//クリップ距離(近)
 		1000.0f //クリップ距離(遠)
 	);
+	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//エネミー初期化
 	/*EnemyManager& enemyManager=EnemyManager::Instance();

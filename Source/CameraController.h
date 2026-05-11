@@ -16,7 +16,7 @@ private:
 	DirectX::XMFLOAT3 target = { 0,0,0 };	//注視点
 	DirectX::XMFLOAT3 angle = { 0,0,0 };	//回転角度
 	float rollSpeed = DirectX::XMConvertToRadians(90);	//回転速度	
-	float range = 20.0f;					//距離
+	float range = 25.0f;					//距離
 	float maxAngleX = DirectX::XMConvertToRadians(45);
 	float minAngleX = DirectX::XMConvertToRadians(-45);
 };
