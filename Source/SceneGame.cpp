@@ -98,7 +98,7 @@ void SceneGame::Update(float elapsedTime)
 
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
-	//cameraController->SetTarget(target);
+	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
 	if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())

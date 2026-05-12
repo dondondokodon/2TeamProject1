@@ -47,10 +47,15 @@ void LaserBeam::Update(float elapsedTime)
 		{
 			segments.push_back({ start, hitPos ,hitNormal,true});
 
-		   
+		    //反射方向
 			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
+			//法線
+			//XZ平面にする
+			hitNormal.y = 0.0f;
 			DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
+			//反射
 			DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
+			//正規化
 			DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
 
 			start = hitPos;
