@@ -72,15 +72,6 @@
     <ClInclude Include="Source\EffectManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Enemy.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemySlime.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Framework.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -88,18 +79,6 @@
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileHoming.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileStraight.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene.h">
@@ -322,15 +301,6 @@
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Enemy.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyManager.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemySlime.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Framework.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
@@ -341,18 +311,6 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Player.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileHoming.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileManager.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileStraight.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">
