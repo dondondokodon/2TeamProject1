@@ -1,8 +1,6 @@
 ﻿#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
-#include"EnemyManager.h"
-#include"EnemySlime.h"
 #include"Player.h"
 #include"Laser.h"
 #include"Mirror.h"
@@ -23,14 +21,6 @@
 //
 void SceneGame::Initialize()
 {
-
-	//ステージ初期化
-	//stage = new Stage();
-
-	//ステージグリッド初期化
-	//stageGrid = new StageGrid();
-
-
 	//プレイヤー初期化
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
@@ -64,19 +54,6 @@ void SceneGame::Initialize()
 	);
 	cameraController->SetTarget({ 0,0,-10.0f });
 
-	//エネミー初期化
-	/*EnemyManager& enemyManager=EnemyManager::Instance();
-	for (int i = 0;i < 2;i++)
-	{
-		EnemySlime* slime = new EnemySlime();
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}*/
-
-	//EffectManager::Instance().Initialize();
-
-	
 	//ステージ初期化
 	std::unique_ptr<StageData> stageData = std::make_unique<StageData2>(StageData2());
 	StageObjectManager& mng = StageObjectManager::Instance();
@@ -87,21 +64,7 @@ void SceneGame::Initialize()
 // 終了化
 void SceneGame::Finalize()
 {
-	//ステージ終了化
-	/*if (stage != nullptr)
-	{
-		delete stage;
-		stage = nullptr;
-	}*/
-
-	//ステージグリッド終了化
-	/*if (stageGrid != nullptr)
-	{
-		delete stageGrid;
-		stageGrid = nullptr;
-	}*/
-
-
+	
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
 	{
@@ -122,14 +85,6 @@ void SceneGame::Finalize()
 
 	//ステージ終了化
 	StageObjectManager::Instance().Clear();
-
-	//エネミー終了化
-	//EnemyManager::Instance().Clear();
-
-
-
-	//EffectManager::Instance().Finalize();
-
 	
 	Flag::Instance().ClearFlag();
 }
@@ -137,8 +92,6 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	//stage->Update(elapsedTime);
-
 	// カメラ更新
 	InputChangePlayer();
 
@@ -146,7 +99,7 @@ void SceneGame::Update(float elapsedTime)
 
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
-	//cameraController->SetTarget(target);
+	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
 	if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
@@ -176,9 +129,6 @@ void SceneGame::Update(float elapsedTime)
 
 	//プレイヤー更新処理
 	// Player::Instance().Update(elapsedTime);
-
-	//エネミー更新処理
-	//EnemyManager::Instance().Update(elapsedTime);
 
 	//ステージオブジェクト更新処理
 	StageObjectManager::Instance().Update(elapsedTime);
@@ -239,15 +189,6 @@ void SceneGame::Render()
 
 	// 3Dモデル描画
 	{
-		//ステージ描画
-		//stage->Render(rc, modelRenderer);
-
-		//ステージグリッド(今は木箱を出す用)描画
-		//stageGrid->Render(rc, modelRenderer);
-
-		//鏡描画
-
-
 		//プレイヤー描画
 		for (int i = 0; i < 2; ++i)
 		{
@@ -256,9 +197,6 @@ void SceneGame::Render()
 				players[i]->Render(rc, modelRenderer);
 			}
 		}
-
-		//エネミー描画
-		//EnemyManager::Instance().Render(rc, modelRenderer);
 
 		//ステージオブジェクト描画
 		StageObjectManager::Instance().Render(rc, modelRenderer);
@@ -278,17 +216,8 @@ void SceneGame::Render()
 			}
 		}
 
-		//エネミーデバッグプリミティブ描画
-		//EnemyManager::Instance().RenderDebugPrimitive(rc,shapeRenderer);
-
 		//ステージオブジェクトデバッグプリミティブ描画
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
-
-		//木箱用デバッグプリミティブ描画
-		//stageGrid->RenderDebugPrimitive(rc, shapeRenderer);
-
-		
-
 	}
 
 	// 2Dスプライト描画
@@ -301,14 +230,15 @@ void SceneGame::Render()
 void SceneGame::DrawGUI()
 {
 	//プレイヤーデバッグ描画
-	Player::Instance().DrawDebugGUI();
+	for (auto& p : players)
+	{
+		p->DrawDebugGUI();
+	}
+	
 
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
 
-
-
-	//Player::Instance().DrawDebugGUI();
 	Player* controlPlayer = GetControlPlayer();
 
 	if (controlPlayer != nullptr)
