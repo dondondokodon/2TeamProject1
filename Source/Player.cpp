@@ -3,10 +3,7 @@
 #include"System/Audio.h"
 #include<imgui.h>
 #include"Camera.h"
-#include"EnemyManager.h"
 #include"Collision.h"
-#include"ProjectileStraight.h"
-#include"ProjectileHoming.h"
 #include"StageObjectManager.h"
 #include"LaserManager.h"
 #include"RideState.h"
@@ -129,32 +126,13 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 //bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
 //bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
-	//弾丸入力処理
-	//一応、操作中のプレイヤーだけ弾をてつ
-	if (canControl)
-	{
-		InputProjectile();
-	}
-
 	//アニメーション更新処理
 	animation.UpdateAnimation(elapsedTime);
-
-	//弾丸更新処理
-	projectileManager.Update(elapsedTime);
 
 	//無敵時間更新
 	UpdateInvincibleTimer(elapsedTime);
 
-	//死んでほしくないので死んだら回復
-	if (health <= 0)	health = 100;
-
 	UpdateCollider();
-
-	//プレイヤーと敵との衝突処理
-	CollisionPlayerVsEnemies();
-
-	//弾丸と敵の衝突処理
-	CollisionProjectilesVsEnemies();
 
 	//プレイヤーとステージオブジェクトの衝突処理
 	CollisionPlayerVsStage();
@@ -183,9 +161,6 @@ void Player::UpdateCollider()
 void Player::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 	renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
-
-	//弾丸描画処理
-	projectileManager.Render(rc, renderer);
 }
 
 //デバッグプリミティブ描画
@@ -193,9 +168,6 @@ void Player::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 {
 	//基底クラスの関数の呼び出し
 	//Character::RenderDebugPrimitive(rc, renderer);
-
-	//弾丸デバッグプリミティブ描画
-	projectileManager.RenderDebugPrimitive(rc, renderer);
 
 	//BoxColliderのデバッグプリミティブ描画
 	//renderer->RenderBox(rc, bodyCollider.GetCenter(), { 0,0,0 }, bodyCollider.GetSize(), DirectX::XMFLOAT4(0, 1, 0, 1));
@@ -318,133 +290,6 @@ void Player::InputMove(float elapsedTime)
 	if (!isRobot)
 	{
 		Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
-	}
-}
-
-//プレイヤーとエネミーとの衝突処理
-void Player::CollisionPlayerVsEnemies()
-{
-	EnemyManager& enemyManager = EnemyManager::Instance();
-
-	//全ての敵と総当たりで衝突処理
-	int enemyCount = enemyManager.GetEnemyCount();
-	for (int i = 0;i < enemyCount;++i)
-	{
-		Enemy* enemy = enemyManager.GetEnemy(i);
-
-		//衝突処理
-		DirectX::XMFLOAT3 outPosition;
-		//球と球のほう
-		//if (Collision::IntersectSphereVsSphere(position, radius,
-		//	enemy->GetPosition(), enemy->GetRadius(), 
-		//	outPosition))
-		//{
-		//	//押し出し後の位置設定
-		//	outPosition.x += enemy->GetPosition().x;
-		//	outPosition.y += enemy->GetPosition().y;
-		//	outPosition.z += enemy->GetPosition().z;
-		//	enemy->SetPosition(outPosition);
-		//}
-		if (Collision::IntersectCylinderVsCylinder(
-			position, radius, height, enemy->GetPosition(),
-			enemy->GetRadius(), enemy->GetHeight(), outPosition
-		))
-		{
-			//前で先生がやってるやつ
-			DirectX::HXMVECTOR P = DirectX::XMLoadFloat3(&position);
-			DirectX::HXMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-			DirectX::HXMVECTOR V = DirectX::XMVectorSubtract(P, E);
-			DirectX::HXMVECTOR N = DirectX::XMVector3Normalize(V);
-			DirectX::XMFLOAT3 normal;
-			DirectX::XMStoreFloat3(&normal, N);
-			float enemyTop = enemy->GetPosition().y + enemy->GetHeight();
-			//たぶんベクトルでやる判定　ｘｚ平面のベクトルでうまいことやりそう
-			/*if (enemyTop <= position.y - velocity.y)
-			{
-				自分でやったやつ
-				velocity.y = JumpSpeed*0.5f;
-			}*/
-			//上から踏んだ時ジャンプ（プレイヤーから敵へのベクトルでやってる？）
-			if (normal.y > 0.8f)
-			{
-				//ダメージを与える
-				enemy->ApplyDamage(1, 0.5f);
-
-				Jump(JumpSpeed * 0.5f);
-			}
-			//押し出し後の位置設定
-			else
-				enemy->SetPosition(outPosition);
-		}
-	}
-}
-
-//弾丸と敵の衝突処理
-void Player::CollisionProjectilesVsEnemies()
-{
-	EnemyManager& enemyManager = EnemyManager::Instance();
-
-	//全ての弾丸とすべての敵を総当たりで衝突処理
-	int projectileCount = projectileManager.GetProjectileCount();
-	int enemyCount = enemyManager.GetEnemyCount();
-	for (int i = 0;i < projectileCount;i++)
-	{
-		Projectile* projectile = projectileManager.GetProjectile(i);
-		for (int j = 0;j < enemyCount;++j)
-		{
-			Enemy* enemy = enemyManager.GetEnemy(j);
-
-			//衝突処理
-			DirectX::XMFLOAT3 outPosition;
-			if (Collision::IntersectSphereVsCylinder(
-				projectile->GetPosition(),
-				projectile->GetRadius(),
-				enemy->GetPosition(),
-				enemy->GetRadius(),
-				enemy->GetHeight(),
-				outPosition))
-			{
-				//ダメージを与える
-				if (enemy->ApplyDamage(1, 0.5f))
-				{
-					//吹き飛ばす
-					{
-						DirectX::XMFLOAT3 impulse;
-						DirectX::XMVECTOR pPos = DirectX::XMLoadFloat3(&projectile->GetPosition());
-						DirectX::XMVECTOR ePos = DirectX::XMLoadFloat3(&enemy->GetPosition());
-
-						DirectX::XMVECTOR dir = DirectX::XMVectorSubtract(ePos, pPos);//向き
-						dir = DirectX::XMVector3Normalize(dir);//正規化
-
-						float power = 10.0f;
-						dir = DirectX::XMVectorScale(dir, power);
-
-						DirectX::XMStoreFloat3(&impulse, dir);
-
-						//上には少しだけはねる
-						impulse.y = power * 0.5f;
-
-
-						enemy->AddImpulse(impulse);
-					}
-
-					//ヒットエフェクト再生
-					{
-						DirectX::XMFLOAT3 e = enemy->GetPosition();
-						e.y += enemy->GetHeight() * 0.5f;
-						//hitEffect->Play(e);
-					}
-
-					//ヒットSE再生
-					{
-						hitSE->Play(false);
-					}
-
-					//弾丸破棄
-					projectile->Destroy();
-				}
-			}
-		}
 	}
 }
 
@@ -740,83 +585,6 @@ bool Player::InputJump()
 		}
 	}
 	return false;
-}
-
-//弾丸入力処理
-void Player::InputProjectile()
-{
-	GamePad& gamePad = Input::Instance().GetGamePad();
-
-	//直進弾丸発射
-	if (gamePad.GetButtonDown() & GamePad::BTN_X)
-	{
-		//前方向
-		DirectX::XMFLOAT3 dir;
-		dir.x = sinf(angle.y);
-		dir.y = 0.0f;
-		dir.z = cosf(angle.y);
-
-		//発射位置（プレイヤーの腰当たり）
-		DirectX::XMFLOAT3 pos;
-		pos.x = position.x;
-		pos.y = position.y + 0.5f;
-		pos.z = position.z;
-
-		//発射
-		ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-		projectile->Launch(dir, pos);
-	}
-
-	//追尾弾発射
-	if (gamePad.GetButtonDown() & GamePad::BTN_Y)
-	{
-		//前方向
-		DirectX::XMFLOAT3 dir;
-		dir.x = sinf(angle.y);
-		dir.y = 0.0f;
-		dir.z = cosf(angle.y);
-
-		//発射位置（プレイヤーの腰当たり）
-		DirectX::XMFLOAT3 pos;
-		pos.x = position.x;
-		pos.y = position.y + 0.5f;
-		pos.z = position.z;
-
-		//ターゲット（デフォルトではプレイヤーの前方）
-		DirectX::XMFLOAT3 target;
-		target.x = dir.x;
-		target.y = dir.y;
-		target.z = dir.z;
-
-		//一番近くの敵をターゲットにする
-		float dist = FLT_MAX;
-		EnemyManager& enemyManager = EnemyManager::Instance();
-		int enemyCount = enemyManager.GetEnemyCount();
-		for (int i = 0;i < enemyCount;++i)
-		{
-			Enemy* enemy = enemyManager.GetEnemy(i);
-			if (!enemy)	continue;
-			//敵との距離判定
-
-			DirectX::XMFLOAT3 epos = enemy->GetPosition();
-
-			float dx = epos.x - pos.x;
-			float dy = epos.y - pos.y;
-			float dz = epos.z - pos.z;
-			float distSq = dx * dx + dy * dy + dz * dz;
-
-			if (distSq < dist)
-			{
-				dist = distSq;
-				target = epos;
-				target.y += enemy->GetHeight() * 0.5f;
-			}
-		}
-
-		//発射
-		ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
-		projectile->Launch(dir, pos, target);
-	}
 }
 
 //操作対象から外れたときに移動を止め、待機状態に戻す
