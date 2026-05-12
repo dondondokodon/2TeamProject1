@@ -16,6 +16,7 @@
 #include"SceneTitle.h"
 
 #include"StageData1.h"
+#include"StageData2.h"
 
 //
 void SceneGame::Initialize()
@@ -54,7 +55,7 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
-	std::unique_ptr<StageData> stageData = std::make_unique<StageData1>(StageData1());
+	std::unique_ptr<StageData> stageData = std::make_unique<StageData2>(StageData2());
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
 	mng.LoadStageData(stageData.get());
