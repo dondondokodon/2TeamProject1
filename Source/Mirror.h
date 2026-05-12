@@ -16,6 +16,13 @@ public:
     void DrawDebugGUI();
     RayHitResult ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override;
 
+    void SetAngle(const DirectX::XMFLOAT3& ang)override
+    {
+        angle = ang;
+        targetAngleY = ang.y;
+        UpdateTransform();
+    }
+
     
 private:
     DirectX::XMFLOAT3 aabbMin;

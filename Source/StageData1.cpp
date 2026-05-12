@@ -1,28 +1,30 @@
-ï»¿#include "StageData1.h"
+#include "StageData1.h"
 
 
 StageData1::StageData1()
 {
-	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’è¿½åŠ 
-	//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç¨®é¡žã€ä½ç½®ã€å›žè»¢ã€å¤§ãã•ã€ãƒ¬ãƒ¼ã‚¶ãƒ¼ã®å‘ãï¼ˆãƒ¬ãƒ¼ã‚¶ãƒ¼ä»¥å¤–ã¯ç„¡è¦–ã•ã‚Œã‚‹ï¼‰
+	//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒg‚Ì”z’uƒf[ƒ^‚ð’Ç‰Á
+	//ƒIƒuƒWƒFƒNƒg‚ÌŽí—ÞAˆÊ’uA‰ñ“]A‘å‚«‚³AƒŒ[ƒU[‚ÌŒü‚«iƒŒ[ƒU[ˆÈŠO‚Í–³Ž‹‚³‚ê‚éj
 	objects.push_back({ ObjectType::Laser,{   7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
 	objects.push_back({ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
-	objects.push_back({ ObjectType::Laser,{  25.0f, 1.0f,   7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} });
+	objects.push_back({ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} });
 	objects.push_back({ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} });
-	objects.push_back({ ObjectType::IrradiationDevice,{ -5.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}});
-	objects.push_back({ ObjectType::Mirror,{  0.0f, 1.2f, -7.0f },{ 0.0f,0.0f,0.0f },{ 0.5f,0.5f,0.5f } });
-	objects.push_back({ ObjectType::Mirror,{ -2.0f, 1.2f,  2.0f },{ 0.0f,0.0f,0.0f },{ 0.5f,0.5f,0.5f } });
-	objects.push_back({ ObjectType::Box,{  3.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
-	objects.push_back({ ObjectType::Box,{ 11.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
-	objects.push_back({ ObjectType::Box,{ 10.5f, 0.5f,   7.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
-	objects.push_back({ ObjectType::Box,{  1.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
-	objects.push_back({ ObjectType::Box,{-10.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
-	objects.push_back({ ObjectType::Box,{-13.5f, 0.5f,   3.5f },{ 0.0f, 0.0f, 0.0f},{ 0.58f, 0.58f, 0.58f } });
+	objects.push_back({ ObjectType::IrradiationDevice,{ -6.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}});
+	objects.push_back({ ObjectType::Mirror,{  -1.0f, 1.2f, -7.5f },{ 0.0f,0.0f,0.0f },{ 0.5f,0.5f,0.5f } });
+	objects.push_back({ ObjectType::Mirror,{ -2.0f, 1.2f,  2.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } });
+	objects.push_back({ ObjectType::Mirror,{ 5.5f, 1.2f,  4.5f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } });
+	objects.push_back({ ObjectType::Box,{  3.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{ 11.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{ 10.5f, 0.5f,   7.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  1.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{-10.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{-13.5f, 0.5f,   3.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
 	objects.push_back({ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } });
 	objects.push_back({ ObjectType::Stairs,{10.0f, 1.3f,  2.0f },{0.0f, DirectX::XMConvertToRadians(90.0f), 0.0f},{ 0.5f, 0.5f,   0.5f } });
 
-	//è‡ªåˆ†è‡ªèº«ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆã‚¹ãƒ†ãƒ¼ã‚¸ï¼‰
-	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//å‰ã®ã‚„ã¤
+
+	//Ž©•ªŽ©g‚ÌƒIƒuƒWƒFƒNƒgiƒXƒe[ƒWj
+	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//‘O‚Ì‚â‚Â
 	MyStage = new Stage("Data/Model/Stage/tutorial_stage.mdl");
 	MyStage->SetScale({ 0.3f,0.3f,0.3f });
 	//MyStage->SetScale({ 1.0f,1.0f,1.0f });

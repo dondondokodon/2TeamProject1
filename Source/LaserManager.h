@@ -34,6 +34,9 @@ public:
 	//レーザー数取得
 	int GetLaserCount() { return static_cast<int>(Lasers.size()); }
 
+	//回転しているか取得
+	bool GetIsRotating() { return isRotating; }
+
 private:
 	std::vector <std::unique_ptr<Laser>> Lasers;
 	std::set<Laser*> removes;
