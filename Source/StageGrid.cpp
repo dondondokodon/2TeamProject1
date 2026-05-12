@@ -16,11 +16,11 @@ StageGrid::StageGrid(const char* filename)
 StageGrid::StageGrid()
 {
     // ステージモデル（木箱）を読み込み
-    model = std::make_unique<Model>("Data/Model/Objects/Box/Box_1cm.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
 
-    aabbMin = { 0.0f, 0.0f, 0.0f };
-    aabbMax = { 0.0f, 0.0f, 0.0f };
-    scale = { 1.0f,1.0f,1.0f };
+    aabbMin  = { 0.0f, 0.0f, 0.0f };
+    aabbMax  = { 0.0f, 0.0f, 0.0f };
+    scale    = { 0.2f, 0.2f, 0.2f };
     position = { 0.5f, 0.5f, -5.5f };
 }
 

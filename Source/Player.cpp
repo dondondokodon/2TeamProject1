@@ -12,6 +12,7 @@
 #include"RideState.h"
 #include"StageGrid.h"
 #include"GoalObject.h"
+#include "Stairs.h"
 
 // コンストラクタ
 void Player::Initialize(const char* modelPath)
@@ -644,22 +645,28 @@ void Player::CollisionPlayerVsStage()
 
 	//ステージグリッドとゴールオブジェクト
 	// 全てのステージオブジェクトに対してループ
-	for (int i = 0; i < stageObjectManager.GetStageObjectSize(); ++i) {
+	for (int i = 0; i < stageObjectManager.GetStageObjectSize(); ++i)
+	{
 		StageObject* obj = stageObjectManager.GetStageObject(i);
 		if (!obj) continue;
 
-		// StageGrid（箱）へのキャストを試みる
 		StageGrid* grid = dynamic_cast<StageGrid*>(obj);
-
-		// GoalObject（ゴール）へのキャストを試みる
 		GoalObject* goal = dynamic_cast<GoalObject*>(obj);
-		if (grid) {
-			// 内部で IsControlling() をチェックしているので、全員分呼んでOK
+		Stairs* stairs = dynamic_cast<Stairs*>(obj);
+
+		if (grid)
+		{
 			grid->CollisionVsPlayer(*this);
 		}
+
 		if (goal)
 		{
 			goal->CollisionVsPlayer(*this);
+		}
+
+		if (stairs)
+		{
+			stairs->CollisionVsPlayer(*this);
 		}
 	}
 

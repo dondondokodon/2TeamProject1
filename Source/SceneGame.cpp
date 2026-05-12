@@ -19,7 +19,7 @@
 
 #include"StageData1.h"
 
-//
+
 void SceneGame::Initialize()
 {
 
@@ -29,6 +29,7 @@ void SceneGame::Initialize()
 	//ステージグリッド初期化
 	//stageGrid = new StageGrid();
 
+	
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -145,7 +146,7 @@ void SceneGame::Update(float elapsedTime)
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
 	//cameraController->SetTarget(target);
-	cameraController->Update(elapsedTime);
+	//cameraController->Update(elapsedTime);
 
 	for (int i = 0; i < 2; ++i)
 	{

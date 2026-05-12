@@ -39,6 +39,8 @@ void StageObjectManager::Update(float elapsedTime)
 //描画処理
 void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
+
+
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Render(rc, renderer);
