@@ -8,6 +8,16 @@ StageData2::StageData2()
 	objects.push_back({ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} });
 	objects.push_back({ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} });
 	objects.push_back({ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} });
+	objects.push_back({ ObjectType::IrradiationDevice,{ -7.5f,1.0f,7.0f },{ 0.0f,DirectX::XMConvertToRadians(180.0f),0.0f},{0.5f,0.5f,0.5f} });
+	objects.push_back({ ObjectType::Box,{  -12.5f, 0.5f, 1.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  -11.5f, 0.5f, 11.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  -3.5f, 0.5f, -2.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  10.5f, 0.5f, 6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  12.5f, 0.5f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Box,{  11.5f, 0.5f, -6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } });
+	objects.push_back({ ObjectType::Mirror,{  -2.5f, 1.2f, 3.0f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } });
+	objects.push_back({ ObjectType::Mirror,{  4.5f, 1.2f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } });
+	objects.push_back({ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } });
 
 
 	//自分自身のオブジェクト（ステージ）
