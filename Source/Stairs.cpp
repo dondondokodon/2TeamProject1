@@ -44,5 +44,5 @@ void Stairs::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 void Stairs::DrawDebugGUI()
 {
   
-    ImGui::DragFloat3("angle", &angle.x, 0.1f);
+
 }
