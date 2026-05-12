@@ -296,6 +296,99 @@ DirectX::XMFLOAT3 Player::GetForward() const
 	return forward;
 }
 
+bool Player::RayCastLaserMirror(
+	const DirectX::XMFLOAT3& start,
+	const DirectX::XMFLOAT3& end,
+	DirectX::XMFLOAT3& hitPos,
+	DirectX::XMFLOAT3& hitNormal) const
+{
+	// ロボット以外は鏡を持っていないので判定しない
+	if (!isRobot) return false;
+
+	// ロボットの正面方向を、鏡面の法線として使う。ロボットの正面に鏡が付いている扱い
+	DirectX::XMFLOAT3 normal = GetForward();
+
+	// 鏡面の中心位置
+	// プレイヤーの足元 position から少し前方・少し上に鏡がある想定
+	DirectX::XMFLOAT3 planeCenter = {
+		position.x + normal.x * 0.25f,
+		position.y + 0.55f,
+		position.z + normal.z * 0.25f
+	};
+
+	// レーザーの始点から終点へのベクトルをつｋる
+	DirectX::XMFLOAT3 ray = {
+		end.x - start.x,
+		end.y - start.y,
+		end.z - start.z
+	};
+
+	// レーザー線分の長さを求める
+	float rayLength = sqrtf(ray.x * ray.x + ray.y * ray.y + ray.z * ray.z);
+
+	// 長さがない線分は判定できない
+	if (rayLength <= 0.0001f) return false;
+
+	// レーザー方向を正規化する
+	ray.x /= rayLength;
+	ray.y /= rayLength;
+	ray.z /= rayLength;
+
+	// レーザー方向と鏡の法線の内積
+	// 0に近いほど鏡面と平行で、交差位置を安定して求められない
+	float denom =
+		ray.x * normal.x +
+		ray.y * normal.y +
+		ray.z * normal.z;
+
+	// ロボットの正面側から入ってきたレーザーだけ反射対象にする
+	if (denom >= -0.1f) return false;	// denom が 0 に近い場合や、背面側から来た場合は反射しない
+
+	// レーザー線分と鏡面の交点までの距離を求める
+	float t =
+		((planeCenter.x - start.x) * normal.x +
+			(planeCenter.y - start.y) * normal.y +
+			(planeCenter.z - start.z) * normal.z) / denom;
+
+	// 交点がレーザー線分の範囲外なら当たっていない
+	if (t < 0.0f || t > rayLength) return false;
+
+	// 実際の交点を求める
+	hitPos = {
+		start.x + ray.x * t,
+		start.y + ray.y * t,
+		start.z + ray.z * t
+	};
+
+	// 鏡面の横方向ベクトル。normal をXZ平面で90度回して、鏡の幅方向として使う
+	DirectX::XMFLOAT3 right = {
+		normal.z,
+		0.0f,
+		-normal.x
+	};
+
+	// 交点が鏡の中心から横にどれだけ離れているか
+	float localX =
+		(hitPos.x - planeCenter.x) * right.x +
+		(hitPos.z - planeCenter.z) * right.z;
+
+	// 交点が鏡の中心から上下にどれだけ離れているか
+	float localY = hitPos.y - planeCenter.y;
+
+	// 鏡判定の半分の幅と高さ
+	// 値を大きくすると、ロボットの鏡判定が広くなる
+	const float mirrorHalfWidth = 0.9f;
+	const float mirrorHalfHeight = 1.0f;
+
+	// 交点が鏡の範囲外なら当たっていない
+	if (fabsf(localX) > mirrorHalfWidth) return false;
+	if (fabsf(localY) > mirrorHalfHeight) return false;
+
+	// 反射に使う法線を返す
+	hitNormal = normal;
+
+	return true;
+}
 
 
 //着地したときの処理
@@ -604,6 +697,60 @@ void Player::CollisionPlayerVsStage()
 			}
 
 			isHit = true;
+
+			// ロボットは正面に鏡を持っているので、
+			// レーザーが正面側から当たっている場合だけ、レーザー内に入れるようにする。
+			// 横や背中側から当たっている場合は鏡で受けられないため、通常通り押し出す。
+			if (isRobot)
+			{
+				bool laserFromFront = false;
+
+				// ロボットの正面方向
+				DirectX::XMFLOAT3 forward = GetForward();
+
+				for (const auto& seg : laser->GetBeam().segments)
+				{
+					// レーザー線分の進行方向を求める
+					DirectX::XMFLOAT3 segDir = {
+						seg.end.x - seg.start.x,
+						seg.end.y - seg.start.y,
+						seg.end.z - seg.start.z
+					};
+
+					float len = sqrtf(
+						segDir.x * segDir.x +
+						segDir.y * segDir.y +
+						segDir.z * segDir.z
+					);
+
+					// 長さがない線分は判定できないので飛ばす
+					if (len <= 0.0001f) continue;
+
+					// 方向ベクトルを正規化
+					segDir.x /= len;
+					segDir.y /= len;
+					segDir.z /= len;
+
+					// レーザーは segDir 方向へ進んでいる。
+					// ロボットから見ると、レーザーが来る方向は -segDir。
+					// それがロボットの正面 forward と近ければ、正面から受けている。
+					float frontDot =
+						(-segDir.x) * forward.x +
+						(-segDir.z) * forward.z;
+
+					if (frontDot > 0.1f)
+					{
+						laserFromFront = true;
+						break;
+					}
+				}
+
+				// 正面側から受けている場合は、鏡で反射できるので押し出さない
+				if (laserFromFront)
+				{
+					break;
+				}
+			}
 
 			// 上に乗る処理
 			if (hit.normal.y > 0.7f && velocity.y <= 0)
@@ -941,11 +1088,11 @@ void Player::InputRotate()
 	//LB/RBで45度ずつ回転
 	const float step = DirectX::XMConvertToRadians(45.0f);
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
+	if (gamePad.GetButtonDown() & GamePad::BTN_R)
 	{
 		angle.y -= step;
 	}
-	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER)
+	if (gamePad.GetButtonDown() & GamePad::BTN_T)
 	{
 		angle.y += step;
 	}

@@ -1,4 +1,4 @@
-#include "System/Graphics.h"
+﻿#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"EnemyManager.h"
@@ -170,6 +170,20 @@ void SceneGame::Update(float elapsedTime)
 	//ステージオブジェクト更新処理
 	StageObjectManager::Instance().Update(elapsedTime);
 
+	// レーザー側でPlayer2の鏡判定を行えるように、現在のプレイヤー配列を各レーザーへ渡しておく。
+	// Player2はStageObjectではない→StageObjectManagerのRayCastだけではレーザー反射判定に入らない
+	LaserManager* laserManager = StageObjectManager::Instance().GetLaserManager();
+	if (laserManager)
+	{
+		for (int i = 0; i < laserManager->GetLaserCount(); ++i)
+		{
+			Laser* laser = laserManager->GetLaser(i);
+			if (laser)
+			{
+				laser->SetMirrorPlayers(players, 2);
+			}
+		}
+	}
 	// エフェクト更新
 	EffectManager::Instance().Update(elapsedTime);
 }
