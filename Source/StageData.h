@@ -29,7 +29,7 @@ public:
 class StageData
 {
 public:
-	//StageData() {}
+	StageData() {}
 	StageData(const char* filename);
 	~StageData() {}
 	std::vector<std::unique_ptr<ObjectData>> objects;
