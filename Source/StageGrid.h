@@ -5,6 +5,7 @@
 #include"Player.h"
 #include"../Source/stage.h"
 #include"StageObject.h"
+#include"StageObjectManager.h"
 
 // ------------------------------------------------------------
 // StageGrid
@@ -15,7 +16,7 @@
 class StageGrid : public StageObject
 {
 public:
-    StageGrid(const char* filename);
+
     StageGrid();
     ~StageGrid();
 
@@ -33,6 +34,8 @@ public:
 
     //動かす
     void StartMove(DirectX::XMFLOAT3 targetPos);
+
+    void CollisionVsStage(StageObjectManager& stageObjectManager);
 
     RayHitResult StageGrid::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override {
         // StageGrid は「絶対に」レーザーを止める存在であることを保証する
@@ -55,6 +58,11 @@ private:
     bool isFacingBox=false;
     float moveRemain = 0.0f;       // 残り移動距離（1.0f 分動く）
     DirectX::XMFLOAT3 moveDir = { 0,0,0 }; // 移動方向（±X or ±Z）
+
+    int gridX;
+    int gridZ;
+
+
 
     // --------------------------------------------------------
     // ★ AABB（当たり判定用）

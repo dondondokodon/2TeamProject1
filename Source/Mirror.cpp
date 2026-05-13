@@ -12,7 +12,6 @@ Mirror::Mirror()
     angle = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f, 1.0f, 1.0f };
 
-
     type = RayHitType::reflection;
 
     UpdateTransform();
@@ -103,19 +102,6 @@ void Mirror::CollisionVsPlayer(Player& p)
 
 void Mirror::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-    // スケール・回転・平行移動
-    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-    DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(
-        angle.x,
-        angle.y,
-        angle.z
-    );
-    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-
-    DirectX::XMMATRIX M = S * R * T;
-
-    DirectX::XMFLOAT4X4 transform;
-    DirectX::XMStoreFloat4x4(&transform, M);
 
     renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
 

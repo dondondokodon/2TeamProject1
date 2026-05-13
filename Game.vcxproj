@@ -163,6 +163,7 @@
     <ClInclude Include="Source\StageGrid.h" />
     <ClInclude Include="Source\StageObject.h" />
     <ClInclude Include="Source\StageObjectManager.h" />
+    <ClInclude Include="Source\Stairs.h" />
     <ClInclude Include="Source\System\Audio.h" />
     <ClInclude Include="Source\System\AudioResource.h" />
     <ClInclude Include="Source\System\AudioSource.h" />
@@ -228,6 +229,7 @@
     <ClCompile Include="Source\StageGrid.cpp" />
     <ClCompile Include="Source\StageObject.cpp" />
     <ClCompile Include="Source\StageObjectManager.cpp" />
+    <ClCompile Include="Source\Stairs.cpp" />
     <ClCompile Include="Source\System\Audio.cpp" />
     <ClCompile Include="Source\System\AudioResource.cpp" />
     <ClCompile Include="Source\System\AudioSource.cpp" />

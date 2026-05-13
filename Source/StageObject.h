@@ -71,6 +71,8 @@ public:
 		return result;	//基底クラスはとりあえずtrue
 	}
 
+
+
 protected:
 
 	//行列更新処理

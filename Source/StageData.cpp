@@ -4,6 +4,7 @@
 #include "StageGrid.h"
 #include "Mirror.h"
 #include "GoalObject.h"
+#include "Stairs.h"
 #include<memory>
 
 StageObject* ObjectData::CreateStageObject()const
@@ -22,6 +23,7 @@ StageObject* ObjectData::CreateStageObject()const
 		//ゴールオブジェクトの生成と初期化
 		obj = new GoalObject();
 		break;
+	
 	case ObjectType::IrradiationDevice:
 		//照射装置オブジェクトの生成と初期化
 		obj = new IrradiationDevice();
@@ -36,7 +38,12 @@ StageObject* ObjectData::CreateStageObject()const
 			laser->Initialize(pos, direction, 150.0f);
 		}
 		break;
+	
 	}
+	case ObjectType::Stairs:
+		//階段オブジェクトの生成と初期化
+	    obj = new Stairs();
+	    break;
 	default:
 		break;
 	}

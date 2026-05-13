@@ -263,6 +263,9 @@
     <ClInclude Include="Source\StageObjectManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Stairs.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
     <ClInclude Include="Source\StageData2.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -440,6 +443,9 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Flag.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stairs.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageData2.cpp">

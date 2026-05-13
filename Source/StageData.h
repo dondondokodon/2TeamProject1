@@ -11,7 +11,8 @@ enum class ObjectType
 	Mirror,
 	Goal,
 	IrradiationDevice,
-	Laser
+	Laser,
+	Stairs,
 };
 
 struct ObjectData

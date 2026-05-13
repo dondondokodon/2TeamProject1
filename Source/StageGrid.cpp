@@ -2,27 +2,27 @@
 #include"Collision.h"
 #include"Player.h"
 
-StageGrid::StageGrid(const char* filename)
-{
-    // ステージモデル（木箱）を読み込み
-    model = std::make_unique<Model>(filename);
 
-    aabbMin = { 0.0f, 0.0f, 0.0f };
-    aabbMax = { 0.0f, 0.0f, 0.0f };
-    scale = { 1.0f,1.0f,1.0f };
-    position = { 0.5f, 0.5f, -5.5f };
-}
 
 StageGrid::StageGrid()
 {
-    // ステージモデル（木箱）を読み込み
-    model = std::make_unique<Model>("Data/Model/Objects/Box/Box_1cm.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
 
-    aabbMin = { 0.0f, 0.0f, 0.0f };
-    aabbMax = { 0.0f, 0.0f, 0.0f };
-    scale = { 1.0f,1.0f,1.0f };
-    position = { 0.5f, 0.5f, -5.5f };
+    position = { 0.0f, 0.0f, 0.0f };
+    scale = { 1.0f, 1.0f, 1.0f };   // ← 必須
+    angle = { 0.0f, 0.0f, 0.0f };
+
+    isMoving = false;
+    moveRemain = 0.0f;
+    moveDir = { 0,0,0 };
+
+    aabbMin = { 0,0,0 };
+    aabbMax = { 0,0,0 };
+
+    gridX = 0;
+    gridZ = 0;
 }
+
 
 StageGrid::~StageGrid()
 {
@@ -63,15 +63,15 @@ void StageGrid::Update(float elapsedTime)
     // ★ AABB（当たり判定）の更新
     // ---------------------------------------------------------
     aabbMin = {
-        position.x - 0.5f * scale.x,
-        position.y - 0.5f * scale.y,
-        position.z - 0.5f * scale.z
+        position.x - 2.4f,
+        position.y - 2.4f,
+        position.z - 2.4f
     };
 
     aabbMax = {
-        position.x + 0.5f * scale.x,
-        position.y + 0.5f * scale.y,
-        position.z + 0.5f * scale.z
+        position.x + 2.4f,
+        position.y + 2.4f,
+        position.z + 2.4f
     };
 
     // Pキーの状態を保存
@@ -102,20 +102,21 @@ void StageGrid::Render(const RenderContext& rc, ModelRenderer* renderer)
 //デバッグプリミティブ描画
 void StageGrid::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
-    float debugScale = 0.55f; // デバッグ用に少し小さく描く
+  
 
     // AABB の中心
     DirectX::XMFLOAT3 center = {
-        (aabbMin.x + aabbMax.x) * 0.5f,
-        (aabbMin.y + aabbMax.y) * 0.5f,
-        (aabbMin.z + aabbMax.z) * 0.5f
+      (aabbMin.x + aabbMax.x) * 0.5f,
+      (aabbMin.y + aabbMax.y) * 0.5f,
+      (aabbMin.z + aabbMax.z) * 0.5f
     };
+
 
     // AABB のサイズ（縮小版）
     DirectX::XMFLOAT3 size = {
-        (aabbMax.x - aabbMin.x) * debugScale,
-        (aabbMax.y - aabbMin.y) * debugScale,
-        (aabbMax.z - aabbMin.z) * debugScale
+      (aabbMax.x - aabbMin.x) * 0.6f,
+      (aabbMax.y - aabbMin.y) * 0.6f,
+      (aabbMax.z - aabbMin.z) * 0.6f
     };
 
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
@@ -143,6 +144,7 @@ void StageGrid::CollisionVsPlayer(Player& p)
         // プレイヤーを押し戻す（めり込み補正）
         DirectX::XMFLOAT3 pos = p.GetPosition();
         pos.x += push.x;
+        pos.y += push.y;
         pos.z += push.z;
         p.SetPosition(pos);
 
@@ -182,7 +184,10 @@ void StageGrid::CollisionVsPlayer(Player& p)
 
 void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
 {
-    float moveAmount = 1.0f;
+    const int limit = 5;
+
+    int nextX = gridX;
+    int nextZ = gridZ;
 
     float dx = targetPos.x - position.x;
     float dz = targetPos.z - position.z;
@@ -190,12 +195,100 @@ void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
     if (fabs(dx) > fabs(dz))
     {
         moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
+        nextX += (moveDir.x > 0 ? 1 : -1);
     }
     else
     {
         moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
+        nextZ += (moveDir.z > 0 ? 1 : -1);
     }
 
+    // ★ 5マス制限
+    if (abs(nextX) > limit || abs(nextZ) > limit)
+        return;
+
+    gridX = nextX;
+    gridZ = nextZ;
+
     isMoving = true;
-    moveRemain = moveAmount;
+    moveRemain = 1.0f;
+}
+
+void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
+{
+    if (!isMoving) return;
+
+    // --------------------------------------
+    // ★ 進行方向ベクトル
+    // --------------------------------------
+    DirectX::XMFLOAT3 forward =
+    {
+        moveDir.x,
+        0.0f,
+        moveDir.z
+    };
+
+    // --------------------------------------
+    // ★ 箱の半径（AABB基準）
+    // --------------------------------------
+    float startOffset = 2.4f;
+
+    // --------------------------------------
+    // ★ レイ発射位置（箱の外側）
+    // --------------------------------------
+    DirectX::XMFLOAT3 start =
+    {
+        position.x + forward.x * startOffset,
+        position.y + 0.5f,
+        position.z + forward.z * startOffset
+    };
+
+    // --------------------------------------
+    // ★ 進行方向へ少しだけレイを飛ばす
+    // --------------------------------------
+    float rayLength = 0.6f;
+
+    DirectX::XMFLOAT3 end =
+    {
+        start.x + moveDir.x * rayLength,
+        start.y,
+        start.z + moveDir.z * rayLength
+    };
+
+    // --------------------------------------
+    // ★ 太さ用（3本レイ）
+    // --------------------------------------
+    const float offset = 0.3f;
+
+    DirectX::XMFLOAT3 origins[3] =
+    {
+        start,
+        { start.x, start.y, start.z + offset },
+        { start.x, start.y, start.z - offset }
+    };
+
+    // --------------------------------------
+    // ★ 判定
+    // --------------------------------------
+    for (int i = 0; i < 3; i++)
+    {
+        DirectX::XMFLOAT3 oStart = origins[i];
+
+        DirectX::XMFLOAT3 oEnd =
+        {
+            oStart.x + moveDir.x * rayLength,
+            oStart.y,
+            oStart.z + moveDir.z * rayLength
+        };
+
+        DirectX::XMFLOAT3 hitPos, hitNormal;
+        RayHitResult result = stageObjectManager.RayCast(oStart, oEnd, hitPos, hitNormal);
+
+        if (result.hit)
+        {
+            isMoving = false;
+            moveRemain = 0.0f;
+            return;
+        }
+    }
 }

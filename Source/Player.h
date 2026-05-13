@@ -8,6 +8,7 @@
 #include"AnimationController.h"
 #include"BoxCollider.h"	
 #include"CylinderCollider.h"
+#include "RayHitType.h"
 
 #include"PlayerStates.h"
 
@@ -99,6 +100,20 @@ public:
 
 	//向き取得
 	DirectX::XMFLOAT3 GetForward() const;
+
+	// ロボット正面にある仮想鏡面と、レーザー線分の当たり判定
+	// 当たった場合は、反射位置 hitPos と反射用法線 hitNormal を返す
+	bool RayCastLaserMirror(
+		const DirectX::XMFLOAT3& start,
+		const DirectX::XMFLOAT3& end,
+		DirectX::XMFLOAT3& hitPos,
+		DirectX::XMFLOAT3& hitNormal) const;
+
+	// レーザーとロボット本体の当たり判定用
+	const CylinderCollider& GetBodyCylinderCollider() const { return bodyCylinderCollider; }
+
+	// ロボットがレーザー反射用の鏡を持っているか
+	bool IsLaserMirror() const { return isRobot; }
 
 
 protected:
