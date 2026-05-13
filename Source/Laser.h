@@ -7,6 +7,8 @@
 #include"Effect.h"
 #include<imgui.h>
 
+class Player;
+
 struct LaserSegment
 {
 	DirectX::XMFLOAT3 start;
@@ -41,6 +43,7 @@ public:
 	void Render();//役割ずれてるかも
 	LaserHit CheckHitAABB(const BoxCollider& box) const;
 	LaserHit CheckHitCylinder(const CylinderCollider& cylinder) const;
+	void SetMirrorPlayers(Player** players, int count);
 
 	
 
@@ -135,16 +138,23 @@ private:
 	std::unique_ptr<Effect> laserBackEffect;	//laserの装置にだけつける
 	std::unique_ptr<Effect> beamReflectEffect;
 	std::vector<Effekseer::Handle> activeEffects;
-	std::vector<Effekseer::Handle> activeReflectEffects;
-	Effekseer::Handle BackEffectHandle;
-	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
+std::vector<Effekseer::Handle> activeReflectEffects;
+Effekseer::Handle BackEffectHandle;
+bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
+
+// ロボットの仮想鏡面判定に使うプレイヤー配列
+// SceneGame から players を渡してもらい、LaserBeam 側で Player2 を確認する
+Player** mirrorPlayers = nullptr;
+
+// mirrorPlayers に入っているプレイヤー数
+int mirrorPlayerCount = 0;
+
 };
 
 //???[?U?[??{??
 class Laser :public StageObject
 {
 	public:
-
 		//?f?o?b?O?v???~?e?B?u?`??
 		void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override
 		{
@@ -194,12 +204,20 @@ public:
 	
 	bool IsRotating() const { return isRotating; }
 	
-	const LaserBeam& GetBeam() const { return beam; }
+const LaserBeam& GetBeam() const { return beam; }
 
-	DirectX::XMFLOAT3& GetStartPos() { return startPos; }
+// レーザーの反射判定で参照するプレイヤー配列を設定する
+// Player2はStageObjectではないため、レーザー側で別途チェックする
+void SetMirrorPlayers(Player** players, int count)
+{
+	beam.SetMirrorPlayers(players, count);
+}
 
-	//laserの回転　オリジンを中心として回転させる
-	void UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY);
+DirectX::XMFLOAT3& GetStartPos() { return startPos; }
+
+//laserの回転　オリジンを中心として回転させる
+void UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY);
+
 
 private:
 	LaserBeam beam;  // ?? ???????[?U?[??{??
@@ -215,9 +233,14 @@ private:
 	bool isActive = true;
 	bool isRotating = false;
 
-	float currentAngleY = 0.0f;
-	float targetAngleY = 0.0f;
+  // レーザー装置の現在のY回転角度
+  float currentAngleY = 0.0f;
 
+  // レーザー装置が最終的に向く予定のY回転角度
+  float targetAngleY = 0.0f;
+
+  // 1フレームあたりの回転速度（度）
+  float rotateSpeed = 4.0f;
 
 	float width = 0.6f; // 見た目の太さ（直径）
 	StageObjectManager* manager = nullptr;

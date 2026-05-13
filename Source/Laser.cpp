@@ -5,8 +5,16 @@
 #include"StageObjectManager.h"
 #include"math.h"
 #include"EffectManager.h"
+#include "Player.h"
 
 using namespace DirectX;
+
+void LaserBeam::SetMirrorPlayers(Player** players, int count)
+{
+	mirrorPlayers = players;
+	mirrorPlayerCount = count;
+}
+
 
 void LaserBeam::Update(float elapsedTime) 
 {
@@ -29,25 +37,81 @@ void LaserBeam::Update(float elapsedTime)
 		//    StageObjectManager  ?  C L   X g  ?     
 		RayHitResult hit = StageObjectManager::Instance().RayCast(start, end, hitPos, hitNormal);
 
+		// 今回のレーザー線分がロボットの仮想鏡に当たったかを確認するための変数
+		Player* hitMirrorPlayer = nullptr;
+
+		// ステージオブジェクトに当たった距離を記録、後でロボットの鏡にも当たった場合より手前にある方を優先するから
+		float stageHitDistSq = FLT_MAX;
+		if (hit.hit)
+		{
+			float dx = hitPos.x - start.x;
+			float dy = hitPos.y - start.y;
+			float dz = hitPos.z - start.z;
+			stageHitDistSq = dx * dx + dy * dy + dz * dz;
+		}
+
+		// Player2はStageObjectではないので、StageObjectManagerのRayCastには含まれない→レーザー側でプレイヤー配列を見て、ロボットの仮想鏡面との当たり判定えお
+		for (int playerIndex = 0; playerIndex < mirrorPlayerCount; ++playerIndex)
+		{
+			Player* player = mirrorPlayers[playerIndex];
+
+			// プレイヤーが存在しない、または鏡を持っていない場合は判定しない
+			if (!player || !player->IsLaserMirror()) continue;
+
+			DirectX::XMFLOAT3 playerHitPos;
+			DirectX::XMFLOAT3 playerHitNormal;
+
+			// ロボット正面の仮想鏡面に、このレーザー線分が当たるか調べる
+			if (!player->RayCastLaserMirror(start, end, playerHitPos, playerHitNormal)) continue;
+
+			// レーザー開始位置から、ロボット鏡面のヒット位置までの距離を求める
+			float dx = playerHitPos.x - start.x;
+			float dy = playerHitPos.y - start.y;
+			float dz = playerHitPos.z - start.z;
+			float playerHitDistSq = dx * dx + dy * dy + dz * dz;
+
+			// ステージオブジェクトより手前でロボットの鏡に当たった場合だけ、
+			// 今回のヒット結果をロボット鏡面の反射として扱う
+			if (playerHitDistSq < stageHitDistSq)
+			{
+				hit.hit = true;
+
+				// ロボットはStageObjectではないので object は nullptr にする
+				hit.object = nullptr;
+
+				// レーザーの通常反射処理に流すため、reflection として扱う
+				hit.type = RayHitType::reflection;
+				hit.hitPos = playerHitPos;
+
+				hitPos = playerHitPos;
+				hitNormal = playerHitNormal;
+				stageHitDistSq = playerHitDistSq;
+			}
+		}
+
 		//反射
 		if (hit.object)
 		{
 			//それぞれのヒット条件と見比べる
 			hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
-			if(hit.hit)
-				  hit.object->OnHit(true); //ヒット通知
+			if (hit.hit)
+			{
+				hit.object->OnHit(true); //ヒット通知
+			}
 		}
-		else
+		else if (!hit.hit)
 		{
 			 segments.push_back({ start, end,hitNormal,false });
 			 break;
 		}
-	   
-		if (hit.type==RayHitType::reflection)
+
+
+		if (hit.type == RayHitType::reflection)
 		{
+			// 反射点までのレーザー線分を登録
 			segments.push_back({ start, hitPos ,hitNormal,true});
 
-		    //反射方向
+		  //反射方向
 			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
 			//法線
 			//XZ平面にする
@@ -58,17 +122,22 @@ void LaserBeam::Update(float elapsedTime)
 			//正規化
 			DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
 
-			start = hitPos;
+			// 次のレーザーの開始位置を、反射点から少しだけ進める
+			// 同じ位置から再スタートすると、同じ鏡にもう一度当たってしまうことがあるから
+			start = {
+				hitPos.x + dir.x * 0.02f,
+				hitPos.y + dir.y * 0.02f,
+				hitPos.z + dir.z * 0.02f
+			};
 		}
 		else if (hit.type == RayHitType::Stop)
 		{
+			// 反射しない物体に当たった場合は当たった一でレーザーを止める
 			segments.push_back({ start, hitPos,hitNormal,true });
 			break;
 		}
-	   
-	}
 
-  
+	}
 }
 
 void LaserBeam::Render()

@@ -15,7 +15,7 @@ public:
 
 	//レーザー登録
 	void Register(Laser* laser);
-
+  
 	//レーザー全削除
 	void Clear();
 
