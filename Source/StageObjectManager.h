@@ -80,6 +80,6 @@ private:
 	std::set<StageObject*> removes;
 	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
 	std::vector<std::unique_ptr<StageData>> stageDatas;
-	int nowStageIndex = 0;
+	int nextStageIndex = 0;
 };
 

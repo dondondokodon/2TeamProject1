@@ -28,11 +28,16 @@ RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOA
 
     RayHitResult result{ true,this,type,hitPos };
 
-    float radius = 1.0f;
+    float radius = 0.5f;
     if (distSq < (radius * radius)) {
         // 前後の制限
-         if (abs(localPos.z) < 1.0f) 
-        result.hit= true;
+         //if (abs(localPos.z) < 0.5f) 
+         //result.hit = true;
+        if (localPos.z > 0.4f && localPos.z < 0.5f)
+        {
+            result.hit = true;
+        }
+       
     }
     else
     result.hit = false;

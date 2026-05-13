@@ -21,7 +21,7 @@ StageObjectManager::~StageObjectManager()
 //リセット
 void StageObjectManager::Reset()
 {
-	nowStageIndex = 0;
+	nextStageIndex = 0;
 	Clear();
 	stageDatas.clear();
 	stageDatas.push_back(std::make_unique<StageData1>());
@@ -117,13 +117,13 @@ void StageObjectManager::LoadStageData(int stageNum)
 //次のステージに移る処理 true：最後のステージ
 bool StageObjectManager::NextStage()
 {
-	nowStageIndex++;
-
-	if (nowStageIndex >= stageDatas.size())
+	if (nextStageIndex >= stageDatas.size())
 	{
 		return true;
 	}
-	LoadStageData(nowStageIndex);
+	LoadStageData(nextStageIndex);
+	nextStageIndex++;
+
 	return false;
 }
 

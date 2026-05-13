@@ -139,9 +139,17 @@ void SceneGame::Update(float elapsedTime)
 	//ゴールしたか
 	if (Flag::Instance().getFlag(Flag::IsGoal))
 	{
+		Flag::Instance().SetFlag(Flag::IsGoal, false);
+		Flag::Instance().SetFlag(Flag::openGoal, false);
+		for (auto& p : players)
+		{
+			p->SetPosition(DirectX::XMFLOAT3(0, 0, 0));
+		}
+
 		//ゴールしてたら次のステージへ
 		if(StageObjectManager::Instance().NextStage())
-		Goal();
+			Goal();
+		return;
 	}
 }
 
