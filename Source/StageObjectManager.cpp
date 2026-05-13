@@ -57,28 +57,28 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 }
 
 //ステージデータロード
-void StageObjectManager::LoadStageData(StageData* data)
-{
-	Clear();
-	laserManager->Clear();
-
-	for (auto& objData : data->objects)
-	{
-		StageObject* obj = objData->CreateStageObject();
-		if (objData->type == ObjectType::Laser)
-		{
-			Laser* laser = dynamic_cast<Laser*>(obj);
-			laser->setManager(this);
-			laserManager->Register(laser);
-		}
-		else
-		Register(obj);
-	}
-
-	if (data->MyStage) {
-		Register(data->MyStage.release());
-	}
-}
+//void StageObjectManager::LoadStageData(StageData* data)
+//{
+//	Clear();
+//	laserManager->Clear();
+//
+//	for (auto& objData : data->objects)
+//	{
+//		StageObject* obj = objData->CreateStageObject();
+//		if (objData->type == ObjectType::Laser)
+//		{
+//			Laser* laser = dynamic_cast<Laser*>(obj);
+//			laser->setManager(this);
+//			laserManager->Register(laser);
+//		}
+//		else
+//		Register(obj);
+//	}
+//
+//	if (data->MyStage) {
+//		Register(data->MyStage.release());
+//	}
+//}
 
 //ステージデータロード
 void StageObjectManager::LoadStageData(int stageNum)
@@ -107,8 +107,8 @@ void StageObjectManager::Reset()
 {
 	nowStageIndex = 0;
 	Clear();
-	laserManager->Clear();
-	delete laserManager;
+	/*laserManager->Clear();
+	delete laserManager;*/
 }
 
 //次のステージに移る処理 true：最後のステージ
@@ -203,6 +203,7 @@ void StageObjectManager::setLaserManager(LaserManager* mgr)
 {
 	if (laserManager)
 	{
+		//laserManager->Clear();
 		delete laserManager;
 		laserManager = nullptr;
 	}

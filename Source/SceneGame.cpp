@@ -55,16 +55,16 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
-	std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
+	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
-	mng.LoadStageData(stageData.get());
+	mng.NextStage();
+	//mng.LoadStageData(stageData.get());
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
-	
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
 	{
@@ -139,6 +139,8 @@ void SceneGame::Update(float elapsedTime)
 	//ゴールしたか
 	if (Flag::Instance().getFlag(Flag::IsGoal))
 	{
+		//ゴールしてたら次のステージへ
+		if(StageObjectManager::Instance().NextStage())
 		Goal();
 	}
 }
