@@ -114,7 +114,7 @@ StageData::StageData(const char* filename)
 			obj.value("DirectionZ",0.0f)
 		};
 
-		objects.push_back(std::make_unique<ObjectData>(ObjectData{ o,position,angle,scale,direction }));
+		objects.push_back(new ObjectData{ o,position,angle,scale,direction });
 
 	}
 }

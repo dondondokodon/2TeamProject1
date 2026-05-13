@@ -29,7 +29,7 @@ public:
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
 
 	//ステージデータロード
-	//void LoadStageData(StageData* data);	//直接もらうほう
+	void LoadStageData(StageData* data);	//直接もらうほう
 
 	void LoadStageData(int stageNum);	//持ってるほうからロード
 
