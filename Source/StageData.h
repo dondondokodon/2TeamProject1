@@ -31,7 +31,7 @@ class StageData
 public:
 	StageData() {}
 	StageData(const char* filename);
-	~StageData() {}
+	virtual ~StageData() {}
 	std::vector<std::unique_ptr<ObjectData>> objects;
 	std::unique_ptr<Stage> MyStage = nullptr;
 };
