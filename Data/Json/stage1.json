@@ -223,5 +223,35 @@
     "DirectionX": 0,
     "DirectionY": 0,
     "DirectionZ": 0
+  },
+  {
+    "type": "Laser",
+    "PosX": 5,
+    "PosY": 1,
+    "PosZ": 0,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 2,
+    "ScaleY": 2,
+    "ScaleZ": 2,
+    "DirectionX": 0,
+    "DirectionY": 1,
+    "DirectionZ": 0
+  },
+  {
+    "type": "Laser",
+    "PosX": 7,
+    "PosY": 1,
+    "PosZ": -25,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 1,
+    "ScaleY": 1,
+    "ScaleZ": 1,
+    "DirectionX": -1,
+    "DirectionY": 1,
+    "DirectionZ": 0
   }
 ]
