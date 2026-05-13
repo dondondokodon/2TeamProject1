@@ -872,11 +872,11 @@ void Player::InputRotate()
 	//LB/RBで45度ずつ回転
 	const float step = DirectX::XMConvertToRadians(45.0f);
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
 	{
 		angle.y -= step;
 	}
-	if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+	if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
 	{
 		angle.y += step;
 	}
