@@ -5,6 +5,7 @@
 #include"BoxCollider.h"
 #include"CylinderCollider.h"
 #include"Effect.h"
+#include<imgui.h>
 
 class Player;
 
@@ -12,6 +13,8 @@ struct LaserSegment
 {
 	DirectX::XMFLOAT3 start;
 	DirectX::XMFLOAT3 end;
+	DirectX::XMFLOAT3 normal={0,0,0};
+	bool hit = false;
 };
 
 struct LaserHit
@@ -46,7 +49,7 @@ public:
 
 	void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 	{
-		// LaserBeam ???????`??
+		// ?e?B?u?`??
 		for (auto& seg : segments)
 		{
 			// start ?? end ??x?N?g??
@@ -103,9 +106,11 @@ public:
 	void DrawDebugGUI();
 
 
-	void setEffect(const char* filename)
+	void setEffect(const char* filename,const char* file,const char* name)
 	{
 		laserEffect = std::make_unique<Effect>(filename);
+		laserBackEffect = std::make_unique<Effect>(file);
+		beamReflectEffect = std::make_unique<Effect>(name);
 	}
 
 	//一時的にエフェクト停止
@@ -117,22 +122,32 @@ public:
 			{
 				laserEffect->Stop(handle);
 			}
+			for (auto handle : activeReflectEffects)
+			{
+				beamReflectEffect->Stop(handle);
+			}
+			laserBackEffect->Stop(BackEffectHandle);
 			activeEffects.clear();
+			activeReflectEffects.clear();
 			isEffectPlaying = false;
 		}
 	}
 
 private:
 	std::unique_ptr<Effect> laserEffect;
+	std::unique_ptr<Effect> laserBackEffect;	//laserの装置にだけつける
+	std::unique_ptr<Effect> beamReflectEffect;
 	std::vector<Effekseer::Handle> activeEffects;
-	bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
-	
-	// ロボットの仮想鏡面判定に使うプレイヤー配列
-	// SceneGame から players を渡してもらい、LaserBeam 側で Player2 を確認する
-	Player** mirrorPlayers = nullptr;
+std::vector<Effekseer::Handle> activeReflectEffects;
+Effekseer::Handle BackEffectHandle;
+bool isEffectPlaying = false;	//この変数使わなくてもactiveEffectsのサイズで管理できるけど、わかりやすさのために用意してる
 
-	// mirrorPlayers に入っているプレイヤー数
-	int mirrorPlayerCount = 0;
+// ロボットの仮想鏡面判定に使うプレイヤー配列
+// SceneGame から players を渡してもらい、LaserBeam 側で Player2 を確認する
+Player** mirrorPlayers = nullptr;
+
+// mirrorPlayers に入っているプレイヤー数
+int mirrorPlayerCount = 0;
 
 };
 
@@ -140,11 +155,6 @@ private:
 class Laser :public StageObject
 {
 	public:
-
-		float currentAngleY = 0.0f;   // 現在の角度
-		float targetAngleY = 0.0f;   // 目標の角度
-		float rotateSpeed = 4.0f;   // 1フレームあたりの回転速度（度）
-
 		//?f?o?b?O?v???~?e?B?u?`??
 		void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)override
 		{
@@ -159,6 +169,13 @@ class Laser :public StageObject
 		void DrawDebugGUI()
 		{
 			beam.DrawDebugGUI();
+
+			//// デバッグ：現在の計算された座標と向きを ImGui か何かで出す
+			//if (ImGui::Begin("Laser Debug")) {
+			//	ImGui::Text("Current Angle: %f", currentAngleY);
+			//	ImGui::Text("StartPos: %f, %f, %f", startPos.x, startPos.y, startPos.z);
+			//	ImGui::End();
+			//}
 		}
 
 public:
@@ -173,6 +190,8 @@ public:
 	void Update(float elapsedTime) override;
 	void Render(const RenderContext& rc, ModelRenderer* renderer) override;
 
+	void SetRotating(bool flag);
+
 	void SetActive(bool flag) { isActive = flag; }
 	bool IsActive() const { return isActive; }
 
@@ -185,25 +204,45 @@ public:
 	
 	bool IsRotating() const { return isRotating; }
 	
-	const LaserBeam& GetBeam() const { return beam; }
+const LaserBeam& GetBeam() const { return beam; }
 
-	// レーザーの反射判定で参照するプレイヤー配列を設定する
-	// Player2はStageObjectではないため、レーザー側で別途チェックする
-	void SetMirrorPlayers(Player** players, int count)
-	{
-		beam.SetMirrorPlayers(players, count);
-	}
+// レーザーの反射判定で参照するプレイヤー配列を設定する
+// Player2はStageObjectではないため、レーザー側で別途チェックする
+void SetMirrorPlayers(Player** players, int count)
+{
+	beam.SetMirrorPlayers(players, count);
+}
+
+DirectX::XMFLOAT3& GetStartPos() { return startPos; }
+
+//laserの回転　オリジンを中心として回転させる
+void UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY);
+
 
 private:
 	LaserBeam beam;  // ?? ???????[?U?[??{??
 
 	DirectX::XMFLOAT3 startPos;
 	DirectX::XMFLOAT3 direction;
+
+	DirectX::XMFLOAT3 baseStartPos;	//初期座標（不変）
+	DirectX::XMFLOAT3 baseDirection;//初期方向（不変）
+
 	float maxLength = 20.0f;
 
 	bool isActive = true;
 	bool isRotating = false;
 
+  // レーザー装置の現在のY回転角度
+  float currentAngleY = 0.0f;
+
+  // レーザー装置が最終的に向く予定のY回転角度
+  float targetAngleY = 0.0f;
+
+  // 1フレームあたりの回転速度（度）
+  float rotateSpeed = 4.0f;
+
 	float width = 0.6f; // 見た目の太さ（直径）
 	StageObjectManager* manager = nullptr;
+
 };

@@ -72,15 +72,6 @@
     <ClInclude Include="Source\EffectManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Enemy.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemySlime.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Framework.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -88,18 +79,6 @@
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileHoming.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileManager.h">
-      <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileStraight.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene.h">
@@ -233,29 +212,11 @@
     <ClInclude Include="Source\System\ShapeRenderer.h">
       <Filter>Source\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\BoxCollider.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Laser.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageObjectManager.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LaserManager.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
     <ClInclude Include="Source\RideState.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CylinderCollider.h">
-      <Filter>Source\.h�t�@�C��</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Mirror.h">
       <Filter>Source\.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageGrid.h">
-      <Filter>Source\.h�t�@�C��</Filter>
     </ClInclude>
     <ClInclude Include="Source\IrradiationDevice.h">
       <Filter>Source\.h</Filter>
@@ -269,6 +230,21 @@
     <ClInclude Include="Source\StageData1.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\StageObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoxCollider.h" />
+    <ClInclude Include="Source\CylinderCollider.h" />
+    <ClInclude Include="Source\Laser.h" />
+    <ClInclude Include="Source\LaserManager.h" />
+    <ClInclude Include="Source\StageGrid.h" />
+    <ClInclude Include="Source\StageObjectManager.h" />
+    <ClInclude Include="Source\GoalObject.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Flag.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
     <ClInclude Include="Source\BoxCollider.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
@@ -284,10 +260,13 @@
     <ClInclude Include="Source\StageGrid.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageObject.h">
+    <ClInclude Include="Source\StageObjectManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageObjectManager.h">
+    <ClInclude Include="Source\Stairs.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageData2.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>
@@ -328,15 +307,6 @@
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Enemy.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyManager.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemySlime.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Framework.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
@@ -347,18 +317,6 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Player.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileHoming.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileManager.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileStraight.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">
@@ -479,6 +437,18 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageData1.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GoalObject.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Flag.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stairs.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageData2.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

@@ -47,7 +47,7 @@ public:
 		UpdateTransform();
 	}
 
-	void SetAngle(const DirectX::XMFLOAT3& ang)
+	virtual void SetAngle(const DirectX::XMFLOAT3& ang)
 	{
 		angle = ang;
 		UpdateTransform();
@@ -71,12 +71,15 @@ public:
 		return result;	//基底クラスはとりあえずtrue
 	}
 
+
+
 protected:
 
 	//行列更新処理
 	void UpdateTransform();
 
 	std::unique_ptr<Model> model = nullptr;
+	std::unique_ptr<Model> modelBase = nullptr;
 	DirectX::XMFLOAT3 position = { 0,0,0 };
 	DirectX::XMFLOAT3 angle = { 0,0,0 };
 	DirectX::XMFLOAT3 scale = { 1,1,1 };

@@ -101,19 +101,25 @@ void LaserBeam::Update(float elapsedTime)
 		}
 		else if (!hit.hit)
 		{
-			segments.push_back({ start, end });
-			break;
+			 segments.push_back({ start, end,hitNormal,false });
+			 break;
 		}
 
 
 		if (hit.type == RayHitType::reflection)
 		{
 			// 反射点までのレーザー線分を登録
-			segments.push_back({ start, hitPos });
+			segments.push_back({ start, hitPos ,hitNormal,true});
 
+		  //反射方向
 			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
+			//法線
+			//XZ平面にする
+			hitNormal.y = 0.0f;
 			DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
+			//反射
 			DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
+			//正規化
 			DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
 
 			// 次のレーザーの開始位置を、反射点から少しだけ進める
@@ -127,7 +133,7 @@ void LaserBeam::Update(float elapsedTime)
 		else if (hit.type == RayHitType::Stop)
 		{
 			// 反射しない物体に当たった場合は当たった一でレーザーを止める
-			segments.push_back({ start, hitPos });
+			segments.push_back({ start, hitPos,hitNormal,true });
 			break;
 		}
 
@@ -146,9 +152,24 @@ void LaserBeam::Render()
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	if (!isEffectPlaying)
+	{
+		BackEffectHandle = laserBackEffect->Play(origin, 0.5f);
+
+		// 1. 方向ベクトルから角度を計算
+		float yaw = atan2f(direction.x, direction.z);
+		float xzLen = sqrtf(direction.x * direction.x + direction.z * direction.z);
+		float pitch = -atan2f(direction.y, xzLen);
+
+		// 2. 素材が元々逆を向いているなら、180度（XM_PI）回転させて相殺する
+		// yaw に対して XM_PI を加算する
+		effekseerManager->SetRotation(BackEffectHandle, pitch, yaw + DirectX::XM_PI, 0.0f);
+	}
 	
 	//セグメント数とエフェクト数の同期
 	//反射が減った場合：余分なエフェクトを止める
+
 	while (activeEffects.size() > segments.size()) {
 		effekseerManager->StopEffect(activeEffects.back());
 		activeEffects.pop_back();
@@ -202,6 +223,54 @@ void LaserBeam::Render()
 		// 毎フレーム、最新のセグメント行列をセット
 		effekseerManager->SetMatrix(handle, effekMat);
 	}
+
+	//反射エフェクト
+	//セグメント数とエフェクト数の同期
+	int refrectionCount = segments.size();
+	if (refrectionCount > 0 && segments[refrectionCount-1].hit == false)
+		refrectionCount--;
+
+	while(activeReflectEffects.size() > refrectionCount) {
+		effekseerManager->StopEffect(activeReflectEffects.back());
+		activeReflectEffects.pop_back();
+	}
+
+	for (size_t i = 0; i < refrectionCount; ++i) {
+		auto& seg = segments[i];
+		if (!seg.hit)break;
+
+		DirectX::XMVECTOR s = DirectX::XMLoadFloat3(&seg.start);
+		DirectX::XMVECTOR e = DirectX::XMLoadFloat3(&seg.end);
+		float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(e, s)));
+		DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(e, s));
+		DirectX::XMFLOAT3 Direction;
+		DirectX::XMStoreFloat3(&Direction, dir);
+
+		Effekseer::Handle handle;
+
+		//足りない場合のみ新しくPlayする
+		if (i >= activeReflectEffects.size()) {
+			handle = beamReflectEffect.get()->Play(seg.end, 1.0f);
+			activeReflectEffects.push_back(handle);
+		}
+		else {
+			handle = activeReflectEffects[i];
+		}
+
+		//角度計算
+		// 1. 方向ベクトルから角度を計算
+		float yaw = atan2f(seg.normal.x, seg.normal.z);
+		float xzLen = sqrtf(seg.normal.x * seg.normal.x + seg.normal.z * seg.normal.z);
+		float pitch = -atan2f(seg.normal.y, xzLen);
+
+		// 座標を最新のヒット地点(seg.end)に更新する
+		effekseerManager->SetLocation(handle, seg.end.x, seg.end.y, seg.end.z);
+
+		// 2. 素材が元々逆を向いているなら、180度（XM_PI）回転させて相殺する
+		// yaw に対して XM_PI を加算する
+		effekseerManager->SetRotation(activeReflectEffects[i], pitch, yaw + DirectX::XM_PI, 0.0f);
+	}
+
 	
 	isEffectPlaying = true;
 }
@@ -354,7 +423,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 		DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
 
 		DirectX::XMFLOAT3 p;
-		XMStoreFloat3(&p, pVec);
+		DirectX::XMStoreFloat3(&p, pVec);
 
 		// Cylinder 上の最近接点 q
 		DirectX::XMFLOAT3 q;
@@ -430,7 +499,7 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 				n = XMVector3Normalize(fb);
 			}
 
-			XMStoreFloat3(&result.normal, n);
+			DirectX::XMStoreFloat3(&result.normal, n);
 			result.point = q;
 
 			return result;
@@ -442,7 +511,29 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
 }
 
+void Laser::UpdateTransformByAngle(const DirectX::XMFLOAT3& center, float totalAngleY)
+{
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationY(totalAngleY);
+	DirectX::XMVECTOR c = DirectX::XMLoadFloat3(&center);
 
+	// 1. ポジション：常に baseStartPos から計算
+	DirectX::XMVECTOR basePos = DirectX::XMLoadFloat3(&baseStartPos);
+	DirectX::XMVECTOR local = DirectX::XMVectorSubtract(basePos, c);
+	local = DirectX::XMVector3Transform(local, rot);
+	DirectX::XMVECTOR newPos = DirectX::XMVectorAdd(local, c);
+	DirectX::XMStoreFloat3(&startPos, newPos);
+
+	// 2. 方向：常に baseDirection から計算
+	DirectX::XMVECTOR baseDir = DirectX::XMLoadFloat3(&baseDirection);
+	DirectX::XMVECTOR newDir = DirectX::XMVector3TransformNormal(baseDir, rot);
+	DirectX::XMStoreFloat3(&direction, newDir);
+
+
+	currentAngleY = totalAngleY;
+	// 3. Beam(LaserBeam) に最新の値を伝える
+	beam.origin = startPos;
+	beam.direction = direction;
+}
 
 void Laser::RotateAroundCenter(const DirectX::XMFLOAT3& center, float angleY)
 {
@@ -473,18 +564,25 @@ void Laser::Initialize(
    model = std::make_unique<Model>("Data/Model/Objects/Laser/Laser.mdl");
 
    //beam.setEffect("Data/Effect/laserOre.efkefc");
-   beam.setEffect("Data/Effect/reizar.efkefc");
+   beam.setEffect("Data/Effect/reizar.efkefc","Data/Effect/laser_back.efkefc","Data/Effect/hansya.efkefc");
+
+   // 最初に dir を正規化したものを baseDirection に入れる
+   XMVECTOR v = XMVector3Normalize(XMLoadFloat3(&dir));
+   XMStoreFloat3(&baseDirection, v); // ここで保存！
+
+	baseStartPos = emitterPos;
 
 	startPos = emitterPos;
-	direction = dir;
+	direction = baseDirection;
 	maxLength = maxLen;
   
 	scale = { 0.5f,0.5f,0.5f };
 
 	
-	DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
-	v = DirectX::XMVector3Normalize(v);
-	DirectX::XMStoreFloat3(&direction, v);
+	//DirectX::XMVECTOR v = DirectX::XMLoadFloat3(&direction);
+	//v = DirectX::XMVector3Normalize(v);
+	//DirectX::XMStoreFloat3(&direction, v);
+
 
 	// LaserBeam
 	beam.origin = startPos;
@@ -511,63 +609,13 @@ void Laser::Update(float elapsedTime)
 	beam.Update(elapsedTime);*/
 
 	position = startPos;
-	direction = beam.direction;
-	position.x -= direction.x*0.5f;
+
+	//position.x -= direction.x*0.5f;
 	angle.y = atan2f(direction.x, direction.z);
-	
-	
 
 	UpdateTransform();
-	//ResolvePlayerCollision();
 
-	if (!isActive) return;
-
-	// ステージ中心（必要なら変更）
-	DirectX::XMFLOAT3 center = { 0, 0, 0 };
-
-	// Q/E で回転
-	float step = DirectX::XM_PI / 4.0f;
-
-	if (!isRotating)
-	{
-
-		if (GetAsyncKeyState('Q') & 0x0001)
-		{
-			targetAngleY -= step;
-			isRotating = true;   // ← 回転開始
-		}
-		if (GetAsyncKeyState('E') & 0x0001)
-		{
-			targetAngleY += step;
-			isRotating = true;   // ← 回転開始
-		}
-	}
-
-	float diff = targetAngleY - currentAngleY;
-
-	if (fabs(diff) < 0.001f)
-	{
-		diff = 0.0f;
-		currentAngleY = targetAngleY;
-		isRotating = false;
-	}
-	else
-	{
-		float dir = (diff > 0.0f) ? 1.0f : -1.0f;
-
-		// 等速回転（例：1秒で90°）
-		float delta = (DirectX::XM_PI / 2.0f) * elapsedTime * dir;
-
-		if (fabs(delta) > fabs(diff))
-			delta = diff;
-
-		currentAngleY += delta;
-
-		RotateAroundCenter(center, delta);
-	}
-
-
-	// レーザーの反射計算
+	// レーザーの位置
 	beam.origin = startPos;
 	beam.direction = direction;
 	// LaserBeam がレーザーを撃つ（反射含む）
@@ -581,4 +629,9 @@ void Laser::Render(const RenderContext& rc, ModelRenderer* renderer)
 	beam.Render();
 
 	StageObject::Render(rc, renderer);
+}
+
+void Laser::SetRotating(bool flag)
+{
+	isRotating = flag;
 }

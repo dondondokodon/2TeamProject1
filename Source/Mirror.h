@@ -16,6 +16,14 @@ public:
     void DrawDebugGUI();
     RayHitResult ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override;
 
+    void SetAngle(const DirectX::XMFLOAT3& ang)override
+    {
+        angle = ang;
+        targetAngleY = ang.y;
+        UpdateTransform();
+    }
+
+    
 private:
     DirectX::XMFLOAT3 aabbMin;
     DirectX::XMFLOAT3 aabbMax;
@@ -23,4 +31,8 @@ private:
     bool isTouchingPlayer = false;
     bool prevU = false;
     bool prevO = false;
+    float targetAngleY = 0.0f;
+    bool isRotating = false;
+
+
 };

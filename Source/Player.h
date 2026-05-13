@@ -4,7 +4,6 @@
 #include"System/ModelRenderer.h"
 #include"System/AudioSource.h"
 #include"Character.h"
-#include"ProjectileManager.h"
 #include"Effect.h"
 #include"AnimationController.h"
 #include"BoxCollider.h"	
@@ -25,11 +24,11 @@ public:
 	~Player()override {}
 
 	//インスタンス取得
-	static Player& Instance()
+	/*static Player& Instance()
 	{
 		static Player instance;
 		return instance;
-	}
+	}*/
 
 	//初期化
 	void Initialize(const char* modelPath);
@@ -57,9 +56,6 @@ public:
 
 	//ジャンプ入力処理
 	bool InputJump();
-
-	//弾丸入力処理
-	void InputProjectile();
 
 	//回転入力処理（ロボット専用）
 	void InputRotate();
@@ -127,19 +123,11 @@ protected:
 private:
 	std::unique_ptr<Model> model = nullptr;
 
-
-
 	bool isControlling=false;
 
 	float moveSpeed = 5.0f;
 
 	float turnSpeed = DirectX::XMConvertToRadians(720);
-
-	//プレイヤーとエネミーの衝突処理
-	void CollisionPlayerVsEnemies();
-
-	//弾丸と敵の衝突処理	
-	void CollisionProjectilesVsEnemies();
 
 	//ステージとの衝突処理
 	void CollisionPlayerVsStage();
@@ -160,7 +148,6 @@ private:
 	//肩車時の高さオフセット
 	float rideOffsetY = 0.5f;
 
-	ProjectileManager projectileManager;
 	//Effect* hitEffect = nullptr;
 	AudioSource* hitSE = nullptr;
 	AnimationController animation;

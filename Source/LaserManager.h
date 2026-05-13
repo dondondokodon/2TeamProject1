@@ -15,9 +15,7 @@ public:
 
 	//レーザー登録
 	void Register(Laser* laser);
-
-	int GetLaserCount() const { return static_cast<int>(Lasers.size()); }
-
+  
 	//レーザー全削除
 	void Clear();
 
@@ -36,8 +34,16 @@ public:
 	//レーザー数取得
 	int GetLaserCount() { return static_cast<int>(Lasers.size()); }
 
+	//回転しているか取得
+	bool GetIsRotating() { return isRotating; }
+
 private:
 	std::vector <std::unique_ptr<Laser>> Lasers;
 	std::set<Laser*> removes;
+
+	float targetAngleY = 0.0f;
+	float currentAngleY = 0.0f;
+	bool isRotating = false;
+
 };
 

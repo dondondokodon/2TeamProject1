@@ -4,7 +4,8 @@
 Mirror::Mirror()
 {
    
-    SetModel("Data/Model/Objects/Mirror/mirror.mdl");
+    model = std::make_unique<Model>("Data/Model/Objects/Mirror/mirror.mdl");
+    modelBase = std::make_unique<Model>("Data/Model/Objects/Mirror/mirror_base.mdl");
 
     // 初期トランスフォーム
     position = { 0.0f, 1.2f, 0.0f };
@@ -23,7 +24,8 @@ Mirror::~Mirror()
 
 void Mirror::Update(float elapsedTime)
 {
-    const float step = DirectX::XM_PI / 4.0f;
+    const float step = DirectX::XM_PI / 4.0f; // 45°
+    const float rotateSpeed = 6.0f;           // 補間速度（大きいほど速い）
 
     bool nowU = (GetAsyncKeyState('U') & 0x8000);
     bool nowO = (GetAsyncKeyState('O') & 0x8000);
@@ -31,8 +33,24 @@ void Mirror::Update(float elapsedTime)
     bool trgU = (nowU && !prevU);
     bool trgO = (nowO && !prevO);
 
-    if (trgU) angle.y += step;
-    if (trgO) angle.y -= step;
+    // ★ 目標角度だけを変える
+    if (trgU) {
+        targetAngleY += step;
+        isRotating = true;
+    }
+    if (trgO) {
+        targetAngleY -= step;
+        isRotating = true;
+    }
+
+    // ★ 現在角度 → 目標角度へゆっくり補間
+    angle.y += (targetAngleY - angle.y) * rotateSpeed * elapsedTime;
+
+    // ★ 回転完了判定（誤差許容）
+    if (fabs(targetAngleY - angle.y) < 0.01f) {
+        angle.y = targetAngleY;
+        isRotating = false;
+    }
 
     UpdateTransform();
 
@@ -41,7 +59,6 @@ void Mirror::Update(float elapsedTime)
     const float halfY = 1.5f * scale.y;
     const float halfZ = 0.2f * scale.z;
 
-    // AABB を position を中心に生成
     aabbMin = {
         position.x - halfX,
         position.y - halfY,
@@ -54,11 +71,12 @@ void Mirror::Update(float elapsedTime)
         position.z + halfZ
     };
 
-
     prevU = nowU;
     prevO = nowO;
 
     isTouchingPlayer = false;
+
+    UpdateTransform();
 }
 
 void Mirror::CollisionVsPlayer(Player& p)
@@ -84,21 +102,10 @@ void Mirror::CollisionVsPlayer(Player& p)
 
 void Mirror::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
-    // スケール・回転・平行移動
-    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-    DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(
-        angle.x,
-        angle.y,
-        angle.z
-    );
-    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-
-    DirectX::XMMATRIX M = S * R * T;
-
-    DirectX::XMFLOAT4X4 transform;
-    DirectX::XMStoreFloat4x4(&transform, M);
 
     renderer->Render(rc, transform, model.get(), ShaderId::Lambert);
+
+    renderer->Render(rc, transform, modelBase.get(), ShaderId::Lambert);
 }
 
 void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
@@ -120,6 +127,12 @@ void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 
 RayHitResult Mirror::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
 {
+
+    if (isRotating)
+    {
+        return RayHitResult{ true, this, RayHitType::Stop, hitPos };
+    }
+
     // 角度による判定 (内積)
     // 鏡の正面ベクトル (forward) と レイの方向 (dir) が向かい合っているか
     DirectX::XMFLOAT3 forward = { transform._31,transform._32,transform._33 };
@@ -134,7 +147,7 @@ RayHitResult Mirror::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, 
     RayHitResult result{ true,this,type,hitPos };
     
     //前と後ろからはOK
-    if (dot < 0.1f&&dot>-0.1f)
+    if (dot < 0.2f&&dot>-0.2f)
     {
         result.type = RayHitType::Stop;
     }

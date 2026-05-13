@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include<DirectXMath.h>
 #include<vector>
 #include"StageObject.h"
@@ -10,7 +10,8 @@ enum class ObjectType
 	Mirror,
 	Goal,
 	IrradiationDevice,
-	Laser
+	Laser,
+	Stairs,
 };
 
 struct ObjectData
@@ -19,7 +20,7 @@ struct ObjectData
 	DirectX::XMFLOAT3 pos;
 	DirectX::XMFLOAT3 angle;
 	DirectX::XMFLOAT3 scale;
-	DirectX::XMFLOAT3 direction;	//ÇŸÇ⁄ÉåÅ[ÉUÅ[óp
+	DirectX::XMFLOAT3 direction;	//„Åª„Åº„É¨„Éº„Ç∂„ÉºÁî®
 
 public:
 	StageObject* CreateStageObject() const;
