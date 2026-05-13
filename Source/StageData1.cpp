@@ -3,25 +3,8 @@
 
 StageData1::StageData1():StageData("Data/Json/stage1.json")
 {
-
 	//ステージオブジェクトの配置データを追加
 	//オブジェクトの種類、位置、回転、大きさ、レーザーの向き（レーザー以外は無視される）
-	/*objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{   7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::IrradiationDevice,{ -6.0f,1.0f,-7.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f},{0.5f,0.5f,0.5f}}));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Mirror,{  -1.0f, 1.2f, -7.5f },{ 0.0f,0.0f,0.0f },{ 0.5f,0.5f,0.5f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Mirror,{ -2.0f, 1.2f,  2.0f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Mirror,{ 5.5f, 1.2f,  4.5f },{ 0.0f,DirectX::XMConvertToRadians(90.0f),0.0f },{ 0.5f,0.5f,0.5f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  3.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{ 11.5f, 0.5f, -10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{ 10.5f, 0.5f,   7.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  1.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{-10.5f, 0.5f,  10.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{-13.5f, 0.5f,   3.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } }));*/
-
 
 	//自分自身のオブジェクト（ステージ）
 	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ

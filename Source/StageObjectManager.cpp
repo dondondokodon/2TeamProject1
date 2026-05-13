@@ -8,7 +8,7 @@
 StageObjectManager::StageObjectManager():laserManager(nullptr) 
 {
 	//stageDatas.push_back(std::make_unique<StageData1>());
-	stageDatas.push_back(std::make_unique<StageData2>("Data/Json/stage1.json"));
+	stageDatas.push_back(std::make_unique<StageData2>());
 }
 
 StageObjectManager::~StageObjectManager() 
