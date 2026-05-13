@@ -1,5 +1,6 @@
 ﻿#include "StageObjectManager.h"
 #include "Collision.h"
+#include "StageGrid.h"
 
 #include"LaserManager.h"
 
@@ -18,13 +19,25 @@ void StageObjectManager::Update(float elapsedTime)
 		stageObject->Update(elapsedTime);
 	}
 
+	// ★ ここで当たり判定
+	for (auto& stageObject : stageObjects)
+	{
+		if (StageGrid* grid = dynamic_cast<StageGrid*>(stageObject.get()))
+		{
+			grid->CollisionVsStage(*this);
+		}
+	}
+
 	//破棄処理
 	for (auto& stageObject : removes)
 	{
-		//std::vectorから要素を削除する場合はイテレーターで削除しなければならない
 		auto it = std::find_if(stageObjects.begin(),
 			stageObjects.end(),
-			[&](const std::unique_ptr<StageObject>& obj) { return obj.get() == stageObject; });
+			[&](const std::unique_ptr<StageObject>& obj)
+			{
+				return obj.get() == stageObject;
+			});
+
 		if (it != stageObjects.end())
 		{
 			stageObjects.erase(it);
@@ -33,8 +46,9 @@ void StageObjectManager::Update(float elapsedTime)
 	removes.clear();
 
 	if (laserManager)
-	laserManager->Update(elapsedTime);
+		laserManager->Update(elapsedTime);
 }
+
 
 //描画処理
 void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer)

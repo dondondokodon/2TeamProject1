@@ -448,6 +448,9 @@
     <ClCompile Include="Source\Stairs.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StageData2.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">
