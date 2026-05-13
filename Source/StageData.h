@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<DirectXMath.h>
 #include<vector>
+#include<memory>
 #include"StageObject.h"
 #include"Stage.h"
 
@@ -30,7 +31,8 @@ class StageData
 {
 public:
 	StageData() {}
-	~StageData() {}
-	std::vector<ObjectData> objects;
-	Stage* MyStage = nullptr;
+	StageData(const char* filename);
+	virtual ~StageData() { for (auto obj : objects) { delete obj; } }
+	std::vector<ObjectData*> objects;
+	std::unique_ptr<Stage> MyStage = nullptr;
 };

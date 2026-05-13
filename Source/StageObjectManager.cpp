@@ -3,6 +3,14 @@
 #include "StageGrid.h"
 
 #include"LaserManager.h"
+#include"StageData1.h"
+#include"StageData2.h"
+
+StageObjectManager::StageObjectManager():laserManager(nullptr) 
+{
+	stageDatas.push_back(std::make_unique<StageData1>());
+	stageDatas.push_back(std::make_unique<StageData2>());
+}
 
 StageObjectManager::~StageObjectManager() 
 {
@@ -10,6 +18,17 @@ StageObjectManager::~StageObjectManager()
 	laserManager->Clear();
 	delete laserManager; 
 }
+
+//リセット
+void StageObjectManager::Reset()
+{
+	nextStageIndex = 0;
+	Clear();
+	stageDatas.clear();
+	stageDatas.push_back(std::make_unique<StageData1>());
+	stageDatas.push_back(std::make_unique<StageData2>());
+}
+
 
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
@@ -72,8 +91,8 @@ void StageObjectManager::LoadStageData(StageData* data)
 
 	for (auto& objData : data->objects)
 	{
-		StageObject* obj = objData.CreateStageObject();
-		if (objData.type == ObjectType::Laser)
+		StageObject* obj = objData->CreateStageObject();
+		if (objData->type == ObjectType::Laser)
 		{
 			Laser* laser = dynamic_cast<Laser*>(obj);
 			laser->setManager(this);
@@ -83,7 +102,45 @@ void StageObjectManager::LoadStageData(StageData* data)
 		Register(obj);
 	}
 
-	Register(data->MyStage);
+	if (data->MyStage) {
+		Register(data->MyStage.release());
+	}
+}
+
+//ステージデータロード
+void StageObjectManager::LoadStageData(int stageNum)
+{
+	Clear();
+	laserManager->Clear();
+
+	for (auto& objData : stageDatas[stageNum]->objects)
+	{
+		StageObject* obj = objData->CreateStageObject();
+		if (objData->type == ObjectType::Laser)
+		{
+			Laser* laser = dynamic_cast<Laser*>(obj);
+			laser->setManager(this);
+			laserManager->Register(laser);
+		}
+		else
+			Register(obj);
+	}
+
+	Register(stageDatas[stageNum]->MyStage.release());
+}
+
+
+//次のステージに移る処理 true：最後のステージ
+bool StageObjectManager::NextStage()
+{
+	if (nextStageIndex >= stageDatas.size())
+	{
+		return true;
+	}
+	LoadStageData(nextStageIndex);
+	nextStageIndex++;
+
+	return false;
 }
 
 //ステージオブジェクト登録
@@ -165,6 +222,7 @@ void StageObjectManager::setLaserManager(LaserManager* mgr)
 {
 	if (laserManager)
 	{
+		//laserManager->Clear();
 		delete laserManager;
 		laserManager = nullptr;
 	}
