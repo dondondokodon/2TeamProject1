@@ -84,7 +84,7 @@ void SceneGame::Finalize()
 	}
 
 	//ステージ終了化
-	StageObjectManager::Instance().Clear();
+	StageObjectManager::Instance().Reset();
 	
 	Flag::Instance().ClearFlag();
 }

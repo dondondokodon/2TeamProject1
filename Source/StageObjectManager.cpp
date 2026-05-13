@@ -7,7 +7,7 @@
 
 StageObjectManager::StageObjectManager():laserManager(nullptr) 
 {
-	//stageDatas.push_back(std::make_unique<StageData1>());
+	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
 }
 
@@ -100,6 +100,28 @@ void StageObjectManager::LoadStageData(int stageNum)
 	}
 
 	Register(stageDatas[stageNum]->MyStage.get());
+}
+
+//リセット
+void StageObjectManager::Reset()
+{
+	nowStageIndex = 0;
+	Clear();
+	laserManager->Clear();
+	delete laserManager;
+}
+
+//次のステージに移る処理 true：最後のステージ
+bool StageObjectManager::NextStage()
+{
+	nowStageIndex++;
+
+	if (nowStageIndex >= stageDatas.size())
+	{
+		return true;
+	}
+	LoadStageData(nowStageIndex);
+	return false;
 }
 
 //ステージオブジェクト登録

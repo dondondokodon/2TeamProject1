@@ -33,11 +33,17 @@ public:
 
 	void LoadStageData(int stageNum);	//持ってるほうからロード
 
+	//次のステージに移る処理 true：最後のステージ
+	bool NextStage();
+
 	//ステージオブジェクト登録
 	void Register(StageObject* stageObject);
 
 	//ステージオブジェクト全削除
 	void Clear();
+
+	//リセット
+	void Reset();
 
 	//ステージオブジェクト削除
 	void Remove(StageObject* stageObject);
@@ -74,5 +80,6 @@ private:
 	std::set<StageObject*> removes;
 	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
 	std::vector<std::unique_ptr<StageData>> stageDatas;
+	int nowStageIndex = 0;
 };
 
