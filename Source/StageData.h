@@ -31,6 +31,6 @@ class StageData
 public:
 	StageData() {}
 	~StageData() {}
-	std::vector<std::shared_ptr<ObjectData>> objects;
-	std::shared_ptr<Stage> MyStage = nullptr;
+	std::vector<std::unique_ptr<ObjectData>> objects;
+	std::unique_ptr<Stage> MyStage = nullptr;
 };

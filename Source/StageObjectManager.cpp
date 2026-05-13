@@ -75,8 +75,9 @@ void StageObjectManager::LoadStageData(StageData* data)
 		Register(obj);
 	}
 
-
-	Register(std::move(data->MyStage));
+	if (data->MyStage) {
+		Register(data->MyStage.release());
+	}
 }
 
 //ステージデータロード

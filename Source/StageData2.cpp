@@ -9,20 +9,20 @@ StageData2::StageData2()
 {
 	//ステージオブジェクトの配置データを追加
 	//オブジェクトの種類、位置、回転、大きさ、レーザーの向き（レーザー以外は無視される）
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{   7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::IrradiationDevice,{ -7.5f,1.0f,7.0f },{ 0.0f,DirectX::XMConvertToRadians(180.0f),0.0f},{0.5f,0.5f,0.5f} }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  -12.5f, 0.5f, 1.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  -11.5f, 0.5f, 11.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  -3.5f, 0.5f, -2.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  10.5f, 0.5f, 6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  12.5f, 0.5f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Box,{  11.5f, 0.5f, -6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Mirror,{  -2.5f, 1.2f, 3.0f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Mirror,{  4.5f, 1.2f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } }));
-	//objects.push_back(std::make_shared<ObjectData>(ObjectData{ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Laser,{   7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Laser,{  -7.5f, 1.0f,  25.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 0.0f, 0.0f, -1.0f} }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Laser,{  25.0f, 1.0f,   6.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{-1.0f, 0.0f,  0.0f} }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Laser,{ -25.0f, 1.0f,  -7.0f },{ 0.0f , 0.0f , 0.0f },{ 0.5f,0.5f,0.5f },{ 1.0f, 0.0f,  0.0f} }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::IrradiationDevice,{ -7.5f,1.0f,7.0f },{ 0.0f,DirectX::XMConvertToRadians(180.0f),0.0f},{0.5f,0.5f,0.5f} }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  -12.5f, 0.5f, 1.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  -11.5f, 0.5f, 11.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  -3.5f, 0.5f, -2.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  10.5f, 0.5f, 6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  12.5f, 0.5f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Box,{  11.5f, 0.5f, -6.5f },{ 0.0f, 0.0f, 0.0f},{ 1.0f, 1.0f, 1.0f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Mirror,{  -2.5f, 1.2f, 3.0f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Mirror,{  4.5f, 1.2f, 0.5f },{ 0.0f, 0.0f, 0.0f},{ 0.5f, 0.5f, 0.5f } }));
+	objects.push_back(std::make_unique<ObjectData>(ObjectData{ ObjectType::Goal,{-1.0f, 3.0f,  17.0f },{ 0.0f, 0.0f, 0.0f},{ 0.01f, 0.01f, 0.01f } }));
 
 	int a;
 	////自分自身のオブジェクト（ステージ）
@@ -38,7 +38,7 @@ StageData2::StageData2(const char* fileName)
         return; // ファイルが開けなければ終了
     }
 
-	MyStage = std::make_shared<Stage>("Data/Model/Stage/tutorial_stage.mdl");
+	MyStage = std::make_unique<Stage>("Data/Model/Stage/tutorial_stage.mdl");
 	MyStage->SetScale({ 0.3f,0.3f,0.3f });
 
     // 2. JSONとして直接解析 (取り出し)
@@ -52,15 +52,15 @@ StageData2::StageData2(const char* fileName)
 		std::string type = obj.value("type", "");
 
 		//タイプ
-		if (type == "レーザー")
+		if (type == "Laser")
 			o = ObjectType::Laser;
-		else if (type == "照射装置")
+		else if (type == "Device")
 			o = ObjectType::IrradiationDevice;
-		else if(type=="ミラー")
+		else if(type=="Mirror")
 			o = ObjectType::Mirror;
-		else if (type == "箱")
+		else if (type == "Box")
 			o = ObjectType::Box;
-		else if(type=="ゴール")
+		else if(type=="Goal")
 			o = ObjectType::Goal;
 		else
 			continue;	//例外
@@ -93,7 +93,7 @@ StageData2::StageData2(const char* fileName)
 			obj.value("DirectionZ",0.0f)
 		};
 
-		objects.push_back(std::make_shared<ObjectData>(ObjectData{ o,position,angle,scale,direction }));
+		objects.push_back(std::make_unique<ObjectData>(ObjectData{ o,position,angle,scale,direction }));
 		
 	}
 }

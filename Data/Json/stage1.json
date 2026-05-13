@@ -1,6 +1,6 @@
 ﻿[
   {
-    "type": "レーザー",
+    "type": "Laser",
     "PosX": 7.5,
     "PosY": 1,
     "PosZ": 25,
@@ -15,7 +15,7 @@
     "DirectionZ": -1
   },
   {
-    "type": "レーザー",
+    "type": "Laser",
     "PosX": 1,
     "PosY": 10,
     "PosZ": 4,
@@ -30,7 +30,7 @@
     "DirectionZ": -1
   },
   {
-    "type": "レーザー",
+    "type": "Laser",
     "PosX": 1,
     "PosY": 10,
     "PosZ": 4,
@@ -45,7 +45,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "レーザー",
+    "type": "Laser",
     "PosX": 1,
     "PosY": 10,
     "PosZ": 4,
@@ -60,7 +60,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "照射装置",
+    "type": "Device",
     "PosX": -7.5,
     "PosY": 1,
     "PosZ": 7,
@@ -75,7 +75,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": -12.5,
     "PosY": 0.5,
     "PosZ": 1.5,
@@ -90,7 +90,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": 1,
     "PosY": 10,
     "PosZ": 4,
@@ -105,7 +105,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": 1,
     "PosY": 10,
     "PosZ": -4,
@@ -120,7 +120,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": 1,
     "PosY": 10,
     "PosZ": -4,
@@ -135,7 +135,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": 1,
     "PosY": 10,
     "PosZ": -4,
@@ -150,7 +150,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "箱",
+    "type": "Box",
     "PosX": 1,
     "PosY": 10,
     "PosZ": -4,
@@ -165,7 +165,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "ミラー",
+    "type": "Mirror",
     "PosX": -2.5,
     "PosY": 1.2,
     "PosZ": 3,
@@ -180,7 +180,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "ミラー",
+    "type": "Mirror",
     "PosX": 1,
     "PosY": 10,
     "PosZ": -4,
@@ -195,7 +195,7 @@
     "DirectionZ": 0
   },
   {
-    "type": "ゴール",
+    "type": "Goal",
     "PosX": -1,
     "PosY": 3,
     "PosZ": 17,
