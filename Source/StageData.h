@@ -1,6 +1,7 @@
-#pragma once
+Ôªø#pragma once
 #include<DirectXMath.h>
 #include<vector>
+#include<memory>
 #include"StageObject.h"
 #include"Stage.h"
 
@@ -19,7 +20,7 @@ struct ObjectData
 	DirectX::XMFLOAT3 pos;
 	DirectX::XMFLOAT3 angle;
 	DirectX::XMFLOAT3 scale;
-	DirectX::XMFLOAT3 direction;	//ÇŸÇ⁄ÉåÅ[ÉUÅ[óp
+	DirectX::XMFLOAT3 direction;	//„Åª„Åº„É¨„Éº„Ç∂„ÉºÁî®
 
 public:
 	StageObject* CreateStageObject() const;
@@ -30,6 +31,6 @@ class StageData
 public:
 	StageData() {}
 	~StageData() {}
-	std::vector<ObjectData> objects;
-	Stage* MyStage = nullptr;
+	std::vector<std::shared_ptr<ObjectData>> objects;
+	std::shared_ptr<Stage> MyStage = nullptr;
 };

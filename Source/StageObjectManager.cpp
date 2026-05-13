@@ -2,6 +2,14 @@
 #include "Collision.h"
 
 #include"LaserManager.h"
+#include"StageData1.h"
+#include"StageData2.h"
+
+StageObjectManager::StageObjectManager():laserManager(nullptr) 
+{
+	//stageDatas.push_back(std::make_unique<StageData1>());
+	stageDatas.push_back(std::make_unique<StageData2>("Data/Json/stage1.json"));
+}
 
 StageObjectManager::~StageObjectManager() 
 {
@@ -56,8 +64,8 @@ void StageObjectManager::LoadStageData(StageData* data)
 
 	for (auto& objData : data->objects)
 	{
-		StageObject* obj = objData.CreateStageObject();
-		if (objData.type == ObjectType::Laser)
+		StageObject* obj = objData->CreateStageObject();
+		if (objData->type == ObjectType::Laser)
 		{
 			Laser* laser = dynamic_cast<Laser*>(obj);
 			laser->setManager(this);
@@ -67,7 +75,30 @@ void StageObjectManager::LoadStageData(StageData* data)
 		Register(obj);
 	}
 
-	Register(data->MyStage);
+
+	Register(std::move(data->MyStage));
+}
+
+//ステージデータロード
+void StageObjectManager::LoadStageData(int stageNum)
+{
+	Clear();
+	laserManager->Clear();
+
+	for (auto& objData : stageDatas[stageNum]->objects)
+	{
+		StageObject* obj = objData->CreateStageObject();
+		if (objData->type == ObjectType::Laser)
+		{
+			Laser* laser = dynamic_cast<Laser*>(obj);
+			laser->setManager(this);
+			laserManager->Register(laser);
+		}
+		else
+			Register(obj);
+	}
+
+	Register(stageDatas[stageNum]->MyStage.get());
 }
 
 //ステージオブジェクト登録

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<vector>
 #include<set>
+#include<memory>
 #include"System/ShapeRenderer.h"
 #include "StageObject.h"
 #include"RayHitType.h"
@@ -28,7 +29,9 @@ public:
 	void Render(const RenderContext& rc, ModelRenderer* renderer);
 
 	//ステージデータロード
-	void LoadStageData(StageData* data);
+	void LoadStageData(StageData* data);	//直接もらうほう
+
+	void LoadStageData(int stageNum);	//持ってるほうからロード
 
 	//ステージオブジェクト登録
 	void Register(StageObject* stageObject);
@@ -65,10 +68,11 @@ public:
 	void setLaserManager(LaserManager* mgr);
 
 private:
-	StageObjectManager() : laserManager(nullptr) {}
+	StageObjectManager();
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;
 	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
+	std::vector<std::unique_ptr<StageData>> stageDatas;
 };
 
