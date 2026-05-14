@@ -292,3 +292,108 @@ void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
         return;
     }
 }
+
+void StageGrid::CollisionVsGrid(
+    std::vector<StageGrid*>& grids)
+{
+    // 移動中だけ判定
+    if (!isMoving)
+        return;
+
+    // -----------------------------
+    // 次の位置
+    // -----------------------------
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // -----------------------------
+    // 次フレームAABB
+    // -----------------------------
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    // -----------------------------
+    // 全木箱と判定
+    // -----------------------------
+    for (StageGrid* grid : grids)
+    {
+        // 自分は無視
+        if (grid == this)
+            continue;
+
+        // AABB判定
+        if (Collision::IntersectAABBVsAABB(
+            nextMin,
+            nextMax,
+            grid->GetAABBMin(),
+            grid->GetAABBMax()))
+        {
+            // 停止
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            return;
+        }
+    }
+}
+
+void StageGrid::CollisionVsMirror(
+    std::vector<Mirror*>& mirrors)
+{
+    if (!isMoving)
+        return;
+
+    // 次位置
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // 次AABB
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    for (Mirror* mirror : mirrors)
+    {
+        if (Collision::IntersectAABBVsAABB(
+            nextMin,
+            nextMax,
+            mirror->GetAABBMin(),
+            mirror->GetAABBMax()))
+        {
+            // 木箱停止
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            return;
+        }
+    }
+}

@@ -15,27 +15,38 @@ void IrradiationDevice::Update(float elapsedTime)
 
 RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)
 {
-    // ローカル座標に変換
-    DirectX::XMMATRIX invWorld = DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&transform));    //逆行列
-    DirectX::XMVECTOR localHitPos = XMVector3TransformCoord(XMLoadFloat3(&hitPos), invWorld);               //逆行列をかけ合わせる
-
+    //まずは今まで通りローカル座標での円柱判定
+    DirectX::XMMATRIX invWorld = DirectX::XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&transform));
+    DirectX::XMVECTOR localHitPos = XMVector3TransformCoord(XMLoadFloat3(&hitPos), invWorld);
     DirectX::XMFLOAT3 localPos;
     DirectX::XMStoreFloat3(&localPos, localHitPos);
 
-    // 奥行き(Z)を無視し、XとYの平面距離だけで判定する
-    // これにより、中心を通る「透明な筒」にレーザーが触れていればOKになる
     float distSq = localPos.x * localPos.x + localPos.y * localPos.y;
+    float radius = 0.5f;
 
-    RayHitResult result{ true,this,type,hitPos };
+    RayHitResult result{ false, this, type, hitPos }; // デフォルトはfalse
 
-    float radius = 1.0f;
+    //円柱の範囲内かチェック
     if (distSq < (radius * radius)) {
-        // 前後の制限
-         if (abs(localPos.z) < 1.0f) 
-        result.hit= true;
+        // 向きの判定を追加
+        // デバイスの正面方向（ワールドZ軸）を取得
+        DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&transform);
+        DirectX::XMVECTOR deviceForward = world.r[2]; // 3行目がZ軸（Forward）
+
+        // レーザーの進行方向
+        DirectX::XMVECTOR laserDir = DirectX::XMLoadFloat3(&dir);
+
+        // 内積を計算（向き合っていればマイナスになる）
+        float dot;
+        DirectX::XMStoreFloat(&dot, DirectX::XMVector3Dot(deviceForward, laserDir));
+
+        // 内積がマイナス（向き合っている）かつ、Zが正面側にある場合のみヒット
+        if (dot < 0.3f) {
+            if (localPos.z < 0.0f) { 
+                result.hit = true;
+            }
+        }
     }
-    else
-    result.hit = false;
     return result;
 }
 

@@ -55,16 +55,16 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
-	std::unique_ptr<StageData> stageData = std::make_unique<StageData2>(StageData2());
+	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
-	mng.LoadStageData(stageData.get());
+	mng.NextStage();
+	//mng.LoadStageData(stageData.get());
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
-	
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
 	{
@@ -84,7 +84,7 @@ void SceneGame::Finalize()
 	}
 
 	//ステージ終了化
-	StageObjectManager::Instance().Clear();
+	StageObjectManager::Instance().Reset();
 	
 	Flag::Instance().ClearFlag();
 }
@@ -102,7 +102,7 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
+	//if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
 		for (int i = 0; i < 2; ++i)
 		{
@@ -153,7 +153,17 @@ void SceneGame::Update(float elapsedTime)
 	//ゴールしたか
 	if (Flag::Instance().getFlag(Flag::IsGoal))
 	{
-		Goal();
+		Flag::Instance().SetFlag(Flag::IsGoal, false);
+		Flag::Instance().SetFlag(Flag::openGoal, false);
+		for (auto& p : players)
+		{
+			p->SetPosition(DirectX::XMFLOAT3(0, 0, 0));
+		}
+
+		//ゴールしてたら次のステージへ
+		if(StageObjectManager::Instance().NextStage())
+			Goal();
+		return;
 	}
 }
 
