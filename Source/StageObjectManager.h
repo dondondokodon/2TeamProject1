@@ -52,6 +52,15 @@ public:
 		DirectX::XMFLOAT3& hitPos,
 		DirectX::XMFLOAT3& normal);
 
+	//複数同時レイキャスト（軽くするため）
+	RayHitResult RayCastAny(
+		const DirectX::XMFLOAT3* starts,
+		const DirectX::XMFLOAT3* ends,
+		int rayCount,
+		StageObject* ignoreObject,
+		DirectX::XMFLOAT3& hitPos,
+		DirectX::XMFLOAT3& normal);
+
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 
