@@ -136,6 +136,13 @@ void LaserBeam::Update(float elapsedTime)
 			segments.push_back({ start, hitPos,hitNormal,true });
 			break;
 		}
+		else if (hit.type == RayHitType::None)
+		{
+			//貫通するものに当たった場合はそこまでのlaserを作って貫通後のレーザーを計算する
+			segments.push_back({ start, hitPos,hitNormal,true });
+			start = hitPos;
+			continue;
+		}
 
 	}
 }

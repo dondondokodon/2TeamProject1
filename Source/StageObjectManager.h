@@ -72,6 +72,23 @@ public:
 		DirectX::XMFLOAT3& hitPos,
 		DirectX::XMFLOAT3& normal);
 
+	//ステージの範囲設定
+	void SetStageBounds(float minX, float maxX, float minZ, float maxZ)
+	{
+		stageMinX = minX;
+		stageMaxX = maxX;
+		stageMinZ = minZ;
+		stageMaxZ = maxZ;
+	}
+	//ステージの範囲取得
+	float GetStageMinX() const { return stageMinX; }
+	float GetStageMaxX() const { return stageMaxX; }
+	float GetStageMinZ() const { return stageMinZ; }
+	float GetStageMaxZ() const { return stageMaxZ; }
+
+	//現在のステージ番号取得
+	int GetStageIndex() const { return nextStageIndex - 1; }
+
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 
@@ -88,6 +105,12 @@ public:
 
 private:
 	StageObjectManager();
+
+	//ステージの範囲（レーザーが届く範囲）　初期値は適当
+	float stageMinX = -25.0f;
+	float stageMaxX = 25.0f;
+	float stageMinZ = -25.0f;
+	float stageMaxZ = 25.0f;
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;

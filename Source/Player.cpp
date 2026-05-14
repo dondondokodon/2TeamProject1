@@ -10,6 +10,7 @@
 #include"StageGrid.h"
 #include"GoalObject.h"
 #include "Stairs.h"
+#include <algorithm>
 
 // コンストラクタ
 void Player::Initialize(const char* modelPath)
@@ -653,6 +654,20 @@ void Player::CollisionPlayerVsStage()
 			goal->CollisionVsPlayer(*this);
 		}
 	}
+
+
+	// ステージ外に出ないように、プレイヤーの位置を範囲内に制限する
+	position.x = std::clamp(
+		position.x,
+		stageObjectManager.GetStageMinX(),
+		stageObjectManager.GetStageMaxX()
+	);
+
+	position.z = std::clamp(
+		position.z,
+		stageObjectManager.GetStageMinZ(),
+		stageObjectManager.GetStageMaxZ()
+	);
 
 }
 

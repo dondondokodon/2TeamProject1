@@ -235,7 +235,7 @@ RayHitResult Mirror::ReallyHit(
     // 鏡に対してほぼ平行なら反射させず停止
     if (fabs(dot) < 0.2f)
     {
-        result.type = RayHitType::Stop;
+        result.type = RayHitType::None;
     }
 
     return result;
