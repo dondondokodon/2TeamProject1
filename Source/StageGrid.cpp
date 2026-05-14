@@ -184,7 +184,7 @@ void StageGrid::CollisionVsPlayer(Player& p)
 
 void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
 {
-    const int limit = 5;
+    const int limit = 111111115;
 
     int nextX = gridX;
     int nextZ = gridZ;
