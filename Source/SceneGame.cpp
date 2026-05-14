@@ -104,8 +104,12 @@ void SceneGame::Update(float elapsedTime)
 
 	//if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
+		// プレイヤー更新 (ステージ0ではPlayer2を非表示にする)
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
 		{
+			if (hidePlayer2 && i == 1) continue;
+
 			if (players[i] != nullptr)
 			{
 				bool canControl = (i == controlPlayerIndex);
@@ -114,15 +118,16 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 	
+	bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 
-	if (players[0] != nullptr && players[1] != nullptr)
+	if (!hidePlayer2 && players[0] != nullptr && players[1] != nullptr)
 	{
 		// プレイヤー同士の衝突判定
 		if (!players[0]->IsRiding())
 		{
-			int otherIndex = 1 - controlPlayerIndex;										
-			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);					
-			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);	
+			int otherIndex = 1 - controlPlayerIndex;
+			bool canRide = (controlPlayerIndex == 0 && otherIndex == 1);
+			players[controlPlayerIndex]->CollisionVsPlayer(*players[otherIndex], canRide);
 		}
 	}
 
@@ -214,13 +219,26 @@ void SceneGame::Render()
 	// 3Dモデル描画
 	{
 		//プレイヤー描画
+		//for (int i = 0; i < 2; ++i)
+		//{
+		//	if (players[i] != nullptr)
+		//	{
+		//		players[i]->Render(rc, modelRenderer);
+		//	}
+		//}
+
+		// Player2をステージ0で非表示にする
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
 		{
+			if (hidePlayer2 && i == 1) continue;
+
 			if (players[i] != nullptr)
 			{
 				players[i]->Render(rc, modelRenderer);
 			}
 		}
+
 
 		//ステージオブジェクト描画
 		StageObjectManager::Instance().Render(rc, modelRenderer);
@@ -232,14 +250,26 @@ void SceneGame::Render()
 	// 3Dデバッグ描画
 	{
 		//プレイヤーデバッグプリミティブ描画
+		//for (int i = 0; i < 2; ++i)
+		//{
+		//	if (players[i] != nullptr)
+		//	{
+		//		players[i]->RenderDebugPrimitive(rc, shapeRenderer);
+		//	}
+		//}
+		// Player2をステージ0で非表示にする
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+
 		for (int i = 0; i < 2; ++i)
 		{
+			if (hidePlayer2 && i == 1) continue;
+
 			if (players[i] != nullptr)
 			{
 				players[i]->RenderDebugPrimitive(rc, shapeRenderer);
 			}
 		}
-
+		
 		//ステージオブジェクトデバッグプリミティブ描画
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 	}
@@ -275,9 +305,15 @@ void SceneGame::DrawGUI()
 void SceneGame::InputChangePlayer()
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
-
+	// Xで操作キャラ交代
 	if (gamePad.GetButtonDown() & GamePad::BTN_B)
 	{
+		//ステージ0ではplayer2を操作できないように
+		if (StageObjectManager::Instance().GetStageIndex() == 0 && controlPlayerIndex == 0)
+		{
+			return;
+		}
+
 		if (!players[controlPlayerIndex]->IsRiding())
 		{
 			players[controlPlayerIndex]->StopControl();
@@ -286,6 +322,20 @@ void SceneGame::InputChangePlayer()
 		controlPlayerIndex = 1 - controlPlayerIndex;
 		players[controlPlayerIndex]->SetIsControlling(true);
 	}
+
+	// デバッグ用：Nキーで次のステージへ進む
+	if (GetAsyncKeyState('N') & 0x0001)
+	{
+		StageObjectManager::Instance().NextStage();
+
+		players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+		players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
+
+		controlPlayerIndex = 0;
+		players[0]->SetIsControlling(true);
+		players[1]->SetIsControlling(false);
+	}
+
 }
 
 Player* SceneGame::GetControlPlayer()
