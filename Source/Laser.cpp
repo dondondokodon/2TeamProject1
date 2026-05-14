@@ -298,8 +298,8 @@ void LaserBeam::DrawDebugGUI()
 
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
-	if (isRotating)
-		return LaserHit(); // ????????
+	//if (isRotating)
+	//	return LaserHit(); // ????????
 
 	LaserHit result;
 	//float bestDist = FLT_MAX;
@@ -398,8 +398,8 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 //・ｽ~・ｽ・ｽ・ｽﾆの費ｿｽ・ｽ・ｽ
 LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 {
-	if (isRotating)
-		return LaserHit();
+	//if (isRotating)
+	//	return LaserHit();
 
 	LaserHit result;
 
