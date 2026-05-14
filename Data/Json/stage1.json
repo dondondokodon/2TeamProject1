@@ -223,5 +223,20 @@
     "DirectionX": 0,
     "DirectionY": 0,
     "DirectionZ": 0
+  },
+  {
+    "type": "Stairs",
+    "PosX": 0,
+    "PosY": 0,
+    "PosZ": 0,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 1,
+    "ScaleY": 1,
+    "ScaleZ": 1,
+    "DirectionX": 0,
+    "DirectionY": 0,
+    "DirectionZ": 0
   }
 ]
