@@ -145,10 +145,11 @@ void LaserBeam::Render()
 	// 1. 回転中は何もしない
 	if (isRotating) {
 		if (isEffectPlaying) {
-			StopEffect();
-			isEffectPlaying = false;
+			//StopEffect();
+			//isEffectPlaying = false;
+			StopBackEffect();
 		}
-		return;
+		//return;
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
@@ -298,8 +299,8 @@ void LaserBeam::DrawDebugGUI()
 
 LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 {
-	if (isRotating)
-		return LaserHit(); // ????????
+	//if (isRotating)
+	//	return LaserHit(); // ????????
 
 	LaserHit result;
 	//float bestDist = FLT_MAX;
@@ -398,8 +399,8 @@ LaserHit LaserBeam::CheckHitAABB(const BoxCollider& box) const
 //・ｽ~・ｽ・ｽ・ｽﾆの費ｿｽ・ｽ・ｽ
 LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 {
-	if (isRotating)
-		return LaserHit();
+	//if (isRotating)
+	//	return LaserHit();
 
 	LaserHit result;
 
