@@ -286,6 +286,20 @@ void SceneGame::InputChangePlayer()
 		controlPlayerIndex = 1 - controlPlayerIndex;
 		players[controlPlayerIndex]->SetIsControlling(true);
 	}
+
+	// デバッグ用：Nキーで次のステージへ進む
+	if (GetAsyncKeyState('N') & 0x0001)
+	{
+		StageObjectManager::Instance().NextStage();
+
+		players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
+		players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
+
+		controlPlayerIndex = 0;
+		players[0]->SetIsControlling(true);
+		players[1]->SetIsControlling(false);
+	}
+
 }
 
 Player* SceneGame::GetControlPlayer()

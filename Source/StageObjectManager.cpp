@@ -166,6 +166,20 @@ bool StageObjectManager::NextStage()
 		return true;
 	}
 	LoadStageData(nextStageIndex);
+	
+	// ステージごとの外に出られない範囲
+	if (nextStageIndex == 0)
+	{
+		// StageData1用
+		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+	}
+	else if (nextStageIndex == 1)
+	{
+		// StageData2用
+		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+	}
+
+
 	nextStageIndex++;
 
 	return false;
