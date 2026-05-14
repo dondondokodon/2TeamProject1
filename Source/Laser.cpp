@@ -145,10 +145,11 @@ void LaserBeam::Render()
 	// 1. 回転中は何もしない
 	if (isRotating) {
 		if (isEffectPlaying) {
-			StopEffect();
-			isEffectPlaying = false;
+			//StopEffect();
+			//isEffectPlaying = false;
+			StopBackEffect();
 		}
-		return;
+		//return;
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();

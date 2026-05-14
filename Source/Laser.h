@@ -133,6 +133,13 @@ public:
 		}
 	}
 
+	void StopBackEffect()
+	{
+		if(isEffectPlaying)
+			laserBackEffect->Stop(BackEffectHandle);
+		isEffectPlaying = false;
+	}
+
 private:
 	std::unique_ptr<Effect> laserEffect;
 	std::unique_ptr<Effect> laserBackEffect;	//laserの装置にだけつける
