@@ -263,12 +263,12 @@ void SceneGame::DrawGUI()
 	//ステージオブジェクトマネージャー
 	StageObjectManager::Instance().DrawDebugGUI();
 
-	Player* controlPlayer = GetControlPlayer();
+	/*Player* controlPlayer = GetControlPlayer();*/
 
-	if (controlPlayer != nullptr)
-	{
-		controlPlayer->DrawDebugGUI();
-	}
+	//if (controlPlayer != nullptr)
+	//{
+	//	controlPlayer->DrawDebugGUI();
+	//}
 
 }
 
