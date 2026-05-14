@@ -642,23 +642,15 @@ void Player::CollisionPlayerVsStage()
 		StageObject* obj = stageObjectManager.GetStageObject(i);
 		if (!obj) continue;
 
-		StageGrid* grid = dynamic_cast<StageGrid*>(obj);
-		GoalObject* goal = dynamic_cast<GoalObject*>(obj);
-		Stairs* stairs = dynamic_cast<Stairs*>(obj);
 
-		if (grid)
+		if (StageGrid* grid = dynamic_cast<StageGrid*>(obj))
 		{
 			grid->CollisionVsPlayer(*this);
 		}
 
-		if (goal)
+		else if (GoalObject* goal = dynamic_cast<GoalObject*>(obj))
 		{
 			goal->CollisionVsPlayer(*this);
-		}
-
-		if (stairs)
-		{
-			stairs->CollisionVsPlayer(*this);
 		}
 	}
 

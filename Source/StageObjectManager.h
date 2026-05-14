@@ -6,6 +6,7 @@
 #include "StageObject.h"
 #include"RayHitType.h"
 #include"StageData.h"
+#include "Mirror.h"
 //#include"LaserManager.h"
 
 class StageGrid;
@@ -62,6 +63,15 @@ public:
 		DirectX::XMFLOAT3& hitPos,
 		DirectX::XMFLOAT3& normal);
 
+	//複数同時レイキャスト（軽くするため）
+	RayHitResult RayCastAny(
+		const DirectX::XMFLOAT3* starts,
+		const DirectX::XMFLOAT3* ends,
+		int rayCount,
+		StageObject* ignoreObject,
+		DirectX::XMFLOAT3& hitPos,
+		DirectX::XMFLOAT3& normal);
+
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
 
@@ -85,6 +95,6 @@ private:
 	std::vector<std::unique_ptr<StageData>> stageDatas;
 	int nextStageIndex = 0;
 	std::vector<StageGrid*> grids;
-
+	std::vector<Mirror*> mirrors;
 };
 

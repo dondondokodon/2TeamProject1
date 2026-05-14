@@ -33,26 +33,27 @@ void StageObjectManager::Reset()
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
 {
+	// ---------------------------
+   // リスト初期化
+   // ---------------------------
+	grids.clear();
+	mirrors.clear();
 
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
-	}
-
-	// ---------------------------
-// 木箱リスト初期化
-// ---------------------------
-	grids.clear();
-
-	// ---------------------------
-	// 木箱収集
-	// ---------------------------
-	for (auto& stageObject : stageObjects)
-	{
-		if (StageGrid* grid =
-			dynamic_cast<StageGrid*>(stageObject.get()))
+   
+    
+		if (StageGrid* grid = dynamic_cast<StageGrid*>(stageObject.get()))
 		{
 			grids.push_back(grid);
+		}
+
+		// 鏡
+		if (Mirror* mirror =
+			dynamic_cast<Mirror*>(stageObject.get()))
+		{
+			mirrors.push_back(mirror);
 		}
 	}
 
@@ -64,7 +65,15 @@ void StageObjectManager::Update(float elapsedTime)
 		grid->CollisionVsStage(*this);
 
 		grid->CollisionVsGrid(grids);
+
+		grid->CollisionVsMirror(mirrors);
 	}
+
+	// ★ ここで当たり判定
+	/*for (auto& stageObject : stageObjects)
+	{
+		
+	}*/
 
 	//破棄処理
 	for (auto& stageObject : removes)
@@ -234,6 +243,44 @@ RayHitResult StageObjectManager::RayCast(
 
 	return result;
 }
+
+//レイキャスト複数
+RayHitResult StageObjectManager::RayCastAny(
+	const DirectX::XMFLOAT3* starts,
+	const DirectX::XMFLOAT3* ends,
+	int rayCount,
+	StageObject* ignoreObject,
+	DirectX::XMFLOAT3& hitPos,
+	DirectX::XMFLOAT3& normal)
+{
+	RayHitResult result = { false, nullptr, RayHitType::Stop,{0,0,0} };
+
+	for (auto& obj : stageObjects)
+	{
+		if (obj.get() == ignoreObject) continue;
+
+		for (int i = 0; i < rayCount; ++i)
+		{
+			if (Collision::RayCast(
+				starts[i],
+				ends[i],
+				obj->GetTransform(),
+				obj->GetModel(),
+				hitPos,
+				normal))
+			{
+				result.hit = true;
+				result.object = obj.get();
+				result.type = obj->GetRayHitType();
+				result.hitPos = hitPos;
+				return result;
+			}
+		}
+	}
+
+	return result;
+}
+
 
 LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
 

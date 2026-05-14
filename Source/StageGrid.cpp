@@ -248,48 +248,48 @@ void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
     // --------------------------------------
     float rayLength = 0.6f;
 
-    DirectX::XMFLOAT3 end =
-    {
-        start.x + moveDir.x * rayLength,
-        start.y,
-        start.z + moveDir.z * rayLength
-    };
-
-    // --------------------------------------
-    // ★ 太さ用（3本レイ）
-    // --------------------------------------
     const float offset = 0.3f;
 
-    DirectX::XMFLOAT3 origins[3] =
+    DirectX::XMFLOAT3 starts[3] =
     {
         start,
         { start.x, start.y, start.z + offset },
         { start.x, start.y, start.z - offset }
     };
 
-    // --------------------------------------
-    // ★ 判定
-    // --------------------------------------
-    for (int i = 0; i < 3; i++)
+    DirectX::XMFLOAT3 ends[3] =
     {
-        DirectX::XMFLOAT3 oStart = origins[i];
-
-        DirectX::XMFLOAT3 oEnd =
         {
-            oStart.x + moveDir.x * rayLength,
-            oStart.y,
-            oStart.z + moveDir.z * rayLength
-        };
-
-        DirectX::XMFLOAT3 hitPos, hitNormal;
-        RayHitResult result = stageObjectManager.RayCast(oStart, oEnd, hitPos, hitNormal);
-
-        if (result.hit)
+            starts[0].x + moveDir.x * rayLength,
+            starts[0].y,
+            starts[0].z + moveDir.z * rayLength
+        },
         {
-            isMoving = false;
-            moveRemain = 0.0f;
-            return;
+            starts[1].x + moveDir.x * rayLength,
+            starts[1].y,
+            starts[1].z + moveDir.z * rayLength
+        },
+        {
+            starts[2].x + moveDir.x * rayLength,
+            starts[2].y,
+            starts[2].z + moveDir.z * rayLength
         }
+    };
+
+    DirectX::XMFLOAT3 hitPos, hitNormal;
+    RayHitResult result = stageObjectManager.RayCastAny(
+        starts,
+        ends,
+        3,
+        this,
+        hitPos,
+        hitNormal);
+
+    if (result.hit)
+    {
+        isMoving = false;
+        moveRemain = 0.0f;
+        return;
     }
 }
 
@@ -344,6 +344,52 @@ void StageGrid::CollisionVsGrid(
             grid->GetAABBMax()))
         {
             // 停止
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            return;
+        }
+    }
+}
+
+void StageGrid::CollisionVsMirror(
+    std::vector<Mirror*>& mirrors)
+{
+    if (!isMoving)
+        return;
+
+    // 次位置
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // 次AABB
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    for (Mirror* mirror : mirrors)
+    {
+        if (Collision::IntersectAABBVsAABB(
+            nextMin,
+            nextMax,
+            mirror->GetAABBMin(),
+            mirror->GetAABBMax()))
+        {
+            // 木箱停止
             isMoving = false;
             moveRemain = 0.0f;
 

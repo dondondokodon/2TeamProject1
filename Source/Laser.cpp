@@ -410,11 +410,30 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 
 	for (const auto& seg : segments)
 	{
+		// ざっくり距離チェック。
+// 円柱中心がレーザー線分の範囲から明らかに遠い場合は、細かい判定をしない。
+		float minX = min(seg.start.x, seg.end.x) - (cylR + radius);
+		float maxX = max(seg.start.x, seg.end.x) + (cylR + radius);
+		float minY = min(seg.start.y, seg.end.y) - (halfH + radius);
+		float maxY = max(seg.start.y, seg.end.y) + (halfH + radius);
+		float minZ = min(seg.start.z, seg.end.z) - (cylR + radius);
+		float maxZ = max(seg.start.z, seg.end.z) + (cylR + radius);
+
+		if (center.x < minX || center.x > maxX ||
+			center.y < minY || center.y > maxY ||
+			center.z < minZ || center.z > maxZ)
+		{
+			continue;
+		}
+
 		DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
 		DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
 
-		DirectX::XMVECTOR dir = XMVector3Normalize(XMVectorSubtract(e, s));
-		float segLen = XMVectorGetX(XMVector3Length(XMVectorSubtract(e, s)));
+		DirectX::XMVECTOR segVec = XMVectorSubtract(e, s);
+		float segLen = XMVectorGetX(XMVector3Length(segVec));
+		if (segLen <= 0.0001f) continue;
+
+		DirectX::XMVECTOR dir = XMVectorScale(segVec, 1.0f / segLen);
 
 		// レーザー上の最近接点 p
 		DirectX::XMVECTOR c = XMLoadFloat3(&center);
