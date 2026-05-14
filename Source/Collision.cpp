@@ -279,62 +279,107 @@ bool Collision::IntersectCylinderVsAABB(const DirectX::XMFLOAT3& cylPos, float c
 //	return hit;
 //}
 
-
-bool Collision::RayCast(const DirectX::XMFLOAT3& start,
+bool Collision::RayCast(
+	const DirectX::XMFLOAT3& start,
 	const DirectX::XMFLOAT3& end,
 	const DirectX::XMFLOAT4X4& worldTransform,
 	const Model* model,
 	DirectX::XMFLOAT3& hitPosition,
-	DirectX::XMFLOAT3& hitNormal) {
+	DirectX::XMFLOAT3& hitNormal)
+{
 	using namespace DirectX;
+
 	bool hit = false;
+
 	XMVECTOR WorldRayStart = XMLoadFloat3(&start);
 	XMVECTOR WorldRayEnd = XMLoadFloat3(&end);
 	XMVECTOR WorldRayVec = WorldRayEnd - WorldRayStart;
 
-	// レイの全長を最大距離として保持
-	float nearestDistT = 1.0f; // 0.0 ~ 1.0 の正規化距離で管理
-	XMVECTOR WorldRayDir = XMVector3Normalize(WorldRayVec);
 	float maxDistance = XMVectorGetX(XMVector3Length(WorldRayVec));
+	if (maxDistance <= 0.0f) return false;
+
+	float nearestDistT = 1.0f;
 
 	const ModelResource* resource = model->GetResource();
 	XMMATRIX ParentWorld = XMLoadFloat4x4(&worldTransform);
 
-	for (const auto& mesh : resource->GetMeshes()) {
-		XMMATRIX World = XMLoadFloat4x4(&model->GetNodes().at(mesh.nodeIndex).globalTransform) * ParentWorld;
+	for (const auto& mesh : resource->GetMeshes())
+	{
+		XMMATRIX World =
+			XMLoadFloat4x4(&model->GetNodes().at(mesh.nodeIndex).globalTransform) *
+			ParentWorld;
+
 		XMMATRIX InvWorld = XMMatrixInverse(nullptr, World);
 
-		// レイをローカル空間へ
 		XMVECTOR LocalStart = XMVector3Transform(WorldRayStart, InvWorld);
 		XMVECTOR LocalEnd = XMVector3Transform(WorldRayEnd, InvWorld);
 		XMVECTOR LocalVec = LocalEnd - LocalStart;
-		XMVECTOR LocalDir = XMVector3Normalize(LocalVec);
+
 		float localMaxDist = XMVectorGetX(XMVector3Length(LocalVec));
+		if (localMaxDist <= 0.0f) continue;
 
-		// --- 【最適化】AABB判定 ---
-		 if (!mesh.boundingBox.Intersects(LocalStart, LocalDir, localMaxDist)) continue;
+		XMVECTOR LocalDir = XMVectorScale(LocalVec, 1.0f / localMaxDist);
 
-		for (size_t i = 0; i < mesh.indices.size(); i += 3) {
+		DirectX::XMFLOAT3 boxCenter = {
+			(mesh.boundsMin.x + mesh.boundsMax.x) * 0.5f,
+			(mesh.boundsMin.y + mesh.boundsMax.y) * 0.5f,
+			(mesh.boundsMin.z + mesh.boundsMax.z) * 0.5f
+		};
+
+		const float boundsMargin = 0.1f;
+
+		DirectX::XMFLOAT3 boxExtents = {
+			(mesh.boundsMax.x - mesh.boundsMin.x) * 0.5f + boundsMargin,
+			(mesh.boundsMax.y - mesh.boundsMin.y) * 0.5f + boundsMargin,
+			(mesh.boundsMax.z - mesh.boundsMin.z) * 0.5f + boundsMargin
+		};
+
+		DirectX::BoundingBox boundingBox(boxCenter, boxExtents);
+
+		float boxDist = 0.0f;
+		if (!boundingBox.Intersects(LocalStart, LocalDir, boxDist))
+		{
+			continue;
+		}
+
+		if (boxDist > localMaxDist)
+		{
+			continue;
+		}
+
+		for (size_t i = 0; i < mesh.indices.size(); i += 3)
+		{
 			XMVECTOR A = XMLoadFloat3(&mesh.vertices[mesh.indices[i]].position);
 			XMVECTOR B = XMLoadFloat3(&mesh.vertices[mesh.indices[i + 1]].position);
 			XMVECTOR C = XMLoadFloat3(&mesh.vertices[mesh.indices[i + 2]].position);
 
-			float t; // 交点までの距離(倍率)
-			if (DirectX::TriangleTests::Intersects(LocalStart, LocalDir, A, B, C, t)) {
-				// レイの範囲内か、かつ今までの最短より近いか
-				if (t >= 0.0f && t <= localMaxDist) {
-					// ワールド空間での距離に換算して比較
-					float worldT = t / localMaxDist; // 0.0 ~ 1.0
-					if (worldT < nearestDistT) {
-						// ヒット確定時の重い処理（法線計算など）をここで行う
+			float t;
+			if (DirectX::TriangleTests::Intersects(LocalStart, LocalDir, A, B, C, t))
+			{
+				if (t >= 0.0f && t <= localMaxDist)
+				{
+					float worldT = t / localMaxDist;
+
+					if (worldT < nearestDistT)
+					{
 						XMVECTOR Normal = XMVector3Cross(B - A, C - B);
-						if (XMVectorGetX(XMVector3Dot(LocalDir, Normal)) < 0) {
+
+						if (XMVectorGetX(XMVector3Dot(LocalDir, Normal)) < 0)
+						{
 							nearestDistT = worldT;
 
-							// 最終的な出力用。ループが終わるまでStoreしなくても良いが構造上ここで更新
 							XMVECTOR HitPos = LocalStart + LocalDir * t;
-							XMStoreFloat3(&hitPosition, XMVector3Transform(HitPos, World));
-							XMStoreFloat3(&hitNormal, XMVector3Normalize(XMVector3TransformNormal(Normal, World)));
+
+							XMStoreFloat3(
+								&hitPosition,
+								XMVector3Transform(HitPos, World)
+							);
+
+							XMStoreFloat3(
+								&hitNormal,
+								XMVector3Normalize(XMVector3TransformNormal(Normal, World))
+							);
+
 							hit = true;
 						}
 					}
@@ -342,5 +387,6 @@ bool Collision::RayCast(const DirectX::XMFLOAT3& start,
 			}
 		}
 	}
+
 	return hit;
 }
