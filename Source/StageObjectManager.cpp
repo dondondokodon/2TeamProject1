@@ -247,7 +247,6 @@ RayHitResult StageObjectManager::RayCast(
 			tempHitPos,
 			tempNormal))
 		{
-		
 			// start → hitPos の距離
 			float dx = tempHitPos.x - start.x;
 			float dy = tempHitPos.y - start.y;
