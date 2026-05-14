@@ -6,6 +6,9 @@
 #include"../Source/stage.h"
 #include"StageObject.h"
 #include"StageObjectManager.h"
+#include"Mirror.h"
+
+class Mirror;
 
 // ------------------------------------------------------------
 // StageGrid
@@ -40,6 +43,9 @@ public:
     void CollisionVsGrid(
         std::vector<StageGrid*>& grids);
 
+    void CollisionVsMirror(
+        std::vector<Mirror*>& mirrors);
+
     DirectX::XMFLOAT3 GetAABBMin() const { return aabbMin; }
     DirectX::XMFLOAT3 GetAABBMax() const { return aabbMax; }
 
@@ -52,6 +58,8 @@ public:
         result.hitPos = hitPos;
         return result;
     }
+
+
 private:
     // --------------------------------------------------------
     // ★ 木箱の移動状態管理

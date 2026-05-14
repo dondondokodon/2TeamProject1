@@ -6,6 +6,7 @@
 #include "StageObject.h"
 #include"RayHitType.h"
 #include"StageData.h"
+#include "Mirror.h"
 //#include"LaserManager.h"
 
 class StageGrid;
@@ -85,6 +86,6 @@ private:
 	std::vector<std::unique_ptr<StageData>> stageDatas;
 	int nextStageIndex = 0;
 	std::vector<StageGrid*> grids;
-
+	std::vector<Mirror*> mirrors;
 };
 

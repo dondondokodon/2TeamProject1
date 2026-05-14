@@ -351,3 +351,49 @@ void StageGrid::CollisionVsGrid(
         }
     }
 }
+
+void StageGrid::CollisionVsMirror(
+    std::vector<Mirror*>& mirrors)
+{
+    if (!isMoving)
+        return;
+
+    // 次位置
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // 次AABB
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    for (Mirror* mirror : mirrors)
+    {
+        if (Collision::IntersectAABBVsAABB(
+            nextMin,
+            nextMax,
+            mirror->GetAABBMin(),
+            mirror->GetAABBMax()))
+        {
+            // 木箱停止
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            return;
+        }
+    }
+}

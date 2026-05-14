@@ -23,6 +23,8 @@ public:
         UpdateTransform();
     }
 
+        const DirectX::XMFLOAT3& GetAABBMin() const { return aabbMin; }
+    const DirectX::XMFLOAT3& GetAABBMax() const { return aabbMax; }
     
 private:
     DirectX::XMFLOAT3 aabbMin;

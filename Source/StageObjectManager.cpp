@@ -40,19 +40,28 @@ void StageObjectManager::Update(float elapsedTime)
 	}
 
 	// ---------------------------
-// 木箱リスト初期化
-// ---------------------------
+    // リスト初期化
+    // ---------------------------
 	grids.clear();
+	mirrors.clear();
 
 	// ---------------------------
-	// 木箱収集
+	// 木箱,鏡収集
 	// ---------------------------
 	for (auto& stageObject : stageObjects)
 	{
+		// 木箱
 		if (StageGrid* grid =
 			dynamic_cast<StageGrid*>(stageObject.get()))
 		{
 			grids.push_back(grid);
+		}
+
+		// 鏡
+		if (Mirror* mirror =
+			dynamic_cast<Mirror*>(stageObject.get()))
+		{
+			mirrors.push_back(mirror);
 		}
 	}
 
@@ -64,6 +73,8 @@ void StageObjectManager::Update(float elapsedTime)
 		grid->CollisionVsStage(*this);
 
 		grid->CollisionVsGrid(grids);
+
+		grid->CollisionVsMirror(mirrors);
 	}
 
 	//破棄処理
