@@ -33,6 +33,17 @@ void StageObjectManager::Reset()
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
 {
+	// ---------------------------
+	// 木箱同士判定
+	// ---------------------------
+	for (StageGrid* grid : grids)
+	{
+		grid->CollisionVsStage(*this);
+
+		grid->CollisionVsGrid(grids);
+
+		grid->CollisionVsMirror(mirrors);
+	}
 
 	for (auto& stageObject : stageObjects)
 	{
@@ -44,6 +55,7 @@ void StageObjectManager::Update(float elapsedTime)
     // ---------------------------
 	grids.clear();
 	mirrors.clear();
+
 
 	// ---------------------------
 	// 木箱,鏡収集
@@ -65,17 +77,6 @@ void StageObjectManager::Update(float elapsedTime)
 		}
 	}
 
-	// ---------------------------
-	// 木箱同士判定
-	// ---------------------------
-	for (StageGrid* grid : grids)
-	{
-		grid->CollisionVsStage(*this);
-
-		grid->CollisionVsGrid(grids);
-
-		grid->CollisionVsMirror(mirrors);
-	}
 
 	//破棄処理
 	for (auto& stageObject : removes)
@@ -224,22 +225,54 @@ RayHitResult StageObjectManager::RayCast(
 	DirectX::XMFLOAT3& hitPos,
 	DirectX::XMFLOAT3& normal)
 {
-	RayHitResult result = { false, nullptr, RayHitType::Stop,{0,0,0} };
+	RayHitResult result =
+	{
+		false,
+		nullptr,
+		RayHitType::Stop,
+		{0,0,0}
+	};
+
+	// 一番近い距離
+	float nearestDistSq = FLT_MAX;
+
 	for (auto& obj : stageObjects)
 	{
+		DirectX::XMFLOAT3 tempHitPos;
+		DirectX::XMFLOAT3 tempNormal;
+
 		if (Collision::RayCast(
 			start,
 			end,
 			obj->GetTransform(),
 			obj->GetModel(),
-			hitPos,
-			normal))
+			tempHitPos,
+			tempNormal))
 		{
-			result.hit = true;
-			result.object = obj.get();
-			result.type = obj->GetRayHitType();
-			result.hitPos = hitPos;
-			return result;
+			// start → hitPos の距離
+			float dx = tempHitPos.x - start.x;
+			float dy = tempHitPos.y - start.y;
+			float dz = tempHitPos.z - start.z;
+
+			float distSq =
+				dx * dx +
+				dy * dy +
+				dz * dz;
+
+			// より近い物だけ保存
+			if (distSq < nearestDistSq)
+			{
+				nearestDistSq = distSq;
+
+				result.hit = true;
+				result.object = obj.get();
+				result.type = obj->GetRayHitType();
+				result.hitPos = tempHitPos;
+
+				// 出力用
+				hitPos = tempHitPos;
+				normal = tempNormal;
+			}
 		}
 	}
 
