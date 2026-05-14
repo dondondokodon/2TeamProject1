@@ -33,15 +33,16 @@ void StageObjectManager::Reset()
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
 {
+	// ---------------------------
+   // リスト初期化
+   // ---------------------------
+	grids.clear();
+	mirrors.clear();
 
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
-    // ---------------------------
-    // リスト初期化
-    // ---------------------------
-	grids.clear();
-	mirrors.clear();
+   
     
 		if (StageGrid* grid = dynamic_cast<StageGrid*>(stageObject.get()))
 		{
