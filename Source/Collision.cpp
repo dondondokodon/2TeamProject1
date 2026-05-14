@@ -183,6 +183,27 @@ bool Collision::IntersectCylinderVsAABB(const DirectX::XMFLOAT3& cylPos, float c
 	return true;
 }
 
+bool Collision::IntersectAABBVsAABB(
+	const DirectX::XMFLOAT3& minA,
+	const DirectX::XMFLOAT3& maxA,
+	const DirectX::XMFLOAT3& minB,
+	const DirectX::XMFLOAT3& maxB)
+{
+	// X軸
+	if (maxA.x < minB.x) return false;
+	if (minA.x > maxB.x) return false;
+
+	// Y軸
+	if (maxA.y < minB.y) return false;
+	if (minA.y > maxB.y) return false;
+
+	// Z軸
+	if (maxA.z < minB.z) return false;
+	if (minA.z > maxB.z) return false;
+
+	return true;
+}
+
 
 // レイキャスト
 bool Collision::RayCast(

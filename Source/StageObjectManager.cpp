@@ -33,18 +33,37 @@ void StageObjectManager::Reset()
 //更新処理
 void StageObjectManager::Update(float elapsedTime)
 {
+
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
 	}
 
-	// ★ ここで当たり判定
+	// ---------------------------
+// 木箱リスト初期化
+// ---------------------------
+	grids.clear();
+
+	// ---------------------------
+	// 木箱収集
+	// ---------------------------
 	for (auto& stageObject : stageObjects)
 	{
-		if (StageGrid* grid = dynamic_cast<StageGrid*>(stageObject.get()))
+		if (StageGrid* grid =
+			dynamic_cast<StageGrid*>(stageObject.get()))
 		{
-			grid->CollisionVsStage(*this);
+			grids.push_back(grid);
 		}
+	}
+
+	// ---------------------------
+	// 木箱同士判定
+	// ---------------------------
+	for (StageGrid* grid : grids)
+	{
+		grid->CollisionVsStage(*this);
+
+		grid->CollisionVsGrid(grids);
 	}
 
 	//破棄処理

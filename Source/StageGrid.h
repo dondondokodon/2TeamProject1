@@ -37,6 +37,12 @@ public:
 
     void CollisionVsStage(StageObjectManager& stageObjectManager);
 
+    void CollisionVsGrid(
+        std::vector<StageGrid*>& grids);
+
+    DirectX::XMFLOAT3 GetAABBMin() const { return aabbMin; }
+    DirectX::XMFLOAT3 GetAABBMax() const { return aabbMax; }
+
     RayHitResult StageGrid::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override {
         // StageGrid は「絶対に」レーザーを止める存在であることを保証する
         RayHitResult result;

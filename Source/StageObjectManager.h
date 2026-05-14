@@ -8,6 +8,7 @@
 #include"StageData.h"
 //#include"LaserManager.h"
 
+class StageGrid;
 class LaserManager;
 
 class StageObjectManager
@@ -73,6 +74,8 @@ public:
 	//セッター
 	void setLaserManager(LaserManager* mgr);
 
+	
+
 private:
 	StageObjectManager();
 
@@ -81,5 +84,7 @@ private:
 	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
 	std::vector<std::unique_ptr<StageData>> stageDatas;
 	int nextStageIndex = 0;
+	std::vector<StageGrid*> grids;
+
 };
 

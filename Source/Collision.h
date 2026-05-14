@@ -45,6 +45,13 @@ public:
 		const DirectX::XMFLOAT3& boxMax,
 		DirectX::XMFLOAT3& outPush);
 
+	static bool IntersectAABBVsAABB(
+		const DirectX::XMFLOAT3& minA,
+		const DirectX::XMFLOAT3& maxA,
+		const DirectX::XMFLOAT3& minB,
+		const DirectX::XMFLOAT3& maxB);
+
+
 
 
 	// レイキャスト
