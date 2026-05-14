@@ -149,7 +149,7 @@ RayHitResult Mirror::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, 
     //前と後ろからはOK
     if (dot < 0.2f&&dot>-0.2f)
     {
-        result.type = RayHitType::Stop;
+        result.type = RayHitType::None;
     }
 
     
