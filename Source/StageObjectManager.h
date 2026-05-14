@@ -86,6 +86,8 @@ public:
 	float GetStageMinZ() const { return stageMinZ; }
 	float GetStageMaxZ() const { return stageMaxZ; }
 
+	//現在のステージ番号取得
+	int GetStageIndex() const { return nextStageIndex - 1; }
 
 	//ステージオブジェクト取得
 	StageObject* GetStageObject(int index) { return stageObjects.at(index).get(); }
