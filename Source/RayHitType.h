@@ -4,7 +4,8 @@ class StageObject;
 enum class RayHitType
 {
 	reflection,
-	Stop
+	Stop,
+	None
 };
 
 struct RayHitResult
