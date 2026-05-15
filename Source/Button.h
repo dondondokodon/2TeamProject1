@@ -18,11 +18,15 @@ public:
 
 	void OnClick();
 
+	void setStageIndex(int index) { stageIndex = index; }
+
 private:
 	 std::unique_ptr<Sprite>sprite;
 	 DirectX::XMFLOAT2 position;
 	 DirectX::XMFLOAT2 offset;
 	 float width;
 	 float height;
+
+	 int stageIndex=0;//これ基底クラスにして派生クラスで個別に設定するほうがいいけどめんどいからこれにする
 };
 

@@ -1,4 +1,5 @@
 ﻿#include "Button.h"
+#include "StageObjectManager.h"
 
 Button::Button():sprite(nullptr)
 {
@@ -28,7 +29,7 @@ void Button::Update(float elapsedTime)
 
 void Button::OnClick()
 {
-
+	StageObjectManager::Instance().setStageIndex(stageIndex);
 }
 
 

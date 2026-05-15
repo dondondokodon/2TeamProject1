@@ -19,7 +19,9 @@ void SceneTitle::Initialize()
 	sprite = new Sprite("Data/Sprite/Title.png");
 	buttons[0].Initialize("Data/Sprite/titleName.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.23f), 800.0f, 180.0f);
 	buttons[1].Initialize("Data/Sprite/Start.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.59f), 290.0f, 120.0f);
-	buttons[2].Initialize("Data/Sprite/Tutorial.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.8f), 500.0f, 120.0f);
+	buttons[1].setStageIndex(0);
+	buttons[2].Initialize("Data/Sprite/Tutorial.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 500.0f, 120.0f);
+	buttons[2].setStageIndex(1);
 
 	ButtonIndex = 1;
 }
@@ -49,12 +51,14 @@ void SceneTitle::Update(float elapsedTime)
 		ButtonIndex = 2;
 	}
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_START)
+	if (gamePad.GetButtonDown() & GamePad::BTN_DOWN)
 	{
 		buttons[ButtonIndex].OnClick();
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
+
 	//何かボタンを押したらゲームシーンへ切り替え
-	const GamePadButton anyButton =
+	/*const GamePadButton anyButton =
 		GamePad::BTN_A
 		| GamePad::BTN_B
 		| GamePad::BTN_X
@@ -72,7 +76,8 @@ void SceneTitle::Update(float elapsedTime)
 		| GamePad::BTN_LEFT_TRIGGER
 		| GamePad::BTN_RIGHT_TRIGGER;
 	if (gamePad.GetButtonDown() & anyButton)
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));*/
+
 	for (auto& button : buttons)
 	{
 		button.Update(elapsedTime);
