@@ -84,7 +84,7 @@ public:
 	//セッター
 	void setLaserManager(LaserManager* mgr);
 
-	
+	void setStageIndex(int num){}
 
 private:
 	StageObjectManager();
