@@ -108,19 +108,14 @@ void LaserBeam::Update(float elapsedTime)
 
 		if (hit.type == RayHitType::reflection)
 		{
-			// 反射点までのレーザー線分を登録
-			segments.push_back({ start, hitPos ,hitNormal,true});
+			segments.push_back({
+	        start,
+	        hitPos,
+	        hit.hitNormal,
+	        true
+				});
 
-		  //反射方向
-			DirectX::XMVECTOR d = DirectX::XMLoadFloat3(&dir);
-			//法線
-			//XZ平面にする
-			hitNormal.y = 0.0f;
-			DirectX::XMVECTOR n = DirectX::XMLoadFloat3(&hitNormal);
-			//反射
-			DirectX::XMVECTOR r = DirectX::XMVector3Reflect(d, n);
-			//正規化
-			DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(r));
+			dir = hit.reflectionDir;
 
 			// 次のレーザーの開始位置を、反射点から少しだけ進める
 			// 同じ位置から再スタートすると、同じ鏡にもう一度当たってしまうことがあるから

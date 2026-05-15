@@ -48,11 +48,11 @@ void Mirror::Update(float elapsedTime)
     // -----------------------------
     // -π ～ π に正規化（target）
     // -----------------------------
-    while (targetAngleY > DirectX::XM_PI)
-        targetAngleY -= DirectX::XM_2PI;
+    //while (targetAngleY > DirectX::XM_PI)
+        //targetAngleY -= DirectX::XM_2PI;
 
-    while (targetAngleY < -DirectX::XM_PI)
-        targetAngleY += DirectX::XM_2PI;
+    //while (targetAngleY < -DirectX::XM_PI)
+        //targetAngleY += DirectX::XM_2PI;
 
     // -----------------------------
     // 最短回転補間
@@ -79,11 +79,11 @@ void Mirror::Update(float elapsedTime)
     // -----------------------------
     // angleも正規化
     // -----------------------------
-    while (angle.y > DirectX::XM_PI)
-        angle.y -= DirectX::XM_2PI;
+    //while (angle.y > DirectX::XM_PI)
+        //angle.y -= DirectX::XM_2PI;
 
-    while (angle.y < -DirectX::XM_PI)
-        angle.y += DirectX::XM_2PI;
+    //while (angle.y < -DirectX::XM_PI)
+        //angle.y += DirectX::XM_2PI;
 
     UpdateTransform();
 
@@ -111,12 +111,12 @@ void Mirror::Update(float elapsedTime)
     float deg = DirectX::XMConvertToDegrees(angle.y);
 
     // 0° ±1° の範囲なら 180° にする
-    if (fabs(deg) < 1.0f)
-    {
-        angle.y = DirectX::XMConvertToRadians(180.0f);
-        targetAngleY = angle.y;
-        UpdateTransform();
-    }
+    //if (fabs(deg) < 1.0f)
+    //{
+    //    angle.y = DirectX::XMConvertToRadians(180.0f);
+    //    targetAngleY = angle.y;
+    //    UpdateTransform();
+    //}
 
 
 }
@@ -157,9 +157,9 @@ void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
     if (!renderer) return;
 
     DirectX::XMFLOAT3 size = {
-        0.6f ,
-        1.5f ,
-        0.2f
+        0.6f *scale.x,
+        1.5f *scale.y,
+        0.2f *scale.z
     };
 
     // AABB
@@ -203,40 +203,77 @@ void Mirror::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* render
 RayHitResult Mirror::ReallyHit(
     DirectX::XMFLOAT3 dir,
     DirectX::XMFLOAT3 hitPos,
-    DirectX::XMFLOAT3 hitNormal)
+    DirectX::XMFLOAT3 /*hitNormal*/)
 {
+    RayHitResult result;
+
+    // ========================
+    // 回転中はレーザー停止
+    // ========================
     if (isRotating)
     {
-        return RayHitResult{ true, this, RayHitType::Stop, hitPos };
+        result.hit = true;
+        result.object = this;
+        result.hitPos = hitPos;
+        result.type = RayHitType::Stop;
+
+        return result;
     }
 
-    // -----------------------------------
-    // 鏡の法線（transform から取得）
-    // ここでは「モデルのローカル +Z を鏡の表面法線」と仮定
-    // -----------------------------------
-    DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&transform);
+    result.hit = true;
+    result.object = this;
+    result.hitPos = hitPos;
+    result.type = RayHitType::reflection;
 
-    DirectX::XMVECTOR N = DirectX::XMVectorSet(0, 0, 1, 0); // ← 必ず定義する
-    N = DirectX::XMVector3TransformNormal(N, mat);
+    //========================
+    // 入射方向
+    //========================
+    DirectX::XMVECTOR D =
+        DirectX::XMVector3Normalize(
+            DirectX::XMLoadFloat3(&dir));
+
+    //========================
+    // 鏡の法線
+    // ローカル前方向(Z+)
+    //========================
+    DirectX::XMVECTOR N =
+        DirectX::XMVector3TransformNormal(
+            DirectX::XMVectorSet(0, 0, 1, 0),
+            DirectX::XMLoadFloat4x4(&transform));
+
     N = DirectX::XMVector3Normalize(N);
 
-    DirectX::XMVECTOR D = DirectX::XMLoadFloat3(&dir);
-    D = DirectX::XMVector3Normalize(D);
+    //========================
+    // 表裏補正
+    //========================
+    float dot =
+        DirectX::XMVectorGetX(
+            DirectX::XMVector3Dot(D, N));
 
-    float dot = 0.0f;
-    DirectX::XMStoreFloat(
-        &dot,
-        DirectX::XMVector3Dot(
-            DirectX::XMVectorNegate(D),
-            N));
-
-    RayHitResult result{ true, this, type, hitPos };
-
-    // 鏡に対してほぼ平行なら反射させず停止
-    if (fabs(dot) < 0.2f)
+    // レーザーと同じ向きなら反転
+    if (dot > 0.0f)
     {
-        result.type = RayHitType::None;
+        N = DirectX::XMVectorNegate(N);
     }
+
+    //========================
+    // 反射計算
+    //========================
+    DirectX::XMVECTOR R =
+        DirectX::XMVector3Reflect(D, N);
+
+    R = DirectX::XMVector3Normalize(R);
+
+    //========================
+    // 保存
+    //========================
+    DirectX::XMStoreFloat3(
+        &result.reflectionDir,
+        R);
+
+    DirectX::XMStoreFloat3(
+        &result.hitNormal,
+        N);
 
     return result;
 }
