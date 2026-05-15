@@ -172,7 +172,7 @@ bool StageObjectManager::NextStage()
 	if (nextStageIndex == 0)
 	{
 		// StageData1用
-		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+		SetStageBounds(-35.5f, 35.5f, -35.5f, 35.5f);
 	}
 	else if (nextStageIndex == 1)
 	{
@@ -252,6 +252,7 @@ RayHitResult StageObjectManager::RayCast(
 	{
 		DirectX::XMFLOAT3 tempHitPos;
 		DirectX::XMFLOAT3 tempNormal;
+		if(obj->GetRayHitType() == RayHitType::None)continue;
 
 		if (Collision::RayCast(
 			start,
@@ -261,7 +262,6 @@ RayHitResult StageObjectManager::RayCast(
 			tempHitPos,
 			tempNormal))
 		{
-		
 			// start → hitPos の距離
 			float dx = tempHitPos.x - start.x;
 			float dy = tempHitPos.y - start.y;
