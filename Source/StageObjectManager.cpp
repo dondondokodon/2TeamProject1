@@ -252,6 +252,7 @@ RayHitResult StageObjectManager::RayCast(
 	{
 		DirectX::XMFLOAT3 tempHitPos;
 		DirectX::XMFLOAT3 tempNormal;
+		if(obj->GetRayHitType() == RayHitType::None)continue;
 
 		if (Collision::RayCast(
 			start,

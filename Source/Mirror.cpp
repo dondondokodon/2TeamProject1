@@ -24,6 +24,7 @@ Mirror::~Mirror()
 
 void Mirror::Update(float elapsedTime)
 {
+    type= RayHitType::reflection;
     const float step = DirectX::XM_PI / 4.0f;
     const float rotateSpeed = 6.0f;
 
@@ -235,6 +236,7 @@ RayHitResult Mirror::ReallyHit(
     // 鏡に対してほぼ平行なら反射させず停止
     if (fabs(dot) < 0.2f)
     {
+       type = RayHitType::None;
         result.type = RayHitType::None;
     }
 
