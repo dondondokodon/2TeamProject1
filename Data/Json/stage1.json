@@ -78,7 +78,7 @@
     "type": "Mirror",
     "PosX": -2,
     "PosY": 2,
-    "PosZ": -7.5,
+    "PosZ": -7,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
@@ -91,7 +91,7 @@
   },
   {
     "type": "Mirror",
-    "PosX": -7,
+    "PosX": -7.5,
     "PosY": 2,
     "PosZ": 2,
     "angleX": 0,
