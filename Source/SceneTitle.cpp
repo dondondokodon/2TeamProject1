@@ -41,18 +41,18 @@ void SceneTitle::Finalize()
 void SceneTitle::Update(float elapsedTime)
 {
 	GamePad& gamePad = Input::Instance().GetGamePad();
+	float ay = gamePad.GetAxisLY();
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_A)
+	if (ay>0.2f)
 	{
 		ButtonIndex = 1;
 	}
-	else if(gamePad.GetButtonDown() & GamePad::BTN_B)
+	else if(ay<-0.2f)
 	{
 		ButtonIndex = 2;
 	}
 
-	if (gamePad.GetButtonDown() & GamePad::BTN_DOWN)
-	{
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
 		buttons[ButtonIndex].OnClick();
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
