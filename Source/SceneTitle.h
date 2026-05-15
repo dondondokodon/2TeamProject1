@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include"System/Sprite.h"
 #include "Scene.h"
+#include "Button.h"
 class SceneTitle :public Scene
 {
 public:
-	SceneTitle() {}
+	SceneTitle();
 	~SceneTitle()override{}
 
 	//初期化
@@ -24,5 +25,7 @@ public:
 
 private:
 	Sprite* sprite = nullptr;
+	Button buttons[3];
+	short ButtonIndex = 1;
 };
 

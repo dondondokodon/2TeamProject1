@@ -272,6 +272,9 @@
     <ClInclude Include="Source\Button.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ScreenSize.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
