@@ -23,7 +23,8 @@ void SceneGame::Initialize()
 {
 	//プレイヤー初期化
 	players[0] = new Player();
-	players[0]->Initialize("Data/Model/Player/Player.mdl");
+	//players[0]->Initialize("Data/Model/Player/Player.mdl");
+	players[0]->Initialize("Data/Model/Player/Player_animation.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
 	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
 	players[0]->SetIsControlling(true);

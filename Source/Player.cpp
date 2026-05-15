@@ -30,6 +30,13 @@ void Player::Initialize(const char* modelPath)
 	//アニメーションコントローラーにモデルをセット
 	animation.setModel(model.get());
 
+	const auto& animations = model->GetResource()->GetAnimations();
+	for (const auto& anim : animations)
+	{
+		OutputDebugStringA(("Animation: " + anim.name + "\n").c_str());
+	}
+
+
 	//初期ステートをIdleStateに設定
 	state = std::make_unique<IdleState>();
 	state->Initialize(*this);
