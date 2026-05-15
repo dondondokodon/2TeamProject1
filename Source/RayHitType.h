@@ -14,4 +14,7 @@ struct RayHitResult
 	StageObject* object;
 	RayHitType type;
 	DirectX::XMFLOAT3 hitPos;
+	DirectX::XMFLOAT3 hitNormal = {};
+
+	DirectX::XMFLOAT3 reflectionDir;
 };

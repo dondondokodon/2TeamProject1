@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"System/Sprite.h"
 #include "Scene.h"
+#include "Fade.h"
 class SceneTitle :public Scene
 {
 public:
@@ -24,5 +25,9 @@ public:
 
 private:
 	Sprite* sprite = nullptr;
+
+	Fade fade;
+
+	bool changeScene = false;
 };
 
