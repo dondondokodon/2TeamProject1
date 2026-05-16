@@ -34,6 +34,7 @@ void SceneTitle::Finalize()
 	{
 		delete sprite;
 		sprite = nullptr;
+
 	}
 }
 
