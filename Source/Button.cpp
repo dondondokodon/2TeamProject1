@@ -36,5 +36,5 @@ void Button::OnClick()
 void Button::render(const RenderContext& rc)
 {
 	if(sprite)
-	sprite->Render(rc, position.x, position.y, 0, width, height, 1, 1, 1, 1, 1);
+	sprite->Render(rc, position.x, position.y, 0, width, height, 0, 1, 1, 1, 1);
 }
