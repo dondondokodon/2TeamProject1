@@ -106,9 +106,9 @@
   },
   {
     "type": "Mirror",
-    "PosX": 7.5,
+    "PosX": -1.5,
     "PosY": 2,
-    "PosZ": 4.5,
+    "PosZ": 6.3,
     "angleX": 0,
     "angleY": 90,
     "angleZ": 0,
