@@ -22,7 +22,7 @@ StageObjectManager::~StageObjectManager()
 //リセット
 void StageObjectManager::Reset()
 {
-	nextStageIndex = 0;
+	//nextStageIndex = 0;
 	Clear();
 	stageDatas.clear();
 	stageDatas.push_back(std::make_unique<StageData1>());
@@ -228,6 +228,14 @@ void StageObjectManager::DrawDebugGUI()
 
 	if (laserManager)
 	laserManager->DrawDebugGUI();
+
+
+	if (ImGui::Begin("Stage", nullptr, ImGuiWindowFlags_None))
+	{
+			//位置
+			ImGui::InputInt("stageindex", &nextStageIndex);
+	}
+	ImGui::End();
 }
 
 //レイキャスト

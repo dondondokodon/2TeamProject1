@@ -14,6 +14,7 @@
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneTitle.h"
+#include"SceneResult.h"
 
 #include"StageData1.h"
 #include"StageData2.h"
@@ -55,6 +56,7 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
+	// //ステージ終了化
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
 	mng.setLaserManager(new LaserManager());
@@ -83,9 +85,7 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
-	//ステージ終了化
 	StageObjectManager::Instance().Reset();
-	
 	Flag::Instance().ClearFlag();
 }
 
@@ -166,8 +166,9 @@ void SceneGame::Update(float elapsedTime)
 		}
 
 		//ゴールしてたら次のステージへ
-		if(StageObjectManager::Instance().NextStage())
-			Goal();
+		SceneManager::Instance().ChangeScene(new SceneResult());
+		/*if(StageObjectManager::Instance().NextStage())
+			Goal();*/
 		return;
 	}
 }
