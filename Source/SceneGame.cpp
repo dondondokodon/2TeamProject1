@@ -59,7 +59,7 @@ void SceneGame::Initialize()
 	// //ステージ終了化
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
-	mng.Clear();
+	//mng.Clear();
 	mng.setLaserManager(new LaserManager());
 	mng.NextStage();
 	//mng.LoadStageData(stageData.get());
@@ -86,8 +86,8 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
-	//StageObjectManager::Instance().Reset();
-	StageObjectManager::Instance().Clear();
+	StageObjectManager::Instance().Reset();
+	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
 }
 
