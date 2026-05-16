@@ -38,6 +38,8 @@ public:
 	//次のステージに移る処理 true：最後のステージ
 	bool NextStage();
 
+	bool isLastStage() { return nextStageIndex >= stageDatas.size(); }
+
 	//ステージオブジェクト登録
 	void Register(StageObject* stageObject);
 

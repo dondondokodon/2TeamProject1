@@ -2,6 +2,7 @@
 #include"System/Sprite.h"
 #include<memory>
 #include<DirectXMath.h>
+#include "Sprite2D.h"
 
 
 class Button
@@ -21,11 +22,7 @@ public:
 	void setStageIndex(int index) { stageIndex = index; }
 
 private:
-	 std::unique_ptr<Sprite>sprite;
-	 DirectX::XMFLOAT2 position;
-	 DirectX::XMFLOAT2 offset;
-	 float width;
-	 float height;
+	Sprite2D sprite;
 
 	 int stageIndex=0;//これ基底クラスにして派生クラスで個別に設定するほうがいいけどめんどいからこれにする
 };

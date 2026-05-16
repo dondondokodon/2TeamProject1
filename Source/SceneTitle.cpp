@@ -9,7 +9,7 @@
 
 SceneTitle::SceneTitle()
 {
-	ButtonIndex = 1;
+	ButtonIndex = 0;
 }
 
 //初期化
@@ -17,13 +17,14 @@ void SceneTitle::Initialize()
 {
 	//スプライト初期化
 	sprite = new Sprite("Data/Sprite/Title.png");
-	buttons[0].Initialize("Data/Sprite/titleName.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.23f), 1200.0f, 240.0f);
-	buttons[1].Initialize("Data/Sprite/Start.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.59f), 290.0f, 120.0f);
-	buttons[1].setStageIndex(0);
-	buttons[2].Initialize("Data/Sprite/Tutorial.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 500.0f, 120.0f);
-	buttons[2].setStageIndex(1);
 
-	ButtonIndex = 1;
+	title.Initialize("Data/Sprite/titleName.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.23f), 1200.0f, 240.0f);
+	buttons[0].Initialize("Data/Sprite/Start.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.59f), 290.0f, 120.0f);
+	buttons[0].setStageIndex(0);
+	buttons[1].Initialize("Data/Sprite/Tutorial.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 500.0f, 120.0f);
+	buttons[1].setStageIndex(1);
+
+	ButtonIndex = 0;
 	changeScene = false;
 }
 
@@ -51,7 +52,7 @@ void SceneTitle::Update(float elapsedTime)
 	}
 	else if(ay<-0.2f)
 	{
-		ButtonIndex = 2;
+		ButtonIndex = 0;
 	}
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
@@ -90,6 +91,8 @@ void SceneTitle::Update(float elapsedTime)
 		button.Update(elapsedTime);
 	}
 
+	title.Update(elapsedTime);
+
 	fade.Update(elapsedTime);
 	
 	if (!fade.IsFading()&&changeScene)
@@ -122,6 +125,7 @@ void SceneTitle::Render()
 			0, 0, 0, screenWidth, screenHeight,
 			0,
 			1, 1, 1, 1);
+		title.render(rc);
 	}
 
 
