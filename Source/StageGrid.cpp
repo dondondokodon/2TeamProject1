@@ -148,12 +148,13 @@ void StageGrid::CollisionVsPlayer(Player& p)
         aabbMax,
         push))
     {
-        // プレイヤーを押し戻す（めり込み補正）
-        DirectX::XMFLOAT3 pos = p.GetPosition();
-        pos.x += push.x;
-        pos.y += push.y;
-        pos.z += push.z;
-        p.SetPosition(pos);
+        //プレイヤーがレイキャストでやってるからいらない
+        //// プレイヤーを押し戻す（めり込み補正）
+        //DirectX::XMFLOAT3 pos = p.GetPosition();
+        //pos.x += push.x;
+        //pos.y += push.y;
+        //pos.z += push.z;
+        //p.SetPosition(pos);
 
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
