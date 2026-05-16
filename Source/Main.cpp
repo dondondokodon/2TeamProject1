@@ -1,4 +1,4 @@
-#include <windows.h>
+Ôªø#include <windows.h>
 #include <memory>
 #include <assert.h>
 #include <tchar.h>
@@ -7,6 +7,9 @@
 
 const LONG SCREEN_WIDTH = 1280;
 const LONG SCREEN_HEIGHT = 720;
+
+LONG SCREEN_W;
+LONG SCREEN_H;
 
 LRESULT CALLBACK fnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -37,17 +40,22 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 
 	RECT rc = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	HWND hWnd = CreateWindow(_T("Game"), _T(""), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
-	//HWND hWnd = CreateWindow(
-	//	_T("Game"),
-	//	_T(""),
-	//	WS_POPUP | WS_VISIBLE,   // Å©Ç±Ç±ïœçXÇµÇƒÉtÉãÉXÉNÉäÅ[ÉìÇ…ÇµÇΩ
-	//	0, 0,
-	//	GetSystemMetrics(SM_CXSCREEN),
-	//	GetSystemMetrics(SM_CYSCREEN),
-	//	NULL, NULL, instance, NULL
-	//);
+	//HWND hWnd = CreateWindow(_T("Game"), _T(""), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
+	HWND hWnd = CreateWindow(
+		_T("Game"),
+		_T(""),
+		WS_POPUP | WS_VISIBLE,   // ‚Üê„Åì„ÅìÂ§âÊõ¥„Åó„Å¶„Éï„É´„Çπ„ÇØ„É™„Éº„É≥„Å´„Åó„Åü
+		0, 0,
+		GetSystemMetrics(SM_CXSCREEN),
+		GetSystemMetrics(SM_CYSCREEN),
+		NULL, NULL, instance, NULL
+	);
 	ShowWindow(hWnd, cmd_show);
+
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
+	SCREEN_W = clientRect.right - clientRect.left;
+	SCREEN_H = clientRect.bottom - clientRect.top;
 
 	Framework f(hWnd);
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
