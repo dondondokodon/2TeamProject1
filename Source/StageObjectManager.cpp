@@ -195,8 +195,11 @@ void StageObjectManager::Register(StageObject* stageObject)
 //ステージオブジェクト全削除
 void StageObjectManager::Clear()
 {
+	if(laserManager)
 	laserManager->Clear();
 	stageObjects.clear();
+	mirrors.clear();
+	grids.clear();
 }
 
 //ステージオブジェクト削除
