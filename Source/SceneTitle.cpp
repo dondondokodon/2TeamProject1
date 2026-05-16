@@ -24,6 +24,7 @@ void SceneTitle::Initialize()
 	buttons[2].setStageIndex(1);
 
 	ButtonIndex = 1;
+	changeScene = false;
 }
 
 //終了化
@@ -55,7 +56,12 @@ void SceneTitle::Update(float elapsedTime)
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
 		buttons[ButtonIndex].OnClick();
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		if (!changeScene)
+		{
+			fade.StartFadeOut(1.0f, 0.5f);
+			changeScene = true;		
+		}
+		//SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
 
 	//何かボタンを押したらゲームシーンへ切り替え
@@ -83,6 +89,16 @@ void SceneTitle::Update(float elapsedTime)
 	{
 		button.Update(elapsedTime);
 	}
+
+	fade.Update(elapsedTime);
+	
+	if (!fade.IsFading()&&changeScene)
+	{
+		SceneManager::Instance().ChangeScene(
+			new SceneLoading(new SceneGame)
+		);
+	}
+	
 }
 
 //描画処理
