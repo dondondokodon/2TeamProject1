@@ -135,6 +135,7 @@
     <ClInclude Include="Source\CollisionResult.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
+    <ClInclude Include="Source\fade.h" />
     <ClInclude Include="Source\Flag.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\CylinderCollider.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
+    <ClCompile Include="Source\fade.cpp" />
     <ClCompile Include="Source\Flag.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\CylinderCollider.cpp" />

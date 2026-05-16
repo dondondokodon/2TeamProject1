@@ -274,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="Source\ScreenSize.h">
       <Filter>Source\.h</Filter>
+    </ClInclude> 
+    <ClInclude Include="Source\fade.h">
+      <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -458,6 +461,9 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Button.cpp">
+       <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\fade.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

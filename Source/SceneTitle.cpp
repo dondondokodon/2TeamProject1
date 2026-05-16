@@ -113,6 +113,7 @@ void SceneTitle::Render()
 	{
 		button.render(rc);
 	}
+    fade.Render(rc);
 }
 
 //GUI描画

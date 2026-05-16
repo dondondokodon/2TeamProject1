@@ -90,6 +90,8 @@ StageData::StageData(const char* filename)
 			o = ObjectType::Box;
 		else if (type == "Goal")
 			o = ObjectType::Goal;
+		else if(type =="Stairs")
+			o=ObjectType::Stairs;
 		else
 			continue;	//例外
 

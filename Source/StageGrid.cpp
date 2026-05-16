@@ -62,17 +62,24 @@ void StageGrid::Update(float elapsedTime)
     // ---------------------------------------------------------
     // ★ AABB（当たり判定）の更新
     // ---------------------------------------------------------
+    float baseHalf = 2.4f;  // モデルの元サイズ（半径）
+
+    float halfX = baseHalf * scale.x;
+    float halfY = baseHalf * scale.y;
+    float halfZ = baseHalf * scale.z;
+
     aabbMin = {
-        position.x - 2.4f,
-        position.y - 2.4f,
-        position.z - 2.4f
+        position.x - halfX,
+        position.y - halfY,
+        position.z - halfZ
     };
 
     aabbMax = {
-        position.x + 2.4f,
-        position.y + 2.4f,
-        position.z + 2.4f
+        position.x + halfX,
+        position.y + halfY,
+        position.z + halfZ
     };
+
 
     // Pキーの状態を保存
     prevP = nowP;
@@ -106,17 +113,17 @@ void StageGrid::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* ren
 
     // AABB の中心
     DirectX::XMFLOAT3 center = {
-      (aabbMin.x + aabbMax.x) * 0.5f,
-      (aabbMin.y + aabbMax.y) * 0.5f,
-      (aabbMin.z + aabbMax.z) * 0.5f
+       (aabbMin.x + aabbMax.x) * 0.5f,
+       (aabbMin.y + aabbMax.y) * 0.5f,
+       (aabbMin.z + aabbMax.z) * 0.5f
     };
 
 
     // AABB のサイズ（縮小版）
     DirectX::XMFLOAT3 size = {
-      (aabbMax.x - aabbMin.x) * 0.6f,
-      (aabbMax.y - aabbMin.y) * 0.6f,
-      (aabbMax.z - aabbMin.z) * 0.6f
+       (aabbMax.x - aabbMin.x) * 0.6f,
+       (aabbMax.y - aabbMin.y) * 0.6f,
+       (aabbMax.z - aabbMin.z) * 0.6f
     };
 
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
@@ -184,7 +191,7 @@ void StageGrid::CollisionVsPlayer(Player& p)
 
 void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
 {
-    const int limit = 5;
+    const int limit = 111111115;
 
     int nextX = gridX;
     int nextZ = gridZ;

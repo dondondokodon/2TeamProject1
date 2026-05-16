@@ -2,6 +2,7 @@
 #include"System/Sprite.h"
 #include "Scene.h"
 #include "Button.h"
+#include "Fade.h"
 class SceneTitle :public Scene
 {
 public:
@@ -27,5 +28,9 @@ private:
 	Sprite* sprite = nullptr;
 	Button buttons[3];
 	short ButtonIndex = 1;
+
+	Fade fade;
+
+	bool changeScene = false;
 };
 

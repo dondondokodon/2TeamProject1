@@ -34,17 +34,35 @@ void StageObjectManager::Reset()
 void StageObjectManager::Update(float elapsedTime)
 {
 	// ---------------------------
-   // リスト初期化
-   // ---------------------------
-	grids.clear();
-	mirrors.clear();
+	// 木箱同士判定
+	// ---------------------------
+	for (StageGrid* grid : grids)
+	{
+		grid->CollisionVsStage(*this);
+
+		grid->CollisionVsGrid(grids);
+
+		grid->CollisionVsMirror(mirrors);
+	}
 
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
-   
-    
-		if (StageGrid* grid = dynamic_cast<StageGrid*>(stageObject.get()))
+		// ---------------------------
+		// リスト初期化
+		// ---------------------------
+		grids.clear();
+		mirrors.clear();
+	}
+
+	// ---------------------------
+	// 木箱,鏡収集
+	// ---------------------------
+	for (auto& stageObject : stageObjects)
+	{
+		// 木箱
+		if (StageGrid* grid =
+			dynamic_cast<StageGrid*>(stageObject.get()))
 		{
 			grids.push_back(grid);
 		}
@@ -57,23 +75,6 @@ void StageObjectManager::Update(float elapsedTime)
 		}
 	}
 
-	// ---------------------------
-	// 木箱同士判定
-	// ---------------------------
-	for (StageGrid* grid : grids)
-	{
-		grid->CollisionVsStage(*this);
-
-		grid->CollisionVsGrid(grids);
-
-		grid->CollisionVsMirror(mirrors);
-	}
-
-	// ★ ここで当たり判定
-	/*for (auto& stageObject : stageObjects)
-	{
-		
-	}*/
 
 	//破棄処理
 	for (auto& stageObject : removes)
@@ -166,6 +167,20 @@ bool StageObjectManager::NextStage()
 		return true;
 	}
 	LoadStageData(nextStageIndex);
+	
+	// ステージごとの外に出られない範囲
+	if (nextStageIndex == 0)
+	{
+		// StageData1用
+		SetStageBounds(-35.5f, 35.5f, -35.5f, 35.5f);
+	}
+	else if (nextStageIndex == 1)
+	{
+		// StageData2用
+		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+	}
+
+
 	nextStageIndex++;
 
 	return false;
@@ -222,22 +237,55 @@ RayHitResult StageObjectManager::RayCast(
 	DirectX::XMFLOAT3& hitPos,
 	DirectX::XMFLOAT3& normal)
 {
-	RayHitResult result = { false, nullptr, RayHitType::Stop,{0,0,0} };
+	RayHitResult result =
+	{
+		false,
+		nullptr,
+		RayHitType::Stop,
+		{0,0,0}
+	};
+
+	// 一番近い距離
+	float nearestDistSq = FLT_MAX;
+
 	for (auto& obj : stageObjects)
 	{
+		DirectX::XMFLOAT3 tempHitPos;
+		DirectX::XMFLOAT3 tempNormal;
+		if(obj->GetRayHitType() == RayHitType::None)continue;
+
 		if (Collision::RayCast(
 			start,
 			end,
 			obj->GetTransform(),
 			obj->GetModel(),
-			hitPos,
-			normal))
+			tempHitPos,
+			tempNormal))
 		{
-			result.hit = true;
-			result.object = obj.get();
-			result.type = obj->GetRayHitType();
-			result.hitPos = hitPos;
-			return result;
+			// start → hitPos の距離
+			float dx = tempHitPos.x - start.x;
+			float dy = tempHitPos.y - start.y;
+			float dz = tempHitPos.z - start.z;
+
+			float distSq =
+				dx * dx +
+				dy * dy +
+				dz * dz;
+
+			// より近い物だけ保存
+			if (distSq < nearestDistSq)
+			{
+				nearestDistSq = distSq;
+
+				result.hit = true;
+				result.object = obj.get();
+				result.type = obj->GetRayHitType();
+				result.hitPos = tempHitPos;
+
+				// 出力用
+				hitPos = tempHitPos;
+				normal = tempNormal;
+			}
 		}
 	}
 
