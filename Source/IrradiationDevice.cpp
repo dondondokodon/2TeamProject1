@@ -8,6 +8,13 @@ void IrradiationDevice::Update(float elapsedTime)
     Flag::Instance().SetFlag(Flag::Instance().openGoal,isHit);
 
 	//オブジェクトの更新処理
+    if (oldHit != isHit)
+    {
+        if (isHit) SetModel(modelFilename);
+        else SetModel(isActiveModelFilename);
+    }
+
+    oldHit = isHit;
 	isHit = false;	//毎フレームリセットして、ヒット通知があったフレームだけtrueになるようにする
 
     UpdateTransform();

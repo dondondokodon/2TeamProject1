@@ -4,9 +4,9 @@
 class IrradiationDevice:public StageObject
 {
 public:
-	IrradiationDevice()
+	IrradiationDevice():modelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDevice.mdl"),isActiveModelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDeviceIsActive.mdl")
 	{
-		SetModel("Data/Model/Objects/IrradiationDevice/IrradiationDevice.mdl");
+		SetModel(modelFilename);
 	}
 	~IrradiationDevice() = default;
 
@@ -34,6 +34,9 @@ public:
 	}*/
 
 private:
+	const char* modelFilename;
+	const char* isActiveModelFilename;
 	bool isHit = false;
+	bool oldHit = false;
 };
 
