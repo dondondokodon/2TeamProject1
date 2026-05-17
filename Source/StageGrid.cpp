@@ -224,15 +224,16 @@ void StageGrid::CollisionVsPlayer(Player& p)
 
                         // エフェクトを箱の中心から押している側へずらす距離
                         // 値を大きくすると、エフェクトが箱から離れる
-                        const float effectBackOffset = 2.0f;
+                        const float effectBackOffset = 0.6f;
 
                         // エフェクトの高さ
-                        // 値を大きくすると、エフェクトが上に出る
-                        const float effectHeight = 0.05f;
+                        // 値を大きくすると上に出る
+                        // 値をマイナスにすると下に出る
+                        const float effectHeight = -0.8f;
 
                         // エフェクトの大きさ
                         // 値を大きくすると、エフェクトが大きく表示される
-                        const float effectScale = 0.08f;
+                        const float effectScale = 0.09f;
 
                         effectPos.x -= moveDir.x * effectBackOffset;
                         effectPos.z -= moveDir.z * effectBackOffset;
