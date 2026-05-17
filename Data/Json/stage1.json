@@ -122,7 +122,7 @@
   {
     "type": "Box",
     "PosX": 3.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": -7.5,
     "angleX": 0,
     "angleY": 0,
@@ -137,7 +137,7 @@
   {
     "type": "Box",
     "PosX": 11.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": -10.5,
     "angleX": 0,
     "angleY": 0,
@@ -152,7 +152,7 @@
   {
     "type": "Box",
     "PosX": 10.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": 7.5,
     "angleX": 0,
     "angleY": 0,
@@ -167,7 +167,7 @@
   {
     "type": "Box",
     "PosX": 1.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": 10.5,
     "angleX": 0,
     "angleY": 0,
@@ -182,7 +182,7 @@
   {
     "type": "Box",
     "PosX": -10.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": 10.5,
     "angleX": 0,
     "angleY": 0,
@@ -197,7 +197,7 @@
   {
     "type": "Box",
     "PosX": -13.5,
-    "PosY": 0.5,
+    "PosY": 1,
     "PosZ": 3.5,
     "angleX": 0,
     "angleY": 0,
