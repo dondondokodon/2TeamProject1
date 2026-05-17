@@ -86,6 +86,12 @@ void LaserBeam::Update(float elapsedTime)
 				hitPos = playerHitPos;
 				hitNormal = playerHitNormal;
 				stageHitDistSq = playerHitDistSq;
+
+				DirectX::XMVECTOR vIn = DirectX::XMLoadFloat3(&dir);       // 入射ベクトル
+				DirectX::XMVECTOR vNorm = DirectX::XMLoadFloat3(&hitNormal); // 鏡の法線
+				// DirectXMathの反射ベクトル計算関数を使う
+				DirectX::XMVECTOR vRef = DirectX::XMVector3Reflect(vIn, vNorm);
+				DirectX::XMStoreFloat3(&hit.reflectionDir, vRef); // 計算結果を代入
 			}
 		}
 
