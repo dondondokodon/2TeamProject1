@@ -20,9 +20,12 @@ void SceneTitle::Initialize()
 
 	title.Initialize("Data/Sprite/titleName.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.23f), 1200.0f, 240.0f);
 	buttons[0].Initialize("Data/Sprite/Start.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H *0.59f), 290.0f, 120.0f);
-	buttons[0].setStageIndex(0);
+	buttons[0].setStageIndex(1);
 	buttons[1].Initialize("Data/Sprite/Tutorial.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 500.0f, 120.0f);
-	buttons[1].setStageIndex(1);
+	buttons[1].setStageIndex(0);
+
+	nowChoiceButton[0].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.59f), 340.0f, 170.0f);
+	nowChoiceButton[1].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 550.0f, 170.0f);
 
 	ButtonIndex = 0;
 	changeScene = false;
@@ -48,11 +51,11 @@ void SceneTitle::Update(float elapsedTime)
 
 	if (ay>0.2f)
 	{
-		ButtonIndex = 1;
+		ButtonIndex = 0;
 	}
 	else if(ay<-0.2f)
 	{
-		ButtonIndex = 0;
+		ButtonIndex = 1;
 	}
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
@@ -94,6 +97,11 @@ void SceneTitle::Update(float elapsedTime)
 	title.Update(elapsedTime);
 
 	fade.Update(elapsedTime);
+
+	for(auto& selectBox : nowChoiceButton)
+	{
+		selectBox.Update(elapsedTime);
+	}
 	
 	if (!fade.IsFading()&&changeScene)
 	{
@@ -133,6 +141,7 @@ void SceneTitle::Render()
 	{
 		button.render(rc);
 	}
+	nowChoiceButton[ButtonIndex].render(rc);
     fade.Render(rc);
 }
 
