@@ -14,6 +14,7 @@
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneTitle.h"
+#include"SceneResult.h"
 
 #include"StageData1.h"
 #include"StageData2.h"
@@ -36,6 +37,13 @@ void SceneGame::Initialize()
 	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
+
+	//背景初期化
+	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
+	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
+	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
+	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
+	
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
@@ -56,8 +64,10 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
+	// //ステージ終了化
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
+	//mng.Clear();
 	mng.setLaserManager(new LaserManager());
 	mng.NextStage();
 	//mng.LoadStageData(stageData.get());
@@ -84,9 +94,8 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
-	//ステージ終了化
 	StageObjectManager::Instance().Reset();
-	
+	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
 }
 
@@ -132,6 +141,8 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
+	skyBox.Update(elapsedTime);
+
 
 	//プレイヤー更新処理
 	// Player::Instance().Update(elapsedTime);
@@ -167,9 +178,16 @@ void SceneGame::Update(float elapsedTime)
 		}
 
 		//ゴールしてたら次のステージへ
-		if(StageObjectManager::Instance().NextStage())
-			Goal();
+		SceneManager::Instance().ChangeScene(new SceneResult());
+		/*if(StageObjectManager::Instance().NextStage())
+			Goal();*/
 		return;
+	}
+
+	//デバッグ用
+	if (GetAsyncKeyState('G') & 0x0001)
+	{
+		Flag::Instance().SetFlag(Flag::IsGoal, true);
 	}
 }
 
@@ -227,6 +245,9 @@ void SceneGame::Render()
 		//		players[i]->Render(rc, modelRenderer);
 		//	}
 		//}
+
+		//背景描画
+		skyBox.Render(rc, modelRenderer);
 
 		// Player2をステージ0で非表示にする
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);

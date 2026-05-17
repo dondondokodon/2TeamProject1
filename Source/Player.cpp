@@ -455,11 +455,14 @@ void Player::CollisionPlayerVsStage()
 {
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
 
+	//レイを飛ばす位置調整用　元々0.5だったが階段が高いので多めにした
+	float playerRayOffsetY = 0.85f;
+
 	// 接地判定（真下レイキャスト）
 	{
 		bool wasGround = isGround;
 
-		DirectX::XMFLOAT3 start = { position.x, position.y + 0.5f, position.z };
+		DirectX::XMFLOAT3 start = { position.x, position.y + playerRayOffsetY, position.z };
 		DirectX::XMFLOAT3 end = { position.x, position.y - 0.1f, position.z };
 		if (isGround) end.y -= 0.2f;
 
@@ -525,19 +528,19 @@ void Player::CollisionPlayerVsStage()
 				// 中央
 				{ 
 				position.x, 
-				position.y + 0.5f,
+				position.y + playerRayOffsetY,
 				position.z
 				},
 				// 左
 				{ 
 				position.x + sideDir.x * sideOffset, 
-				position.y + 0.5f,
+				position.y + playerRayOffsetY,
 				position.z + sideDir.z * sideOffset 
 				},
 				// 右
 				{
 				position.x - sideDir.x * sideOffset, 
-				position.y + 0.5f, 
+				position.y + playerRayOffsetY,
 				position.z - sideDir.z * sideOffset 
 				},
 			};

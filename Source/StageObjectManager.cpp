@@ -10,6 +10,8 @@ StageObjectManager::StageObjectManager():laserManager(nullptr)
 {
 	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
+	stageDatas.push_back(std::make_unique<StageData3>());
+	stageDatas.push_back(std::make_unique<StageData4>());
 }
 
 StageObjectManager::~StageObjectManager() 
@@ -22,11 +24,13 @@ StageObjectManager::~StageObjectManager()
 //リセット
 void StageObjectManager::Reset()
 {
-	nextStageIndex = 0;
+	//nextStageIndex = 0;
 	Clear();
 	stageDatas.clear();
 	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
+	stageDatas.push_back(std::make_unique<StageData3>());
+	stageDatas.push_back(std::make_unique<StageData4>());
 }
 
 
@@ -172,7 +176,7 @@ bool StageObjectManager::NextStage()
 	if (nextStageIndex == 0)
 	{
 		// StageData1用
-		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+		SetStageBounds(-35.5f, 35.5f, -35.5f, 35.5f);
 	}
 	else if (nextStageIndex == 1)
 	{
@@ -195,8 +199,11 @@ void StageObjectManager::Register(StageObject* stageObject)
 //ステージオブジェクト全削除
 void StageObjectManager::Clear()
 {
+	if(laserManager)
 	laserManager->Clear();
 	stageObjects.clear();
+	mirrors.clear();
+	grids.clear();
 }
 
 //ステージオブジェクト削除
@@ -228,6 +235,14 @@ void StageObjectManager::DrawDebugGUI()
 
 	if (laserManager)
 	laserManager->DrawDebugGUI();
+
+
+	if (ImGui::Begin("Stage", nullptr, ImGuiWindowFlags_None))
+	{
+			//位置
+			ImGui::InputInt("stageindex", &nextStageIndex);
+	}
+	ImGui::End();
 }
 
 //レイキャスト
@@ -252,6 +267,7 @@ RayHitResult StageObjectManager::RayCast(
 	{
 		DirectX::XMFLOAT3 tempHitPos;
 		DirectX::XMFLOAT3 tempNormal;
+		if(obj->GetRayHitType() == RayHitType::None)continue;
 
 		if (Collision::RayCast(
 			start,

@@ -58,7 +58,29 @@ Sprite::Sprite(const char* filename)
 			device,
 			"Data/Shader/SpritePS.cso",
 			pixelShader.GetAddressOf());
-		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		// サンプラーステート生成
+		{
+			D3D11_SAMPLER_DESC desc = {};
+
+			desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+			desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+			desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+			desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+			desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+			desc.MinLOD = 0;
+			desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+			hr = device->CreateSamplerState(
+				&desc,
+				samplerState.GetAddressOf());
+
+			_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+		}
+		
 	}
 
 	// テクスチャの生成	
@@ -189,14 +211,9 @@ void Sprite::Render(const RenderContext& rc,
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	dc->VSSetShader(vertexShader.Get(), nullptr, 0);
 	dc->PSSetShader(pixelShader.Get(), nullptr, 0);
-	dc->PSSetShaderResources(0, 1, shaderResourceView.GetAddressOf());
-
-	ID3D11SamplerState* samplerStates[] =
-	{
-		rc.renderState->GetSamplerState(SamplerState::LinearWrap),
-	};
-	dc->PSSetSamplers(0, _countof(samplerStates), samplerStates);
-
+	dc->PSSetShaderResources(0, 1,shaderResourceView.GetAddressOf());
+	dc->PSSetSamplers(0, 1,samplerState.GetAddressOf());
+  
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::NoTestNoWrite), 0);
 	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));

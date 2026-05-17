@@ -1,15 +1,14 @@
 ﻿#pragma once
-#include"System/Sprite.h"
 #include "Scene.h"
-#include "Button.h"
-#include "Fade.h"
 #include "Sprite2D.h"
+#include "Button.h"
+#include "fade.h"
 
-class SceneTitle :public Scene
+class SceneResult:public Scene
 {
 public:
-	SceneTitle();
-	~SceneTitle()override{}
+	SceneResult();
+	~SceneResult();
 
 	//初期化
 	void Initialize()override;
@@ -27,14 +26,11 @@ public:
 	void DrawGUI()override;
 
 private:
-	Sprite* sprite = nullptr;
-	Button buttons[2];
-	Sprite2D title;
-	Sprite2D nowChoiceButton[2];
-	short ButtonIndex = 0;
-
+	Sprite2D sprites[2];
+	Button nextSceneButton;
+	Sprite2D back;
 	Fade fade;
-
-	bool changeScene = false;
+	bool changeScene;
+	bool isClear;
 };
 
