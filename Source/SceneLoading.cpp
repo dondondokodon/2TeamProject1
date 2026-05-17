@@ -3,13 +3,25 @@
 #include "System/Input.h"
 #include "SceneLoading.h"
 #include "SceneManager.h"
+#include "ScreenSize.h"
 
 
 //初期化
 void SceneLoading::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+	//sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+
+	sprite.Initialize("Data/Sprite/Load_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
+	loadSprites[0].Initialize("Data/Sprite/Load_circle.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), 200, 200);
+	loadSprites[1].Initialize("Data/Sprite/Loading.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), 300, 300);
+
+	loadSprites[0].setRotateSpeed(180.0f);
+	loadSprites[1].setRotateSpeed(40.0f);
+
+	//フェード初期化
+	fade.Initialize();
+	isFading = false;
 
 	//スレッド開始
 	thread = new std::thread(LoadingThread, this);
@@ -27,24 +39,35 @@ void SceneLoading::Finalize()
 	}
 
 	//スプライト終了化
-	if (sprite != nullptr)
+	/*if (sprite != nullptr)
 	{
 		delete sprite;
 		sprite = nullptr;
-	}
+	}*/
 }
 
 //更新処理
 void SceneLoading::Update(float elapsedTime)
 {
-	constexpr float speed = 180;
-	angle += speed * elapsedTime;
+	//constexpr float speed = 180;
+	//angle += speed * elapsedTime;
 	//次のシーンの準備が完了したらシーンを切り替える
-	if (nextScene->IsReady())
+	if (nextScene->IsReady()&&!isFading)
+	{
+		fade.StartFadeOut(1.0f, 0.3f);
+		isFading = true;
+	}
+
+	if (isFading&&!fade.IsFading())
 	{
 		SceneManager::Instance().ChangeScene(nextScene);
 		nextScene = nullptr;
 	}
+
+	sprite.Update(elapsedTime);
+	for(auto& sprite : loadSprites) sprite.Update(elapsedTime);
+
+	fade.Update(elapsedTime);
 }
 
 //描画処理
@@ -69,11 +92,14 @@ void SceneLoading::Render()
 		float positionX    = screenWidth - spriteWidth;
 		float positionY    = screenHeight - spriteHeight;
 
-		sprite->Render(rc,
+		sprite.render(rc);
+
+		/*sprite->Render(rc,
 			positionX, positionY, 0, spriteWidth, spriteHeight,
 			angle,
-			1, 1, 1, 1);
-
+			1, 1, 1, 1);*/
+		for(auto& sprite : loadSprites) sprite.render(rc);
+		fade.Render(rc);
 	}
 }
 
