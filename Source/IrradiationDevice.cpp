@@ -67,7 +67,7 @@ RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOA
             float dot;
             DirectX::XMStoreFloat(&dot, DirectX::XMVector3Dot(deviceForward, laserDir));
 
-            // 完全に正面（逆方向）から衝突している場合のみ
+            // 正面（逆方向）から衝突している場合のみ
             if (dot < 0.5f) {
                 result.hit = true;
             }
