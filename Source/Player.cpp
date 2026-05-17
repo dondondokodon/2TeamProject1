@@ -186,7 +186,7 @@ void Player::UpdateCollider()
 	//円柱
 	bodyCylinderCollider.SetCenter({ position.x, position.y+0.5f, position.z });
 	bodyCylinderCollider.SetRadius(0.5f);
-	bodyCylinderCollider.SetHeight(0.7f);
+	bodyCylinderCollider.SetHeight(0.9f);
 }
 
 //描画処理
