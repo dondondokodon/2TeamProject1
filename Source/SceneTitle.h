@@ -30,6 +30,7 @@ private:
 	Sprite* sprite = nullptr;
 	Button buttons[2];
 	Sprite2D title;
+	Sprite2D nowChoiceButton[2];
 	short ButtonIndex = 0;
 
 	Fade fade;
