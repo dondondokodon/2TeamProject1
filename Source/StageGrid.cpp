@@ -46,8 +46,23 @@ void StageGrid::Update(float elapsedTime)
             delta = moveRemain;
 
         // 実際に移動
-        position.x += moveDir.x * delta;
-        position.z += moveDir.z * delta;
+        // 今フレームで木箱が動く量
+        float moveX = moveDir.x * delta;
+        float moveZ = moveDir.z * delta;
+
+        // 木箱を移動する
+        position.x += moveX;
+        position.z += moveZ;
+
+        // 木箱を押しているプレイヤーも同じ量だけ動かす
+        // これをしないと、木箱だけ進んでプレイヤーが置いていかれる
+        if (pushingPlayer)
+        {
+            DirectX::XMFLOAT3 playerPos = pushingPlayer->GetPosition();
+            playerPos.x += moveX;
+            playerPos.z += moveZ;
+            pushingPlayer->SetPosition(playerPos);
+        }
 
         // 残り移動量を減らす
         moveRemain -= delta;
@@ -56,6 +71,14 @@ void StageGrid::Update(float elapsedTime)
         if (moveRemain <= 0.0f)
         {
             isMoving = false;
+
+            //固定用・消す
+            if (pushingPlayer)
+            {
+                pushingPlayer->StopBoxPush();
+            }
+
+            pushingPlayer = nullptr;
         }
     }
 
@@ -176,42 +199,60 @@ void StageGrid::CollisionVsPlayer(Player& p)
             isFacingBox = (dot > 0.7f);
             if (isTouchingPlayer && isFacingBox)
             {
-                StartMove(p.GetPosition());
+                // 箱が実際に動き始めた時だけ、Pushアニメを再生する
+                //if (StartMove(p))
+                //{
+                //    p.PlayPushAnimation();
+                //}
+                if (StartMove(p)) //木箱押すまでの固定用
+                {
+                    p.StartBoxPush();
+                }
             }
         }
     }
 }
 
-void StageGrid::StartMove(DirectX::XMFLOAT3 targetPos)
+bool StageGrid::StartMove(Player& player)
 {
     const int limit = 111111115;
 
     int nextX = gridX;
     int nextZ = gridZ;
 
+    DirectX::XMFLOAT3 targetPos = player.GetPosition();
+
     float dx = targetPos.x - position.x;
     float dz = targetPos.z - position.z;
 
+	// プレイヤーから見て、どの方向に箱を動かすかを決める
     if (fabs(dx) > fabs(dz))
     {
-        moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1,0,0 } : DirectX::XMFLOAT3{ 1,0,0 };
+        moveDir = (dx > 0) ? DirectX::XMFLOAT3{ -1, 0, 0 } : DirectX::XMFLOAT3{ 1, 0, 0 };
         nextX += (moveDir.x > 0 ? 1 : -1);
     }
     else
     {
-        moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0,0,-1 } : DirectX::XMFLOAT3{ 0,0,1 };
+        moveDir = (dz > 0) ? DirectX::XMFLOAT3{ 0, 0, -1 } : DirectX::XMFLOAT3{ 0, 0, 1 };
         nextZ += (moveDir.z > 0 ? 1 : -1);
     }
 
-    // ★ 5マス制限
+    // 動けない場合は、押しているプレイヤーも登録しない
     if (abs(nextX) > limit || abs(nextZ) > limit)
-        return;
+    {
+        return false;
+    }
 
     gridX = nextX;
     gridZ = nextZ;
 
+    // ここまで来たら、箱は実際に動く
+    pushingPlayer = &player;
+
     isMoving = true;
     moveRemain = 1.0f;
+
+    return true;
 }
 
 void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
@@ -289,6 +330,14 @@ void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
     {
         isMoving = false;
         moveRemain = 0.0f;
+
+		//固定用・消す
+        if (pushingPlayer)
+        {
+            pushingPlayer->StopBoxPush();
+        }
+
+        pushingPlayer = nullptr;
         return;
     }
 }
@@ -347,7 +396,16 @@ void StageGrid::CollisionVsGrid(
             isMoving = false;
             moveRemain = 0.0f;
 
+			//固定用・消す
+            if (pushingPlayer)
+            {
+                pushingPlayer->StopBoxPush();
+            }
+
+            pushingPlayer = nullptr;
+
             return;
+
         }
     }
 }
@@ -392,6 +450,14 @@ void StageGrid::CollisionVsMirror(
             // 木箱停止
             isMoving = false;
             moveRemain = 0.0f;
+
+			//固定用・消す
+            if (pushingPlayer)
+            {
+                pushingPlayer->StopBoxPush();
+            }
+
+            pushingPlayer = nullptr;
 
             return;
         }

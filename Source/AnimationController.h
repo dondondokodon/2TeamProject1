@@ -19,6 +19,9 @@ public:
 	//modelのセット
 	void setModel(Model* model) { this->model = model; }
 
+	//アニメーション中か
+	bool IsPlaying() const { return animationPlaying; }
+
 private:
 	Model*				model;
 	int									animationIndex = -1;

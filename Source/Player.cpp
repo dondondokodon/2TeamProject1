@@ -88,10 +88,12 @@ if (rideTimer > 0.0f)
 }
 
 // ステート更新（操作中 または 肩車中）
-if ((canControl || isRiding) && state)
-	{
-		state->Update(*this, elapsedTime, canControl);
-	}
+//if ((canControl || isRiding) && state)
+if (!isBoxPushing && (canControl || isRiding) && state) //箱を押しているときはステート更新しない・固定用
+
+{
+	state->Update(*this, elapsedTime, canControl);
+}
 
 // 肩車完了判定
 bool rideReady = IsRideReady();
@@ -135,9 +137,30 @@ if (isRiding && ridingTarget != nullptr && canControl && rideReady)
 //bodyCollider.SetCenter({ position.x, position.y - 0.1f, position.z });
 //bodyCollider.SetSize({ 0.5f, 0.1f, 0.5f });
 
-	//アニメーション更新処理
-	animation.UpdateAnimation(elapsedTime);
+// 箱押しアニメ中の挙動切り替え
+// 
+// true  : Pushアニメ中はプレイヤーを止める
+// false : Pushアニメ中も通常通り動ける
+//
+//アニメーション更新処理
+animation.UpdateAnimation(elapsedTime);
 
+// 箱を押すアニメーションが終わったら通常のアニメーションに戻す
+if (isPlayingPushAnimation && !animation.IsPlaying())
+{
+	isPlayingPushAnimation = false;
+
+	DirectX::XMFLOAT3 moveVec = GetMoveVec();
+
+	if ((fabsf(moveVec.x) > 0.01f || fabsf(moveVec.z) > 0.01f))
+	{
+		animation.PlayAnimation("Run", true);
+	}
+	else
+	{
+		animation.PlayAnimation("Idle", true);
+	}
+}
 	//無敵時間更新
 	UpdateInvincibleTimer(elapsedTime);
 
@@ -394,6 +417,38 @@ void Player::InputMove(float elapsedTime)
 		Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 	}
 }
+
+//箱を押したときanimation再生
+void Player::PlayPushAnimation()
+{
+	if (isRobot) return;
+
+	isPlayingPushAnimation = true;
+
+	animation.PlayAnimation("Push", false);
+}
+
+//木箱を押すときに固定化する用・いらないなら消す
+void Player::StartBoxPush()
+{
+	if (isRobot) return;
+
+	isBoxPushing = true;
+
+	ResetMove();
+
+	animation.PlayAnimation("Push", false);
+}
+
+void Player::StopBoxPush()
+{
+	isBoxPushing = false;
+
+	ResetMove();
+
+	animation.PlayAnimation("Idle", true);
+}
+//ここまで
 
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
