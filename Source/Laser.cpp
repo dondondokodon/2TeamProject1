@@ -404,132 +404,261 @@ LaserHit LaserBeam::CheckHitCylinder(const CylinderCollider& cylinder) const
 	//if (isRotating)
 	//	return LaserHit();
 
-	LaserHit result;
+//	LaserHit result;
+//
+//	float halfH = cylinder.GetHeight() * 0.5f;
+//	float cylR = cylinder.GetRadius();
+//	DirectX::XMFLOAT3 center = cylinder.GetCenter();
+//
+//	for (const auto& seg : segments)
+//	{
+//		// ざっくり距離チェック。
+//// 円柱中心がレーザー線分の範囲から明らかに遠い場合は、細かい判定をしない。
+//		float minX = min(seg.start.x, seg.end.x) - (cylR + radius);
+//		float maxX = max(seg.start.x, seg.end.x) + (cylR + radius);
+//		float minY = min(seg.start.y, seg.end.y) - (halfH + radius);
+//		float maxY = max(seg.start.y, seg.end.y) + (halfH + radius);
+//		float minZ = min(seg.start.z, seg.end.z) - (cylR + radius);
+//		float maxZ = max(seg.start.z, seg.end.z) + (cylR + radius);
+//
+//		if (center.x < minX || center.x > maxX ||
+//			center.y < minY || center.y > maxY ||
+//			center.z < minZ || center.z > maxZ)
+//		{
+//			continue;
+//		}
+//
+//		DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
+//		DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
+//
+//		DirectX::XMVECTOR segVec = XMVectorSubtract(e, s);
+//		float segLen = XMVectorGetX(XMVector3Length(segVec));
+//		if (segLen <= 0.0001f) continue;
+//
+//		DirectX::XMVECTOR dir = XMVectorScale(segVec, 1.0f / segLen);
+//
+//		// レーザー上の最近接点 p
+//		DirectX::XMVECTOR c = XMLoadFloat3(&center);
+//		float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
+//		t = std::clamp(t, 0.0f, segLen);
+//
+//		DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
+//
+//		DirectX::XMFLOAT3 p;
+//		DirectX::XMStoreFloat3(&p, pVec);
+//
+//		// Cylinder 上の最近接点 q
+//		DirectX::XMFLOAT3 q;
+//
+//		// Y clamp
+//		q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
+//
+//		// XZ 円
+//		float dx = p.x - center.x;
+//		float dz = p.z - center.z;
+//		float len = sqrtf(dx * dx + dz * dz);
+//
+//		if (len > cylR)
+//		{
+//			q.x = center.x + dx / len * cylR;
+//			q.z = center.z + dz / len * cylR;
+//		}
+//		else
+//		{
+//			q.x = p.x;
+//			q.z = p.z;
+//		}
+//
+//		DirectX::XMVECTOR qVec = XMLoadFloat3(&q);
+//
+//		// 距離
+//		DirectX::XMVECTOR v = XMVectorSubtract(qVec, pVec);
+//		float dist = XMVectorGetX(XMVector3Length(v));
+//
+//		float skin = 0.01f;
+//
+//		if (dist <= radius - skin)
+//		{
+//			result.hit = true;
+//
+//			float depth = radius - dist;
+//
+//			// AABB と同じ押し量
+//			float push = depth * 0.7f;
+//			push = max(push, 0.01f);
+//
+//			result.penetration = push;
+//
+//			// ? 法線（AABB と同じ向きに統一）
+//			DirectX::XMVECTOR n;
+//
+//			if (dist > 0.0001f)
+//			{
+//				// AABB と同じ向き：center - p
+//				DirectX::XMFLOAT3 dirOut =
+//				{
+//					center.x - p.x,
+//					center.y - p.y,
+//					center.z - p.z
+//				};
+//				n = XMVector3Normalize(XMLoadFloat3(&dirOut));
+//			}
+//			else
+//			{
+//				// fallback：XZ 方向優先
+//				DirectX::XMFLOAT3 fallback =
+//				{
+//					center.x - p.x,
+//					0.0f,
+//					center.z - p.z
+//				};
+//
+//				DirectX::XMVECTOR fb = XMLoadFloat3(&fallback);
+//
+//				if (XMVector3Length(fb).m128_f32[0] < 0.0001f)
+//					fb = XMVectorSet(1, 0, 0, 0);
+//
+//				n = XMVector3Normalize(fb);
+//			}
+//
+//			DirectX::XMStoreFloat3(&result.normal, n);
+//			result.point = q;
+//
+//			return result;
+//		}
+//	}
+//
+//	return result;
 
-	float halfH = cylinder.GetHeight() * 0.5f;
-	float cylR = cylinder.GetRadius();
-	DirectX::XMFLOAT3 center = cylinder.GetCenter();
 
-	for (const auto& seg : segments)
+//if (isRotating)
+	//	return LaserHit();
+
+LaserHit result;
+
+float halfH = cylinder.GetHeight() * 0.5f;
+float cylR = cylinder.GetRadius();
+DirectX::XMFLOAT3 center = cylinder.GetCenter();
+
+//下に引き伸ばしたい長さ
+float downLength = 2.0f;
+
+for (const auto& seg : segments)
+{
+	// ざっくり距離チェック（縦方向 minY のみ downLength 分広げる）
+	float minX = min(seg.start.x, seg.end.x) - (cylR + radius);
+	float maxX = max(seg.start.x, seg.end.x) + (cylR + radius);
+	float minY = min(seg.start.y, seg.end.y) - (halfH + radius + downLength); // 下だけ拡張
+	float maxY = max(seg.start.y, seg.end.y) + (halfH + radius);
+	float minZ = min(seg.start.z, seg.end.z) - (cylR + radius);
+	float maxZ = max(seg.start.z, seg.end.z) + (cylR + radius);
+
+	if (center.x < minX || center.x > maxX ||
+		center.y < minY || center.y > maxY ||
+		center.z < minZ || center.z > maxZ)
 	{
-		// ざっくり距離チェック。
-// 円柱中心がレーザー線分の範囲から明らかに遠い場合は、細かい判定をしない。
-		float minX = min(seg.start.x, seg.end.x) - (cylR + radius);
-		float maxX = max(seg.start.x, seg.end.x) + (cylR + radius);
-		float minY = min(seg.start.y, seg.end.y) - (halfH + radius);
-		float maxY = max(seg.start.y, seg.end.y) + (halfH + radius);
-		float minZ = min(seg.start.z, seg.end.z) - (cylR + radius);
-		float maxZ = max(seg.start.z, seg.end.z) + (cylR + radius);
+		continue;
+	}
 
-		if (center.x < minX || center.x > maxX ||
-			center.y < minY || center.y > maxY ||
-			center.z < minZ || center.z > maxZ)
+	DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
+	DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
+
+	DirectX::XMVECTOR segVec = XMVectorSubtract(e, s);
+	float segLen = XMVectorGetX(XMVector3Length(segVec));
+	if (segLen <= 0.0001f) continue;
+
+	DirectX::XMVECTOR dir = XMVectorScale(segVec, 1.0f / segLen);
+
+	// レーザー上の最近接点 p（元の中心線）
+	DirectX::XMVECTOR c = XMLoadFloat3(&center);
+	float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
+	t = std::clamp(t, 0.0f, segLen);
+
+	DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
+
+	DirectX::XMFLOAT3 p;
+	DirectX::XMStoreFloat3(&p, pVec);
+
+	// Cylinder 上の最近接点 q
+	DirectX::XMFLOAT3 q;
+
+	// Y clamp
+	q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
+
+	// XZ 円
+	float dx = p.x - center.x;
+	float dz = p.z - center.z;
+	float len = sqrtf(dx * dx + dz * dz);
+
+	if (len > cylR)
+	{
+		q.x = center.x + dx / len * cylR;
+		q.z = center.z + dz / len * cylR;
+	}
+	else
+	{
+		q.x = p.x;
+		q.z = p.z;
+	}
+
+	// 横方向（XZ）の距離チェック（元の radius を維持）
+	float distX4Z = sqrtf((q.x - p.x) * (q.x - p.x) + (q.z - p.z) * (q.z - p.z));
+
+	// 縦方向（Y）の範囲チェック（上は radius、下は radius + downLength）
+	float topY = p.y + radius;
+	float bottomY = p.y - radius - downLength;
+
+	float skin = 0.01f;
+
+	// 横幅が radius 以内で、かつ縦方向の範囲に収まっているか
+	if (distX4Z <= radius - skin && q.y >= bottomY && q.y <= topY)
+	{
+		result.hit = true;
+
+		//上から乗ったか、横から接触したかを判定で切り分ける
+		if (q.y >= p.y - skin)
 		{
-			continue;
-		}
+			// 【1】上から乗った場合の処理
 
-		DirectX::XMVECTOR s = XMLoadFloat3(&seg.start);
-		DirectX::XMVECTOR e = XMLoadFloat3(&seg.end);
+			// 法線は真上（これでプレイヤー側は「上乗りのワープ」を実行する）
+			result.normal = { 0.0f, 1.0f, 0.0f };
 
-		DirectX::XMVECTOR segVec = XMVectorSubtract(e, s);
-		float segLen = XMVectorGetX(XMVector3Length(segVec));
-		if (segLen <= 0.0001f) continue;
+			// めり込み深さは上方向の深さ
+			float depthY = topY - q.y;
+			result.penetration = max(depthY * 0.7f, 0.01f);
 
-		DirectX::XMVECTOR dir = XMVectorScale(segVec, 1.0f / segLen);
-
-		// レーザー上の最近接点 p
-		DirectX::XMVECTOR c = XMLoadFloat3(&center);
-		float t = XMVectorGetX(XMVector3Dot(XMVectorSubtract(c, s), dir));
-		t = std::clamp(t, 0.0f, segLen);
-
-		DirectX::XMVECTOR pVec = XMVectorAdd(s, XMVectorScale(dir, t));
-
-		DirectX::XMFLOAT3 p;
-		DirectX::XMStoreFloat3(&p, pVec);
-
-		// Cylinder 上の最近接点 q
-		DirectX::XMFLOAT3 q;
-
-		// Y clamp
-		q.y = std::clamp(p.y, center.y - halfH, center.y + halfH);
-
-		// XZ 円
-		float dx = p.x - center.x;
-		float dz = p.z - center.z;
-		float len = sqrtf(dx * dx + dz * dz);
-
-		if (len > cylR)
-		{
-			q.x = center.x + dx / len * cylR;
-			q.z = center.z + dz / len * cylR;
+			// プレイヤーが乗るべき実数値（レーザーの上面）
+			DirectX::XMFLOAT3 floorPoint = p;
+			floorPoint.y = seg.start.y + radius;
+			result.point = floorPoint;
 		}
 		else
 		{
-			q.x = p.x;
-			q.z = p.z;
-		}
+			//横から当たった場合の処理
 
-		DirectX::XMVECTOR qVec = XMLoadFloat3(&q);
+			// 法線は横方向（XZ）のみ（Y成分は0にするため、プレイヤー側で「上乗り」は絶対に発生しない）
+			DirectX::XMFLOAT3 dirXZ = { center.x - p.x, 0.0f, center.z - p.z };
+			DirectX::XMVECTOR nXZ = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dirXZ));
+			DirectX::XMStoreFloat3(&result.normal, nXZ);
 
-		// 距離
-		DirectX::XMVECTOR v = XMVectorSubtract(qVec, pVec);
-		float dist = XMVectorGetX(XMVector3Length(v));
-
-		float skin = 0.01f;
-
-		if (dist <= radius - skin)
-		{
-			result.hit = true;
-
-			float depth = radius - dist;
-
-			// AABB と同じ押し量
-			float push = depth * 0.7f;
-			push = max(push, 0.01f);
-
-			result.penetration = push;
-
-			// ? 法線（AABB と同じ向きに統一）
-			DirectX::XMVECTOR n;
-
-			if (dist > 0.0001f)
-			{
-				// AABB と同じ向き：center - p
-				DirectX::XMFLOAT3 dirOut =
-				{
-					center.x - p.x,
-					center.y - p.y,
-					center.z - p.z
-				};
-				n = XMVector3Normalize(XMLoadFloat3(&dirOut));
-			}
-			else
-			{
-				// fallback：XZ 方向優先
-				DirectX::XMFLOAT3 fallback =
-				{
-					center.x - p.x,
-					0.0f,
-					center.z - p.z
-				};
-
-				DirectX::XMVECTOR fb = XMLoadFloat3(&fallback);
-
-				if (XMVector3Length(fb).m128_f32[0] < 0.0001f)
-					fb = XMVectorSet(1, 0, 0, 0);
-
-				n = XMVector3Normalize(fb);
+			// もし完全に中心が重なって正規化できなかった場合の安全弁
+			if (result.normal.x == 0.0f && result.normal.z == 0.0f) {
+				result.normal = { 1.0f, 0.0f, 0.0f };
 			}
 
-			DirectX::XMStoreFloat3(&result.normal, n);
+			// めり込み深さは横方向の深さ
+			float depthXZ = radius - distX4Z;
+			result.penetration = max(depthXZ * 0.7f, 0.01f);
+
+			// 交点はそのまま円柱上の点 q を使う（ワープさせない）
 			result.point = q;
-
-			return result;
 		}
+
+		return result;
 	}
+}
 
-	return result;
-
+return result;
 
 }
 

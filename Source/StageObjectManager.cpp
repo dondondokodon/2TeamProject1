@@ -138,6 +138,7 @@ void StageObjectManager::LoadStageData(StageData* data)
 	if (data->MyStage) {
 		Register(data->MyStage.release());
 	}
+	
 }
 
 //ステージデータロード
