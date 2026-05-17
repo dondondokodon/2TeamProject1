@@ -31,10 +31,10 @@ void Player::Initialize(const char* modelPath)
 	animation.setModel(model.get());
 
 	const auto& animations = model->GetResource()->GetAnimations();
-	for (const auto& anim : animations)
-	{
-		OutputDebugStringA(("Animation: " + anim.name + "\n").c_str());
-	}
+	//for (const auto& anim : animations)
+	//{
+	//	OutputDebugStringA(("Animation: " + anim.name + "\n").c_str());
+	//}
 
 
 	//初期ステートをIdleStateに設定
