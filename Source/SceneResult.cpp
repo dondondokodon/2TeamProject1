@@ -22,9 +22,10 @@ void SceneResult::Initialize()
 {
 	changeScene = false;
 	isClear = false;
-	sprites[0].Initialize("Data/Sprite/result_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.2f, SCREEN_H * 0.5f), 800.0f, 800.0f);
-	sprites[1].Initialize("Data/Sprite/STAGE_CLEAR.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.5f), 600.0f, 600.0f);
-	nextSceneButton.Initialize("Data/Sprite/NEXT.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.5f), 600.0f, 600.0f);
+	back.Initialize("Data/Sprite/Load_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
+	sprites[0].Initialize("Data/Sprite/result_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.5f), 900.0f, 900.0f);
+	sprites[1].Initialize("Data/Sprite/STAGE_CLEAR.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.25f), 600.0f, 100.0f);
+	nextSceneButton.Initialize("Data/Sprite/NEXT.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.6f), 600.0f, 350.0f);
 }
 
 //終了化
@@ -55,6 +56,7 @@ void SceneResult::Update(float elapsedTime)
 		}
 	}
 
+	back.Update(elapsedTime);
 	fade.Update(elapsedTime);
 	if (!fade.IsFading() && changeScene)
 	{
@@ -80,6 +82,8 @@ void SceneResult::Render()
 	RenderContext rc;
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
+
+	back.render(rc);
 
 	for (auto& sprite : sprites)
 		sprite.render(rc);
