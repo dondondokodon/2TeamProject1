@@ -8,13 +8,13 @@ public:
 	Sprite2D();
 	~Sprite2D();
 
-	void Initialize(const char* filepath, const DirectX::XMFLOAT2& position, float width, float height);
+	virtual void Initialize(const char* filepath, const DirectX::XMFLOAT2& position, float width, float height);
 
-	void Update(float elapsedTime);
+	virtual void Update(float elapsedTime);
 
-	void render(const RenderContext& rc);
+	virtual void render(const RenderContext& rc);
 
-private:
+protected:
 	std::unique_ptr<Sprite>sprite;
 	DirectX::XMFLOAT2 position;
 	DirectX::XMFLOAT2 offset;
