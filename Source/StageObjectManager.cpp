@@ -10,6 +10,8 @@ StageObjectManager::StageObjectManager():laserManager(nullptr)
 {
 	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
+	stageDatas.push_back(std::make_unique<StageData3>());
+	stageDatas.push_back(std::make_unique<StageData4>());
 }
 
 StageObjectManager::~StageObjectManager() 
@@ -27,6 +29,8 @@ void StageObjectManager::Reset()
 	stageDatas.clear();
 	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
+	stageDatas.push_back(std::make_unique<StageData3>());
+	stageDatas.push_back(std::make_unique<StageData4>());
 }
 
 

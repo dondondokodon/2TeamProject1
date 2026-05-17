@@ -284,6 +284,9 @@
     <ClInclude Include="Source\Sprite2D.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SkyBox.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -476,6 +479,9 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Sprite2D.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SkyBox.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

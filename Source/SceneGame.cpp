@@ -36,6 +36,13 @@ void SceneGame::Initialize()
 	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
+
+	//背景初期化
+	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
+	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
+	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
+	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
+	
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
@@ -133,6 +140,8 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
+	skyBox.Update(elapsedTime);
+
 
 	//プレイヤー更新処理
 	// Player::Instance().Update(elapsedTime);
@@ -172,6 +181,12 @@ void SceneGame::Update(float elapsedTime)
 		/*if(StageObjectManager::Instance().NextStage())
 			Goal();*/
 		return;
+	}
+
+	//デバッグ用
+	if (GetAsyncKeyState('G') & 0x0001)
+	{
+		Flag::Instance().SetFlag(Flag::IsGoal, true);
 	}
 }
 
@@ -229,6 +244,9 @@ void SceneGame::Render()
 		//		players[i]->Render(rc, modelRenderer);
 		//	}
 		//}
+
+		//背景描画
+		skyBox.Render(rc, modelRenderer);
 
 		// Player2をステージ0で非表示にする
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
