@@ -14,6 +14,7 @@
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneTitle.h"
+#include"SceneResult.h"
 
 #include"StageData1.h"
 #include"StageData2.h"
@@ -21,9 +22,12 @@
 
 void SceneGame::Initialize()
 {
+	changeScene = false;
+
 	//プレイヤー初期化
 	players[0] = new Player();
-	players[0]->Initialize("Data/Model/Player/Player.mdl");
+	//players[0]->Initialize("Data/Model/Player/Player.mdl");
+	players[0]->Initialize("Data/Model/Player/Player_animation.mdl");
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
 	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
 	players[0]->SetIsControlling(true);
@@ -35,6 +39,16 @@ void SceneGame::Initialize()
 	players[1]->SetIsControlling(false);
 
 	controlPlayerIndex = 0;
+
+	//背景初期化
+	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
+	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
+	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
+	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
+
+	//フェード初期化
+	fade.Initialize();
+	
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
@@ -55,8 +69,10 @@ void SceneGame::Initialize()
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 	//ステージ初期化
+	// //ステージ終了化
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
+	//mng.Clear();
 	mng.setLaserManager(new LaserManager());
 	mng.NextStage();
 	//mng.LoadStageData(stageData.get());
@@ -83,15 +99,22 @@ void SceneGame::Finalize()
 		cameraController = nullptr;
 	}
 
-	//ステージ終了化
 	StageObjectManager::Instance().Reset();
-	
+	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	if (changeScene)
+	{
+		fade.Update(elapsedTime);
+		if(!fade.IsFading())
+		SceneManager::Instance().ChangeScene(new SceneResult());
+		return;
+	}
+
 	// カメラ更新
 	InputChangePlayer();
 
@@ -131,6 +154,8 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
+	skyBox.Update(elapsedTime);
+
 
 	//プレイヤー更新処理
 	// Player::Instance().Update(elapsedTime);
@@ -166,9 +191,21 @@ void SceneGame::Update(float elapsedTime)
 		}
 
 		//ゴールしてたら次のステージへ
-		if(StageObjectManager::Instance().NextStage())
-			Goal();
-		return;
+		if (!changeScene)
+		{
+			fade.StartFadeOut(1.0f, 0.5f);
+			changeScene = true;
+		}
+		//SceneManager::Instance().ChangeScene(new SceneResult());
+		/*if(StageObjectManager::Instance().NextStage())
+			Goal();*/
+		//return;
+	}
+
+	//デバッグ用
+	if (GetAsyncKeyState('G') & 0x0001)
+	{
+		Flag::Instance().SetFlag(Flag::IsGoal, true);
 	}
 }
 
@@ -227,6 +264,9 @@ void SceneGame::Render()
 		//	}
 		//}
 
+		//背景描画
+		skyBox.Render(rc, modelRenderer);
+
 		// Player2をステージ0で非表示にする
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
@@ -276,7 +316,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-
+		fade.Render(rc);
 	}
 }
 

@@ -66,6 +66,9 @@ public:
 	//プレイヤー同士の衝突処理
 	void CollisionVsPlayer(Player& other, bool canRide);
 
+	//箱を押した時のanimationを再壊死する
+	void PlayPushAnimation();
+
 	//肩車開始処理
 	void StartRiding(Player& target);
 	//肩車更新処理
@@ -84,6 +87,13 @@ public:
 	bool GetIsRobot() const { return isRobot; }
 	//肩車位置まで上がりきっているか
 	bool IsRideReady() const;
+
+	//木箱を押すときに固定化する用・いらないなら消す
+	void StartBoxPush();
+	void StopBoxPush();
+	bool IsBoxPushing() const { return isBoxPushing; };
+	//ここまで
+	
 
 	//ステート変更処理
 	void ChangeState(std::unique_ptr<PlayerState> newState);
@@ -136,7 +146,13 @@ private:
 
 	int JumpCount = 0;
 	int JumpLimit = 2;
-	
+
+	//Pushアニメを再生中か
+	bool isPlayingPushAnimation = false;
+
+	//木箱を押しているときに固定化する用・いらないなら消す
+	bool isBoxPushing = false;
+
 	//乗っているか
 	bool isRiding = false;
 	//乗っている相手

@@ -4,7 +4,7 @@
 
 void WalkState::Initialize(Player& player)
 {
-	player.GetAnimation().PlayAnimation("Running", true);
+    player.GetAnimation().PlayAnimation("Run", true);
 }
 
 void WalkState::Finalize(Player& player)

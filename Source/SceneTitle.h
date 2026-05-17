@@ -1,11 +1,14 @@
 ﻿#pragma once
 #include"System/Sprite.h"
 #include "Scene.h"
+#include "Button.h"
 #include "Fade.h"
+#include "Sprite2D.h"
+
 class SceneTitle :public Scene
 {
 public:
-	SceneTitle() {}
+	SceneTitle();
 	~SceneTitle()override{}
 
 	//初期化
@@ -25,6 +28,10 @@ public:
 
 private:
 	Sprite* sprite = nullptr;
+	Button buttons[2];
+	Sprite2D title;
+	Sprite2D nowChoiceButton[2];
+	short ButtonIndex = 0;
 
 	Fade fade;
 

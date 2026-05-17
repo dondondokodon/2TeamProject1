@@ -269,7 +269,22 @@
     <ClInclude Include="Source\StageData2.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Button.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ScreenSize.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
     <ClInclude Include="Source\fade.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneResult.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Sprite2D.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SkyBox.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
   </ItemGroup>
@@ -454,7 +469,19 @@
     <ClCompile Include="Source\StageData2.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Button.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
     <ClCompile Include="Source\fade.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneResult.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Sprite2D.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SkyBox.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

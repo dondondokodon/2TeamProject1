@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include<memory>
 #include"System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
 #include"Player.h"
@@ -7,6 +8,7 @@
 #include"StageObject.h"
 #include"StageObjectManager.h"
 #include"Mirror.h"
+#include"Effect.h"
 
 class Mirror;
 
@@ -35,8 +37,8 @@ public:
     // デバッグ用 AABB 描画
     void RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer);
 
-    //動かす
-    void StartMove(DirectX::XMFLOAT3 targetPos);
+    // 動かせたら true、動かせなかったら false
+    bool StartMove(Player& player);
 
     void CollisionVsStage(StageObjectManager& stageObjectManager);
 
@@ -49,7 +51,7 @@ public:
     DirectX::XMFLOAT3 GetAABBMin() const { return aabbMin; }
     DirectX::XMFLOAT3 GetAABBMax() const { return aabbMax; }
 
-    RayHitResult StageGrid::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal)override {
+    RayHitResult ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOAT3 hitPos, DirectX::XMFLOAT3 hitNormal) override {
         // StageGrid は「絶対に」レーザーを止める存在であることを保証する
         RayHitResult result;
         result.hit = true;
@@ -76,6 +78,12 @@ private:
     int gridX;
     int gridZ;
 
+    // この木箱を押しているプレイヤー
+    // 木箱が移動している間、プレイヤーも同じ量だけ動かすために使う
+    Player* pushingPlayer = nullptr;
+
+    // 木箱を押した瞬間に出すエフェクト
+    std::unique_ptr<Effect> pushEffect = nullptr;
 
 
     // --------------------------------------------------------
