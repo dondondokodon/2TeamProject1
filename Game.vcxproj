@@ -160,6 +160,7 @@
     <ClInclude Include="Source\SceneResult.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\ScreenSize.h" />
+    <ClInclude Include="Source\SkyBox.h" />
     <ClInclude Include="Source\Sprite2D.h" />
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\StageData.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneResult.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
+    <ClCompile Include="Source\SkyBox.cpp" />
     <ClCompile Include="Source\Sprite2D.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageData.cpp" />

@@ -6,6 +6,8 @@
 #include"CameraController.h"
 #include"Scene.h"
 #include"Player.h"
+#include"SkyBox.h"
+
 // ゲームシーン
 class SceneGame:public Scene
 {
@@ -41,4 +43,5 @@ private:
 
 	void InputChangePlayer();
 	Player* GetControlPlayer();
+	SkyBox skyBox;
 };
