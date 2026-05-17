@@ -7,6 +7,7 @@
 #include"Scene.h"
 #include"Player.h"
 #include"SkyBox.h"
+#include"Fade.h"
 
 // ゲームシーン
 class SceneGame:public Scene
@@ -44,4 +45,6 @@ private:
 	void InputChangePlayer();
 	Player* GetControlPlayer();
 	SkyBox skyBox;
+	Fade fade;
+	bool changeScene = false;
 };

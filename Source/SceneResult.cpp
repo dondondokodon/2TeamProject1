@@ -22,6 +22,9 @@ void SceneResult::Initialize()
 {
 	changeScene = false;
 	isClear = false;
+	//フェード初期化
+	fade.Initialize();
+
 	back.Initialize("Data/Sprite/Load_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
 	sprites[0].Initialize("Data/Sprite/result_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.5f), 900.0f, 900.0f);
 	sprites[1].Initialize("Data/Sprite/STAGE_CLEAR.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.25f), 600.0f, 100.0f);

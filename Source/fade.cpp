@@ -4,7 +4,6 @@
 
 Fade::Fade()
 {
-    sprite = new Sprite("Data/Sprite/white.png");
 }
 
 Fade::~Fade()
@@ -15,6 +14,12 @@ Fade::~Fade()
         sprite = nullptr;
     }
 }
+
+void Fade::Initialize()
+{
+    sprite = new Sprite("Data/Sprite/White.png");
+}
+
 
 void Fade::StartFadeIn(float duration_)
 {

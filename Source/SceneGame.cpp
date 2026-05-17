@@ -22,6 +22,8 @@
 
 void SceneGame::Initialize()
 {
+	changeScene = false;
+
 	//プレイヤー初期化
 	players[0] = new Player();
 	players[0]->Initialize("Data/Model/Player/Player.mdl");
@@ -42,6 +44,9 @@ void SceneGame::Initialize()
 	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
 	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
 	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
+
+	//フェード初期化
+	fade.Initialize();
 	
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
@@ -101,6 +106,14 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	if (changeScene)
+	{
+		fade.Update(elapsedTime);
+		if(!fade.IsFading())
+		SceneManager::Instance().ChangeScene(new SceneResult());
+		return;
+	}
+
 	// カメラ更新
 	InputChangePlayer();
 
@@ -177,10 +190,15 @@ void SceneGame::Update(float elapsedTime)
 		}
 
 		//ゴールしてたら次のステージへ
-		SceneManager::Instance().ChangeScene(new SceneResult());
+		if (!changeScene)
+		{
+			fade.StartFadeOut(1.0f, 0.5f);
+			changeScene = true;
+		}
+		//SceneManager::Instance().ChangeScene(new SceneResult());
 		/*if(StageObjectManager::Instance().NextStage())
 			Goal();*/
-		return;
+		//return;
 	}
 
 	//デバッグ用
@@ -297,7 +315,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-
+		fade.Render(rc);
 	}
 }
 

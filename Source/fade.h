@@ -23,6 +23,8 @@ public:
     Fade();
     ~Fade();
 
+	void Initialize();
+
     void Update(float elapsedTime);
     void Render(const RenderContext& rc);
 
