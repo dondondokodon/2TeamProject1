@@ -213,7 +213,7 @@ void Sprite::Render(const RenderContext& rc,
 	dc->PSSetShader(pixelShader.Get(), nullptr, 0);
 	dc->PSSetShaderResources(0, 1,shaderResourceView.GetAddressOf());
 	dc->PSSetSamplers(0, 1,samplerState.GetAddressOf());
-
+  
 	// レンダーステート設定
 	dc->OMSetDepthStencilState(rc.renderState->GetDepthStencilState(DepthState::NoTestNoWrite), 0);
 	dc->RSSetState(rc.renderState->GetRasterizerState(RasterizerState::SolidCullNone));
