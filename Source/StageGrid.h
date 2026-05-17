@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include<memory>
 #include"System/ModelRenderer.h"
 #include"System/ShapeRenderer.h"
 #include"Player.h"
@@ -7,6 +8,7 @@
 #include"StageObject.h"
 #include"StageObjectManager.h"
 #include"Mirror.h"
+#include"Effect.h"
 
 class Mirror;
 
@@ -79,6 +81,9 @@ private:
     // この木箱を押しているプレイヤー
     // 木箱が移動している間、プレイヤーも同じ量だけ動かすために使う
     Player* pushingPlayer = nullptr;
+
+    // 木箱を押した瞬間に出すエフェクト
+    std::unique_ptr<Effect> pushEffect = nullptr;
 
 
     // --------------------------------------------------------

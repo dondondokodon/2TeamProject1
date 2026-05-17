@@ -7,6 +7,7 @@
 StageGrid::StageGrid()
 {
     model = std::make_unique<Model>("Data/Model/Objects/Box/Box.mdl");
+    pushEffect = std::make_unique<Effect>("Data/Effect/hikizuri.efkefc");
 
     position = { 0.0f, 0.0f, 0.0f };
     scale = { 1.0f, 1.0f, 1.0f };   // ← 必須
@@ -207,6 +208,30 @@ void StageGrid::CollisionVsPlayer(Player& p)
                 if (StartMove(p)) //木箱押すまでの固定用
                 {
                     p.StartBoxPush();
+
+					// プッシュエフェクト再生
+                    if (pushEffect)
+                    {
+                        DirectX::XMFLOAT3 effectPos = position;
+
+                        // エフェクトを箱の中心から押している側へずらす距離
+                        // 値を大きくすると、エフェクトが箱から離れる
+                        const float effectBackOffset = 2.0f;
+
+                        // エフェクトの高さ
+                        // 値を大きくすると、エフェクトが上に出る
+                        const float effectHeight = 0.05f;
+
+                        // エフェクトの大きさ
+                        // 値を大きくすると、エフェクトが大きく表示される
+                        const float effectScale = 0.08f;
+
+                        effectPos.x -= moveDir.x * effectBackOffset;
+                        effectPos.z -= moveDir.z * effectBackOffset;
+                        effectPos.y += effectHeight;
+
+                        pushEffect->Play(effectPos, effectScale);
+                    }
                 }
             }
         }
