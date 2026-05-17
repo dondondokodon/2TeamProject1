@@ -28,6 +28,7 @@ public:
 private:
 	Sprite2D sprites[2];
 	Button nextSceneButton;
+	Sprite2D back;
 	Fade fade;
 	bool changeScene;
 	bool isClear;
