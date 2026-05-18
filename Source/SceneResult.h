@@ -3,6 +3,9 @@
 #include "Sprite2D.h"
 #include "Button.h"
 #include "fade.h"
+#include "System/Model.h"
+#include "AnimationController.h"
+#include <memory>
 
 class SceneResult:public Scene
 {
@@ -30,6 +33,8 @@ private:
 	Button nextSceneButton;
 	Sprite2D back;
 	Fade fade;
+	std::unique_ptr<Model> resultPlayerModel = nullptr;
+	AnimationController resultPlayerAnimation;
 	bool changeScene;
 	bool isClear;
 };
