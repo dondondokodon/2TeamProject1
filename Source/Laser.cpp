@@ -634,8 +634,11 @@ for (const auto& seg : segments)
 			result.penetration = max(depthY * 0.7f, 0.01f);
 
 			// プレイヤーが乗るべき実数値（レーザーの上面）
-			DirectX::XMFLOAT3 floorPoint = p;
+			/*DirectX::XMFLOAT3 floorPoint = p;
 			floorPoint.y = seg.start.y + radius;
+			result.point = floorPoint;*/
+			DirectX::XMFLOAT3 floorPoint = p;
+			floorPoint.y = p.y + radius;
 			result.point = floorPoint;
 		}
 		else
