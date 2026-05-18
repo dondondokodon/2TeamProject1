@@ -35,7 +35,7 @@ void SceneGame::Initialize()
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Player/Robot.mdl");
 	players[1]->SetPosition({ 5.0f, 0.0f, -3.0f });
-	players[1]->SetScale({ 0.5f, 0.5f, 0.5f });
+	players[1]->SetScale({ 0.45f, 0.45f, 0.45f });
 	players[1]->SetIsRobot(true);
 	players[1]->SetIsControlling(false);
 
