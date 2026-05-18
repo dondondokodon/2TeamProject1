@@ -6,7 +6,7 @@
 GoalObject::GoalObject()
 {
 	SetModel("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
-	goalEffect = std::make_unique<Effect>("Data/Effect/hansya.efkefc");
+	goalEffect = std::make_unique<Effect>("Data/Effect/goru.efkefc");
     UpdateCollider();
 }
 
@@ -76,16 +76,8 @@ void GoalObject::PlayGoalEffect()
 
 	DirectX::XMFLOAT3 effectPos = position;
 
-	// エフェクトの高さ
-	// 値を大きくすると上に出る
-	const float effectHeight = 0.5f;
-
-	// エフェクトの大きさ
-	// 値を大きくすると大きく表示される
-	const float effectScale = 0.5f;
-
-	effectPos.y += effectHeight;
-	goalEffect->Play(effectPos, effectScale);
+	effectPos.y += goalEffectHeight;
+	goalEffect->Play(effectPos, goalEffectScale);
 }
 
 void GoalObject::DrawDebugGUI()
@@ -98,6 +90,8 @@ void GoalObject::DrawDebugGUI()
             ImGui::InputFloat3("pos", &position.x);
             //位置
             ImGui::CheckboxFlags("isHit", (unsigned int*)&isHit, true);
+			ImGui::InputFloat("Effect Height", &goalEffectHeight);
+			ImGui::InputFloat("Effect Scale", &goalEffectScale);
 
 			// デバッグ確認用
 			// ゴール条件を満たさなくても、このボタンだけでエフェクトを確認できる
