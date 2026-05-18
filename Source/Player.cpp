@@ -671,7 +671,9 @@ void Player::CollisionPlayerVsStage()
 			{
 				velocity.y = 0.0f;
 
-				position.y = 1.34;
+				//position.y = 1.34;
+
+				position.y = hit.point.y-0.15f;	//コライダーが0.15飛び出てるので
 
 				isGround = true;
 				OnLanding();
