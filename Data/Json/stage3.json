@@ -1,7 +1,7 @@
 ﻿[
   {
     "type": "Laser",
-    "PosX": 7.5,
+    "PosX": 9,
     "PosY": 1,
     "PosZ": -25,
     "angleX": 0,
@@ -16,7 +16,7 @@
   },
   {
     "type": "Laser",
-    "PosX": -7.5,
+    "PosX": -9,
     "PosY": 1,
     "PosZ": 25,
     "angleX": 0,
@@ -33,7 +33,7 @@
     "type": "Laser",
     "PosX": 25,
     "PosY": 1,
-    "PosZ": 6,
+    "PosZ": 9,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
@@ -48,7 +48,7 @@
     "type": "Laser",
     "PosX": -25,
     "PosY": 1,
-    "PosZ": -7,
+    "PosZ": -9,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
@@ -238,5 +238,35 @@
     "DirectionX": 0,
     "DirectionY": 0,
     "DirectionZ": 0
+  },
+  {
+    "type": "Laser",
+    "PosX": 25,
+    "PosY": 1,
+    "PosZ": 25,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 0.5,
+    "ScaleY": 0.5,
+    "ScaleZ": 0.5,
+    "DirectionX": -1,
+    "DirectionY": 0,
+    "DirectionZ": -1
+  },
+  {
+    "type": "Laser",
+    "PosX": -25,
+    "PosY": 1,
+    "PosZ": 25,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 0.5,
+    "ScaleY": 0.5,
+    "ScaleZ": 0.5,
+    "DirectionX": 50,
+    "DirectionY": 0,
+    "DirectionZ": 1
   }
 ]
