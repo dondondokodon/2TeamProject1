@@ -1,7 +1,9 @@
-ï»¿#pragma once
+#pragma once
 #include <thread>
 #include "System/Sprite.h"
 #include "Scene.h"
+#include"LoadSprite.h"
+#include"fade.h"
 class SceneLoading :
     public Scene
 {
@@ -9,29 +11,33 @@ public:
     SceneLoading(Scene* nextScene):nextScene(nextScene) {}
     ~SceneLoading()override {}
 
-    //åˆæœŸåŒ–
+    //‰Šú‰»
     void Initialize()override;
 
-    //çµ‚äº†åŒ–
+    //I—¹‰»
     void Finalize()override;
 
-    //æ›´æ–°å‡¦ç†
+    //XVˆ—
     void Update(float elapsedTime)override;
 
-    //æç”»å‡¦ç†
+    //•`‰æˆ—
     void Render()override;
 
-    //GUIæç”»
+    //GUI•`‰æ
     void DrawGUI()override;
 
 private:
-    //ãƒ­ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚¹ãƒ¬ãƒƒãƒ‰
+    //ƒ[ƒfƒBƒ“ƒOƒXƒŒƒbƒh
     static void LoadingThread(SceneLoading* scene);
 
 private:
-    float angle         = 0.0f;
-    std::unique_ptr<Sprite> sprite;
-    std::unique_ptr<std::thread> thread;
-    std::unique_ptr<Scene> nextScene;
+    //Sprite* sprite      = nullptr;
+    Sprite2D sprite;
+    LoadSprite loadSprites[2];
+    /*float angle         = 0.0f;*/
+    Scene* nextScene    = nullptr;
+    std::thread* thread = nullptr;
+    Fade fade;
+    bool isFading = false;
 };
 

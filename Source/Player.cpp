@@ -186,7 +186,7 @@ void Player::UpdateCollider()
 	//円柱
 	bodyCylinderCollider.SetCenter({ position.x, position.y+0.5f, position.z });
 	bodyCylinderCollider.SetRadius(0.5f);
-	bodyCylinderCollider.SetHeight(0.9f);
+	bodyCylinderCollider.SetHeight(0.7f);
 }
 
 //描画処理
@@ -671,7 +671,9 @@ void Player::CollisionPlayerVsStage()
 			{
 				velocity.y = 0.0f;
 
-				position.y = 1.34;
+				//position.y = 1.34;
+
+				position.y = hit.point.y-0.15f;	//コライダーが0.15飛び出てるので
 
 				isGround = true;
 				OnLanding();

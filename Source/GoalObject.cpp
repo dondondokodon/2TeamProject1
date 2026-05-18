@@ -6,6 +6,7 @@
 GoalObject::GoalObject()
 {
 	SetModel("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+	goalEffect = std::make_unique<Effect>("Data/Effect/hansya.efkefc");
     UpdateCollider();
 }
 
@@ -22,6 +23,11 @@ void GoalObject::Update(float elapsedTime)
 	if (Flag::Instance().getFlag(Flag::eventName::openGoal))
 	{
         Flag::Instance().SetFlag(Flag::IsGoal, isHit);
+	}
+
+	if (!isHit)
+	{
+		wasHit = false;
 	}
 
     isHit = false;
@@ -53,7 +59,33 @@ void GoalObject::CollisionVsPlayer(Player& p)
         push))
     {
         isHit = true;
+
+		// ゴール専用素材がまだ無いので、反射エフェクトを仮でゴール用に使う
+		if (!wasHit && Flag::Instance().getFlag(Flag::eventName::openGoal) && goalEffect)
+		{
+			PlayGoalEffect();
+		}
+
+		wasHit = true;
     }
+}
+
+void GoalObject::PlayGoalEffect()
+{
+	if (!goalEffect) return;
+
+	DirectX::XMFLOAT3 effectPos = position;
+
+	// エフェクトの高さ
+	// 値を大きくすると上に出る
+	const float effectHeight = 0.5f;
+
+	// エフェクトの大きさ
+	// 値を大きくすると大きく表示される
+	const float effectScale = 0.5f;
+
+	effectPos.y += effectHeight;
+	goalEffect->Play(effectPos, effectScale);
 }
 
 void GoalObject::DrawDebugGUI()
@@ -66,6 +98,13 @@ void GoalObject::DrawDebugGUI()
             ImGui::InputFloat3("pos", &position.x);
             //位置
             ImGui::CheckboxFlags("isHit", (unsigned int*)&isHit, true);
+
+			// デバッグ確認用
+			// ゴール条件を満たさなくても、このボタンだけでエフェクトを確認できる
+			if (ImGui::Button("Play Goal Effect"))
+			{
+				PlayGoalEffect();
+			}
         }
         if (ImGui::CollapsingHeader("AABB", ImGuiTreeNodeFlags_DefaultOpen))
         {

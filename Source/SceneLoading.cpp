@@ -1,19 +1,33 @@
-ï»¿#include <thread>
+#include <thread>
 #include "System/Graphics.h"
 #include "System/Input.h"
 #include "SceneLoading.h"
 #include "SceneManager.h"
+#include "ScreenSize.h"
 
 
-//åˆæœŸåŒ–
+//‰Šú‰»
 void SceneLoading::Initialize()
 {
-	sprite = std::make_unique<Sprite>("Data/Sprite/LoadingIcon.png");
+	//ƒXƒvƒ‰ƒCƒg‰Šú‰»
+	//sprite = new Sprite("Data/Sprite/LoadingIcon.png");
 
-	thread = std::make_unique<std::thread>(LoadingThread, this);
+	sprite.Initialize("Data/Sprite/Load_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
+	loadSprites[0].Initialize("Data/Sprite/Load_circle.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), 200, 200);
+	loadSprites[1].Initialize("Data/Sprite/Loading.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), 300, 300);
+
+	loadSprites[0].setRotateSpeed(180.0f);
+	loadSprites[1].setRotateSpeed(40.0f);
+
+	//ƒtƒF[ƒh‰Šú‰»
+	fade.Initialize();
+	isFading = false;
+
+	//ƒXƒŒƒbƒhŠJn
+	thread = new std::thread(LoadingThread, this);
 }
 
-//çµ‚äº†åŒ–
+//I—¹‰»
 void SceneLoading::Finalize()
 {
 	if (thread)
@@ -22,36 +36,52 @@ void SceneLoading::Finalize()
 		thread.reset();
 	}
 
-	sprite.reset();
+	//ƒXƒvƒ‰ƒCƒgI—¹‰»
+	/*if (sprite != nullptr)
+	{
+		delete sprite;
+		sprite = nullptr;
+	}*/
 }
 
-//æ›´æ–°å‡¦ç†
+//XVˆ—
 void SceneLoading::Update(float elapsedTime)
 {
-	constexpr float speed = 180;
-	angle += speed * elapsedTime;
-	//æ¬¡ã®ã‚·ãƒ¼ãƒ³ã®æº–å‚™ãŒå®Œäº†ã—ãŸã‚‰ã‚·ãƒ¼ãƒ³ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
-	if (nextScene->IsReady())
+	//constexpr float speed = 180;
+	//angle += speed * elapsedTime;
+	//Ÿ‚ÌƒV[ƒ“‚Ì€”õ‚ªŠ®—¹‚µ‚½‚çƒV[ƒ“‚ğØ‚è‘Ö‚¦‚é
+	if (nextScene->IsReady()&&!isFading)
+	{
+		fade.StartFadeOut(1.0f, 0.3f);
+		isFading = true;
+	}
+
+	if (isFading&&!fade.IsFading())
 	{
 		SceneManager::Instance().ChangeScene(nextScene.release());
 	}
+
+	sprite.Update(elapsedTime);
+	for(auto& sprite : loadSprites) sprite.Update(elapsedTime);
+
+	fade.Update(elapsedTime);
 }
 
-//æç”»å‡¦ç†
+//•`‰æˆ—
 void SceneLoading::Render()
 {
 	Graphics& graphics = Graphics::Instance();
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 	RenderState* renderState = graphics.GetRenderState();
 
-	//æç”»æº–å‚™
+	//•`‰æ€”õ
 	RenderContext rc;
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
 
-	//2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
+	//2DƒXƒvƒ‰ƒCƒg•`‰æ
 	{
-		//ç”»é¢å³ä¸‹ã«ãƒ­ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚¢ã‚¤ã‚³ãƒ³ã‚’æç”»
+		//‰æ–Ê‰E‰º‚Éƒ[ƒfƒBƒ“ƒOƒAƒCƒRƒ“‚ğ•`‰æ
 		float screenWidth  = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
 		float spriteWidth  = 256;
@@ -59,31 +89,34 @@ void SceneLoading::Render()
 		float positionX    = screenWidth - spriteWidth;
 		float positionY    = screenHeight - spriteHeight;
 
-		sprite->Render(rc,
+		sprite.render(rc);
+
+		/*sprite->Render(rc,
 			positionX, positionY, 0, spriteWidth, spriteHeight,
 			angle,
-			1, 1, 1, 1);
-
+			1, 1, 1, 1);*/
+		for(auto& sprite : loadSprites) sprite.render(rc);
+		fade.Render(rc);
 	}
 }
 
-//GUIæç”»
+//GUI•`‰æ
 void SceneLoading::DrawGUI()
 {
 
 }
-//ãƒ­ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã‚¹ãƒ¬ãƒƒãƒ‰
+//ƒ[ƒfƒBƒ“ƒOƒXƒŒƒbƒh
 void SceneLoading::LoadingThread(SceneLoading* scene)
 {
-	//COMé–¢é€£ã®åˆæœŸåŒ–ã§ã‚¹ãƒ¬ãƒƒãƒ‰æ¯ã«å‘¼ã¶å¿…è¦ãŒã‚ã‚‹
+	//COMŠÖ˜A‚Ì‰Šú‰»‚ÅƒXƒŒƒbƒh–ˆ‚ÉŒÄ‚Ô•K—v‚ª‚ ‚é
 	CoInitialize(nullptr);
 
-	//æ¬¡ã®ã‚·ãƒ¼ãƒ³ã®åˆæœŸåŒ–ã‚’è¡Œã†
+	//Ÿ‚ÌƒV[ƒ“‚Ì‰Šú‰»‚ğs‚¤
 	scene->nextScene->Initialize();
 
-	//ã‚¹ãƒ¬ãƒƒãƒ‰ãŒçµ‚ã‚ã‚‹å‰ã«COMé–¢é€£ã®çµ‚äº†åŒ–
+	//ƒXƒŒƒbƒh‚ªI‚í‚é‘O‚ÉCOMŠÖ˜A‚ÌI—¹‰»
 	CoUninitialize();
 
-	//æ¬¡ã®ã‚·ãƒ¼ãƒ³ã®æº–å‚™å®Œäº†è¨­å®š
+	//Ÿ‚ÌƒV[ƒ“‚Ì€”õŠ®—¹İ’è
 	scene->nextScene->SetReady();
 }

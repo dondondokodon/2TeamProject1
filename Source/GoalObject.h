@@ -1,6 +1,8 @@
 ﻿#pragma once
+#include<memory>
 #include "StageObject.h"
 #include "Player.h"
+#include "Effect.h"
 class GoalObject :public StageObject
 {
 public:
@@ -30,9 +32,13 @@ public:
 	void UpdateCollider();
 
 private:
+	void PlayGoalEffect();
+
 	DirectX::XMFLOAT3 aabbMin = { 0,0,0 };
 	DirectX::XMFLOAT3 aabbMax = { 0,0,0 };
 	DirectX::XMFLOAT3 halfSize = { 1.0f,0.5f,1.0f };
 	bool isHit = false;
+	bool wasHit = false;
+	std::unique_ptr<Effect> goalEffect = nullptr;
 };
 
