@@ -156,7 +156,9 @@ void GamePad::Update()
 		if (GetAsyncKeyState('R') & 0x8000) newButtonState |= BTN_R;
 		if (GetAsyncKeyState('T') & 0x8000) newButtonState |= BTN_T;
 
-#if 1
+		// 十字キー・矢印キーはボタン入力としてだけ使う
+		// Player2の左右回転がBTN_LEFT / BTN_RIGHTを使うため、ここでは移動軸に変換しない
+#if 0
 		if (newButtonState & BTN_UP)    ly = 1.0f;
 		if (newButtonState & BTN_RIGHT) lx = 1.0f;
 		if (newButtonState & BTN_DOWN)  ly = -1.0f;
