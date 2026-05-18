@@ -2,7 +2,7 @@
   {
     "type": "Laser",
     "PosX": 9,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": -25,
     "angleX": 0,
     "angleY": 0,
@@ -17,7 +17,7 @@
   {
     "type": "Laser",
     "PosX": -9,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": 25,
     "angleX": 0,
     "angleY": 0,
@@ -32,7 +32,7 @@
   {
     "type": "Laser",
     "PosX": 25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": 9,
     "angleX": 0,
     "angleY": 0,
@@ -47,7 +47,7 @@
   {
     "type": "Laser",
     "PosX": -25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": -9,
     "angleX": 0,
     "angleY": 0,
@@ -168,7 +168,7 @@
     "type": "Mirror",
     "PosX": -2,
     "PosY": 2,
-    "PosZ": 7.5,
+    "PosZ": 8.5,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
@@ -242,7 +242,7 @@
   {
     "type": "Laser",
     "PosX": 25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": 25,
     "angleX": 0,
     "angleY": 0,
@@ -257,7 +257,7 @@
   {
     "type": "Laser",
     "PosX": -25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": 25,
     "angleX": 0,
     "angleY": 0,
@@ -272,7 +272,7 @@
   {
     "type": "Laser",
     "PosX": -25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": -25,
     "angleX": 0,
     "angleY": 0,
@@ -287,7 +287,7 @@
   {
     "type": "Laser",
     "PosX": 25,
-    "PosY": 1,
+    "PosY": 2.3,
     "PosZ": -25,
     "angleX": 0,
     "angleY": 0,
