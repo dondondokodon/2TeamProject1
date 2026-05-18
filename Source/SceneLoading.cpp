@@ -8,30 +8,21 @@
 //初期化
 void SceneLoading::Initialize()
 {
-	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+	sprite = std::make_unique<Sprite>("Data/Sprite/LoadingIcon.png");
 
-	//スレッド開始
-	thread = new std::thread(LoadingThread, this);
+	thread = std::make_unique<std::thread>(LoadingThread, this);
 }
 
 //終了化
 void SceneLoading::Finalize()
 {
-	//スレッド終了化
-	if (thread != nullptr)
+	if (thread)
 	{
 		thread->join();
-		delete thread;
-		thread = nullptr;
+		thread.reset();
 	}
 
-	//スプライト終了化
-	if (sprite != nullptr)
-	{
-		delete sprite;
-		sprite = nullptr;
-	}
+	sprite.reset();
 }
 
 //更新処理
@@ -42,8 +33,7 @@ void SceneLoading::Update(float elapsedTime)
 	//次のシーンの準備が完了したらシーンを切り替える
 	if (nextScene->IsReady())
 	{
-		SceneManager::Instance().ChangeScene(nextScene);
-		nextScene = nullptr;
+		SceneManager::Instance().ChangeScene(nextScene.release());
 	}
 }
 

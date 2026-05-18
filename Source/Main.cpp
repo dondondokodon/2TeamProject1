@@ -2,8 +2,12 @@
 #include <memory>
 #include <assert.h>
 #include <tchar.h>
-
+#include <crtdbg.h>
+#include <d3d11sdklayers.h>
 #include "Framework.h"
+#include "System/Graphics.h"
+
+#pragma comment(lib, "dxguid.lib")
 
 const LONG SCREEN_WIDTH = 1280;
 const LONG SCREEN_HEIGHT = 720;
@@ -59,5 +63,25 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 
 	Framework f(hWnd);
 	SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
-	return f.Run();
+
+	int result = f.Run();
+
+#ifdef _DEBUG
+
+	ID3D11Debug* debug = nullptr;
+
+	HRESULT hr = Graphics::Instance().GetDevice()->QueryInterface(
+		IID_ID3D11Debug,
+		reinterpret_cast<void**>(&debug)
+	);
+
+	if (SUCCEEDED(hr))
+	{
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		debug->Release();
+	}
+
+#endif
+
+	return result;
 }

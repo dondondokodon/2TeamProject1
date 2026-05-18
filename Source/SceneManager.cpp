@@ -48,15 +48,23 @@ void SceneManager::Clear()
 {
 	if (currentScene != nullptr)
 	{
-		currentScene->Finalize();
-		delete currentScene;
-		currentScene = nullptr;
+		Scene* old = currentScene;
+		currentScene = nullptr; // Finalize 中の参照事故を防ぐ
+		old->Finalize();
+		delete old;
 	}
 }
+
 
 //シーン切り替え
 void SceneManager::ChangeScene(Scene* scene)
 {
-	//新しいシーンを設定
-	nextScene = scene;
+	// すでに nextScene があれば破棄（リーク防止）
+	if (nextScene != nullptr)
+	{
+		delete nextScene;
+		nextScene = nullptr;
+	}
+
+	nextScene = scene; // 所有権を受け取る
 }

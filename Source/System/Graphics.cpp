@@ -154,15 +154,41 @@ void Graphics::Present(UINT syncInterval)
 
 void Graphics::Finalize()
 {
-	// ComPtr は Reset か代入 nullptr だけ
-	renderTargetView.Reset();
-	depthStencilView.Reset();
-	swapchain.Reset();
-	immediateContext.Reset();
-	device.Reset();
+	if (immediateContext)
+	{
+		immediateContext->ClearState();
+		immediateContext->Flush();
+	}
 
-	// unique_ptr も忘れずに
 	shapeRenderer.reset();
 	modelRenderer.reset();
 	renderState.reset();
+
+	renderTargetView.Reset();
+	depthStencilView.Reset();
+
+#ifdef _DEBUG
+
+	ID3D11Debug* debug = nullptr;
+
+	HRESULT hr = device->QueryInterface(
+		IID_ID3D11Debug,
+		reinterpret_cast<void**>(&debug)
+	);
+
+	if (SUCCEEDED(hr))
+	{
+		debug->ReportLiveDeviceObjects(
+			D3D11_RLDO_DETAIL |
+			D3D11_RLDO_IGNORE_INTERNAL
+		);
+
+		debug->Release();
+	}
+
+#endif
+
+	swapchain.Reset();
+	immediateContext.Reset();
+	device.Reset();
 }

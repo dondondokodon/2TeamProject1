@@ -64,6 +64,8 @@ public:
 
 	//ミューテックス取得
 	std::mutex& GetMutex() { return mutex; }
+
+	ID3D11Device* GetDevice() const { return device.Get(); }
 private:
 	HWND											hWnd = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Device>			device;

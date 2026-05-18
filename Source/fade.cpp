@@ -4,6 +4,7 @@
 
 Fade::Fade()
 {
+    
 }
 
 Fade::~Fade()
@@ -17,7 +18,7 @@ Fade::~Fade()
 
 void Fade::Initialize()
 {
-    sprite = new Sprite("Data/Sprite/White.png");
+   sprite = new Sprite("Data/Sprite/White.png");
 }
 
 

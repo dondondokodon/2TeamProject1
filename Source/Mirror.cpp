@@ -254,7 +254,8 @@ RayHitResult Mirror::ReallyHit(
     // レーザーと同じ向きなら反転
     if (dot > 0.0f)
     {
-        N = DirectX::XMVectorNegate(N);
+        result.type = RayHitType::Stop;
+        return result;
     }
 
     //========================
