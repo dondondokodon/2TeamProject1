@@ -47,4 +47,6 @@ private:
 	SkyBox skyBox;
 	Fade fade;
 	bool changeScene = false;
+	bool goalSlow = false;
+	float goalSlowTimer = 0.0f;
 };

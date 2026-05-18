@@ -23,6 +23,8 @@
 void SceneGame::Initialize()
 {
 	changeScene = false;
+	goalSlow = false;
+	goalSlowTimer = 0.0f;
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -116,6 +118,20 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
+	//ゴールしてから少し時間を遅くする
+	if (goalSlow)
+	{
+		goalSlowTimer -= elapsedTime;
+		if (goalSlowTimer <= 0.0f)
+		{
+			goalSlow = false;
+			fade.StartFadeOut(1.0f, 0.5f);
+			changeScene = true;
+		}
+	}
+
+	const float gameElapsedTime = goalSlow ? elapsedTime * 0.2f : elapsedTime;
+
 	// カメラ更新
 	InputChangePlayer();
 
@@ -124,7 +140,7 @@ void SceneGame::Update(float elapsedTime)
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
-	cameraController->Update(elapsedTime);
+	cameraController->Update(gameElapsedTime);
 
 	//if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
@@ -136,8 +152,8 @@ void SceneGame::Update(float elapsedTime)
 
 			if (players[i] != nullptr)
 			{
-				bool canControl = (i == controlPlayerIndex);
-				players[i]->Update(elapsedTime, canControl);
+				bool canControl = (!goalSlow && i == controlPlayerIndex);
+				players[i]->Update(gameElapsedTime, canControl);
 			}
 		}
 	}
@@ -155,14 +171,14 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
-	skyBox.Update(elapsedTime);
+	skyBox.Update(gameElapsedTime);
 
 
 	//プレイヤー更新処理
 	// Player::Instance().Update(elapsedTime);
 
 	//ステージオブジェクト更新処理
-	StageObjectManager::Instance().Update(elapsedTime);
+	StageObjectManager::Instance().Update(gameElapsedTime);
 
 	// レーザー側でPlayer2の鏡判定を行えるように、現在のプレイヤー配列を各レーザーへ渡しておく。
 	// Player2はStageObjectではない→StageObjectManagerのRayCastだけではレーザー反射判定に入らない
@@ -179,23 +195,19 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 	// エフェクト更新
-	EffectManager::Instance().Update(elapsedTime);
+	EffectManager::Instance().Update(gameElapsedTime);
 
 	//ゴールしたか
-	if (Flag::Instance().getFlag(Flag::IsGoal))
+	if (!goalSlow && Flag::Instance().getFlag(Flag::IsGoal))
 	{
 		Flag::Instance().SetFlag(Flag::IsGoal, false);
 		Flag::Instance().SetFlag(Flag::openGoal, false);
-		for (auto& p : players)
-		{
-			p->SetPosition(DirectX::XMFLOAT3(0, 0, 0));
-		}
 
 		//ゴールしてたら次のステージへ
 		if (!changeScene)
 		{
-			fade.StartFadeOut(1.0f, 0.5f);
-			changeScene = true;
+			goalSlow = true;
+			goalSlowTimer = 1.5f; // ゴールしてから遅くする時間
 		}
 		//SceneManager::Instance().ChangeScene(new SceneResult());
 		/*if(StageObjectManager::Instance().NextStage())
