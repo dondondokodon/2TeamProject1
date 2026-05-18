@@ -315,9 +315,10 @@ bool Player::RayCastLaserMirror(
 
 	// 鏡面の中心位置
 	// プレイヤーの足元 position から少し前方・少し上に鏡がある想定
+	const float mirrorHeightOffset = 0.6f;
 	DirectX::XMFLOAT3 planeCenter = {
 		position.x + normal.x * 0.25f,
-		position.y + 0.55f,
+		position.y + 0.55f + mirrorHeightOffset,
 		position.z + normal.z * 0.25f
 	};
 
