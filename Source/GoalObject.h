@@ -39,6 +39,7 @@ private:
 	DirectX::XMFLOAT3 halfSize = { 1.0f,0.5f,1.0f };
 	bool isHit = false;
 	bool wasHit = false;
+	bool debugGoalJudgeEnabled = false;
 	float goalEffectHeight = 0.2f;
 	float goalEffectScale = 2.0f;
 	std::unique_ptr<Effect> goalEffect = nullptr;

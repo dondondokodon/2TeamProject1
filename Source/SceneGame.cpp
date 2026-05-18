@@ -18,6 +18,7 @@
 
 #include"StageData1.h"
 #include"StageData2.h"
+#include "DebugConfig.h"
 
 
 void SceneGame::Initialize()
@@ -216,10 +217,12 @@ void SceneGame::Update(float elapsedTime)
 	}
 
 	//デバッグ用
+#if GAME_ENABLE_DEBUG_TOOLS
 	if (GetAsyncKeyState('G') & 0x0001)
 	{
 		Flag::Instance().SetFlag(Flag::IsGoal, true);
 	}
+#endif
 }
 
 // 描画処理
@@ -301,6 +304,7 @@ void SceneGame::Render()
 	}
 
 	// 3Dデバッグ描画
+#if GAME_ENABLE_DEBUG_TOOLS
 	{
 		//プレイヤーデバッグプリミティブ描画
 		//for (int i = 0; i < 2; ++i)
@@ -326,6 +330,7 @@ void SceneGame::Render()
 		//ステージオブジェクトデバッグプリミティブ描画
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 	}
+#endif
 
 	// 2Dスプライト描画
 	{
@@ -336,6 +341,7 @@ void SceneGame::Render()
 // GUI描画
 void SceneGame::DrawGUI()
 {
+#if GAME_ENABLE_DEBUG_TOOLS
 	//プレイヤーデバッグ描画
 	for (auto& p : players)
 	{
@@ -353,6 +359,7 @@ void SceneGame::DrawGUI()
 	//	controlPlayer->DrawDebugGUI();
 	//}
 
+#endif
 }
 
 void SceneGame::InputChangePlayer()
@@ -377,6 +384,7 @@ void SceneGame::InputChangePlayer()
 	}
 
 	// デバッグ用：Nキーで次のステージへ進む
+#if GAME_ENABLE_DEBUG_TOOLS
 	if (GetAsyncKeyState('N') & 0x0001)
 	{
 		StageObjectManager::Instance().NextStage();
@@ -388,6 +396,7 @@ void SceneGame::InputChangePlayer()
 		players[0]->SetIsControlling(true);
 		players[1]->SetIsControlling(false);
 	}
+#endif
 
 }
 
