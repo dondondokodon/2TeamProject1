@@ -19,8 +19,9 @@ void GoalObject::Update(float elapsedTime)
 {
     UpdateCollider();
 
-	//照射装置に当たっているとき
-	if (Flag::Instance().getFlag(Flag::eventName::openGoal))
+	//照射装置に当たっているとき、またはデバッグでゴール判定を有効にしているとき
+	bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
+	if (goalJudgeEnabled)
 	{
         Flag::Instance().SetFlag(Flag::IsGoal, isHit);
 	}
@@ -61,7 +62,8 @@ void GoalObject::CollisionVsPlayer(Player& p)
         isHit = true;
 
 		// ゴール専用素材がまだ無いので、反射エフェクトを仮でゴール用に使う
-		if (!wasHit && Flag::Instance().getFlag(Flag::eventName::openGoal) && goalEffect)
+		bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
+		if (!wasHit && goalJudgeEnabled && goalEffect)
 		{
 			PlayGoalEffect();
 		}
@@ -90,6 +92,14 @@ void GoalObject::DrawDebugGUI()
             ImGui::InputFloat3("pos", &position.x);
             //位置
             ImGui::CheckboxFlags("isHit", (unsigned int*)&isHit, true);
+			ImGui::Checkbox("Debug Goal Judge Enabled", &debugGoalJudgeEnabled);
+			if (ImGui::Button("Force Goal"))
+			{
+				isHit = true;
+				wasHit = true;
+				Flag::Instance().SetFlag(Flag::eventName::IsGoal, true);
+				PlayGoalEffect();
+			}
 			ImGui::InputFloat("Effect Height", &goalEffectHeight);
 			ImGui::InputFloat("Effect Scale", &goalEffectScale);
 
