@@ -31,7 +31,7 @@
   },
   {
     "type": "Laser",
-    "PosX": 25,
+    "PosX": 21,
     "PosY": 2.1,
     "PosZ": 9,
     "angleX": 0,
@@ -46,7 +46,7 @@
   },
   {
     "type": "Laser",
-    "PosX": -25,
+    "PosX": -21,
     "PosY": 2.1,
     "PosZ": -9,
     "angleX": 0,
