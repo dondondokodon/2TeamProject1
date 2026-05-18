@@ -171,20 +171,21 @@ bool StageObjectManager::NextStage()
 	{
 		return true;
 	}
+
 	LoadStageData(nextStageIndex);
-	
-	// ステージごとの外に出られない範囲
-	if (nextStageIndex == 0)
+
+	const float defaultSize = 17.5f;
+	const float wideHalfSize1 = 20.5f;
+
+	float halfSize = defaultSize;
+
+	if (nextStageIndex >= 2)
 	{
-		// StageData1用
-		SetStageBounds(-35.5f, 35.5f, -35.5f, 35.5f);
-	}
-	else if (nextStageIndex == 1)
-	{
-		// StageData2用
-		SetStageBounds(-17.5f, 17.5f, -17.5f, 17.5f);
+		halfSize = wideHalfSize1;
 	}
 
+
+	SetStageBounds(-halfSize, halfSize, -halfSize, halfSize);
 
 	nextStageIndex++;
 
