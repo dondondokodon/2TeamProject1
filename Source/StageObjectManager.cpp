@@ -270,6 +270,7 @@ RayHitResult StageObjectManager::RayCast(
 		DirectX::XMFLOAT3 tempHitPos;
 		DirectX::XMFLOAT3 tempNormal;
 		if(obj->GetRayHitType() == RayHitType::None)continue;
+		if (obj->GetModel() == nullptr)continue;
 
 		if (Collision::RayCast(
 			start,
@@ -323,6 +324,7 @@ RayHitResult StageObjectManager::RayCastAny(
 	for (auto& obj : stageObjects)
 	{
 		if (obj.get() == ignoreObject) continue;
+		if (obj->GetModel() == nullptr) continue;
 
 		for (int i = 0; i < rayCount; ++i)
 		{
