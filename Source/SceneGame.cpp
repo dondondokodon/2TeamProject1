@@ -91,12 +91,13 @@ void SceneGame::Initialize()
 	tutorials.push_back(std::make_unique<Tutorial2>());
 
 	tutorialIndex = StageObjectManager::Instance().GetStageIndex();
-	if (tutorialIndex >= 1)
+	if (tutorialIndex > 1)
 	{
 		tutorialIndex = 1;
+		tutorials[1]->Initialize();
 		tutorials[1]->setEnd();
 	}
-
+	else
 	tutorials[tutorialIndex]->Initialize();
 }
 
