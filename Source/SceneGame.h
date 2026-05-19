@@ -10,10 +10,10 @@
 #include"Fade.h"
 
 // ゲームシーン
-class SceneGame:public Scene
+class SceneGame :public Scene
 {
 public:
-	SceneGame(){}
+	SceneGame() {}
 	~SceneGame()override {}
 
 	// 初期化
@@ -38,10 +38,8 @@ private:
 	//StageGrid* stageGrid = nullptr;
 	//Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
-
 	Player* players[2] = {};
 	int controlPlayerIndex = 0;
-
 	void InputChangePlayer();
 	Player* GetControlPlayer();
 	SkyBox skyBox;

@@ -20,10 +20,12 @@
 #include"StageData2.h"
 
 
+
+#define STAGE_OBJ_MNG
+
+
 void SceneGame::Initialize()
 {
-	changeScene = false;
-
 	//プレイヤー初期化
 	players[0] = new Player();
 	//players[0]->Initialize("Data/Model/Player/Player.mdl");
@@ -31,6 +33,7 @@ void SceneGame::Initialize()
 	players[0]->SetPosition({ -5.0f, 0.0f, -3.0f });
 	players[0]->SetScale({ 0.5f, 0.5f, 0.5f });
 	players[0]->SetIsControlling(true);
+
 
 	players[1] = new Player();
 	players[1]->Initialize("Data/Model/Player/Robot.mdl");
@@ -41,15 +44,6 @@ void SceneGame::Initialize()
 
 	controlPlayerIndex = 0;
 
-	//背景初期化
-	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
-	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
-	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
-	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
-
-	//フェード初期化
-	fade.Initialize();
-	
 	//カメラコントローラー初期化
 	cameraController = new CameraController();
 
@@ -69,19 +63,40 @@ void SceneGame::Initialize()
 	);
 	cameraController->SetTarget({ 0,0,-10.0f });
 
+
+	changeScene = false;
+
+	//背景初期化
+	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
+	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
+	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
+	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
+
+
+	//フェード初期化
+	fade.Initialize();
+
+
+
 	//ステージ初期化
 	// //ステージ終了化
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
 	//mng.Clear();
-	mng.setLaserManager(new LaserManager());
+
+	mng.setLaserManager(std::make_unique<LaserManager>());
+
 	mng.NextStage();
+#if 0
 	//mng.LoadStageData(stageData.get());
+#endif
+
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
+
 	//プレイヤー終了化
 	for (int i = 0; i < 2; ++i)
 	{
@@ -94,20 +109,24 @@ void SceneGame::Finalize()
 	}
 
 	//カメラコントローラー終了化
-	if (cameraController!=nullptr)
+	if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
 	}
 
+#if 1
 	StageObjectManager::Instance().Reset();
 	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
+#endif
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+
+#if 1
 	if (changeScene)
 	{
 		fade.Update(elapsedTime);
@@ -208,6 +227,7 @@ void SceneGame::Update(float elapsedTime)
 	{
 		Flag::Instance().SetFlag(Flag::IsGoal, true);
 	}
+#endif
 }
 
 // 描画処理
@@ -254,6 +274,9 @@ void SceneGame::Render()
 	//	DirectX::XMStoreFloat4x4(&rc.projection, Projection);
 	//}
 
+
+
+#if 1
 	// 3Dモデル描画
 	{
 		//プレイヤー描画
@@ -319,11 +342,15 @@ void SceneGame::Render()
 	{
 		fade.Render(rc);
 	}
+
+#endif
 }
 
 // GUI描画
 void SceneGame::DrawGUI()
 {
+
+#if 1
 	//プレイヤーデバッグ描画
 	for (auto& p : players)
 	{
@@ -340,11 +367,13 @@ void SceneGame::DrawGUI()
 	//{
 	//	controlPlayer->DrawDebugGUI();
 	//}
-
+#endif
 }
+
 
 void SceneGame::InputChangePlayer()
 {
+
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	// Xで操作キャラ交代
 	if (gamePad.GetButtonDown() & GamePad::BTN_B)
@@ -376,13 +405,13 @@ void SceneGame::InputChangePlayer()
 		players[0]->SetIsControlling(true);
 		players[1]->SetIsControlling(false);
 	}
-
 }
 
 Player* SceneGame::GetControlPlayer()
 {
 	return players[controlPlayerIndex];
 }
+
 
 void SceneGame::Goal()
 {

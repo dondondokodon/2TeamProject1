@@ -14,6 +14,7 @@ public:
 
 	virtual void render(const RenderContext& rc);
 
+	
 protected:
 	std::unique_ptr<Sprite>sprite;
 	DirectX::XMFLOAT2 position;

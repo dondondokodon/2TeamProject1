@@ -376,9 +376,6 @@
     <ClCompile Include="Source\System\ImGuiRenderer.cpp">
       <Filter>External\imgui-docking</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ResourceManager.cpp">
-      <Filter>Source\.cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Sprite.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
@@ -489,6 +486,9 @@
     </ClCompile>
     <ClCompile Include="Source\LoadSprite.cpp">
       <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

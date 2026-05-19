@@ -4,22 +4,19 @@
 
 Fade::Fade()
 {
-    
+
 }
 
 Fade::~Fade()
 {
-    if (sprite != nullptr)
-    {
-        delete sprite;
-        sprite = nullptr;
-    }
+  
 }
 
 void Fade::Initialize()
 {
-   sprite = new Sprite("Data/Sprite/White.png");
+    sprite = std::make_unique<Sprite>("Data/Sprite/White.png");
 }
+
 
 
 void Fade::StartFadeIn(float duration_)

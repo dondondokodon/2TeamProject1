@@ -11,6 +11,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "EffectManager.h"
+#include "ResourceManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -21,6 +22,7 @@ static SceneGame sceneGame;
 Framework::Framework(HWND hWnd)
 	: hWnd(hWnd)
 {
+
 	//オーディオ初期化
 	Audio::Instance().Initialize();
 
@@ -41,30 +43,30 @@ Framework::Framework(HWND hWnd)
 	// シーン初期化
 	//sceneGame.Initialize();
 	SceneManager::Instance().ChangeScene(new SceneTitle);
+
 }
 
 // デストラクタ
 Framework::~Framework()
 {
-	// シーン終了化
-	//sceneGame.Finalize();
 	SceneManager::Instance().Clear();
-
-	// IMGUI終了化
+	ResourceManager::Instance().Clear();
 	ImGuiRenderer::Finalize();
-
 	ReleaseDC(hWnd, hDC);
-
-	//エフェクトマネージャー終了化
 	EffectManager::Instance().Finalize();
-
-	//オーディオ終了化
 	Audio::Instance().Finalize();
 
-	//グラフィックス終了化
-	Graphics::Instance().Finalize();
+#ifdef _DEBUG
+	Microsoft::WRL::ComPtr<ID3D11Debug> debug;
+	if (SUCCEEDED(Graphics::Instance().GetDevice()->QueryInterface(IID_PPV_ARGS(&debug))))
+	{
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	}
+#endif
 
+	Graphics::Instance().Finalize();
 }
+
 
 // 更新処理
 void Framework::Update(float elapsedTime)

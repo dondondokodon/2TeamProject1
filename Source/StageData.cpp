@@ -23,30 +23,46 @@ StageObject* ObjectData::CreateStageObject()const
 		//ゴールオブジェクトの生成と初期化
 		obj = new GoalObject();
 		break;
-	
 	case ObjectType::IrradiationDevice:
 		//照射装置オブジェクトの生成と初期化
 		obj = new IrradiationDevice();
 		break;
+
+
+#if true
 	case ObjectType::Laser:
 	{
 		//レーザーオブジェクトの生成と初期化
+
+#if true
+		Laser* laser = new Laser();
+		laser->Initialize(pos, direction, 150.0f);
+		obj = laser;
+#endif
+
+
+#if false
 		obj = new Laser();
 		Laser* laser = dynamic_cast<Laser*>(obj);
 		if (laser)
 		{
 			laser->Initialize(pos, direction, 150.0f);
 		}
+#endif
 		break;
-	
 	}
+#endif
+
 	case ObjectType::Stairs:
 		//階段オブジェクトの生成と初期化
 	    obj = new Stairs();
 	    break;
+
 	default:
-		break;
+		return nullptr;
+		//break;
 	}
+
 	obj->SetPosition(pos);
 	obj->SetAngle(angle);
 	obj->SetScale(scale);

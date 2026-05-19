@@ -4,7 +4,7 @@
 class IrradiationDevice:public StageObject
 {
 public:
-	IrradiationDevice():modelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDevice.mdl"),isActiveModelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDeviceIsActive.mdl")
+	IrradiationDevice():modelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDevice2.mdl"),isActiveModelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDeviceIsActive2.mdl")
 	{
 		SetModel(modelFilename);
 	}

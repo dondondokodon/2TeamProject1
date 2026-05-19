@@ -37,14 +37,16 @@ void SceneTitle::Initialize()
 //終了化
 void SceneTitle::Finalize()
 {
-	//スプライト終了化
-	if (sprite != nullptr)
+	if (sprite)
 	{
 		delete sprite;
 		sprite = nullptr;
-
 	}
+
+	
 }
+
+
 
 //更新処理
 void SceneTitle::Update(float elapsedTime)

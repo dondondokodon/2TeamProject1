@@ -8,7 +8,7 @@ class StageObject
 {
 public:
 	StageObject() {}
-	~StageObject() {}
+	virtual ~StageObject() {}
 
 	//更新処理
 	virtual void Update(float elapsedTime) = 0;
