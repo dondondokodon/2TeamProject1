@@ -33,8 +33,6 @@ void StageGrid::Update(float elapsedTime)
 {
     float moveSpeed = 2.0f;
 
-    bool nowP = (GetAsyncKeyState('P') & 0x8000);
-
     // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
@@ -103,10 +101,6 @@ void StageGrid::Update(float elapsedTime)
         position.y + halfY,
         position.z + halfZ
     };
-
-
-    // Pキーの状態を保存
-    prevP = nowP;
 
     isTouchingPlayer = false;
     UpdateTransform();
@@ -183,14 +177,11 @@ void StageGrid::CollisionVsPlayer(Player& p)
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
 
-        bool nowP = (GetAsyncKeyState('P') & 0x8000);
-        bool trgP = (nowP && !prevP);
-
         auto playerPos = p.GetPosition();
-        auto playerForward = p.GetForward();
+        auto moveVec = p.GetMoveVec();
 
         // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
-        if (trgP && !isMoving && p.GetIsControlling() && !p.GetIsRobot())
+        if (!isMoving && p.GetIsControlling() && !p.GetIsRobot())
         {
             DirectX::XMFLOAT3 toBox = {
             position.x - playerPos.x,
@@ -204,8 +195,15 @@ void StageGrid::CollisionVsPlayer(Player& p)
                 toBox.z /= len;
             }
 
-            float dot = playerForward.x * toBox.x + playerForward.z * toBox.z;
-            isFacingBox = (dot > 0.7f);
+            float moveLen = sqrtf(moveVec.x * moveVec.x + moveVec.z * moveVec.z);
+            if (moveLen > 0.0001f)
+            {
+                moveVec.x /= moveLen;
+                moveVec.z /= moveLen;
+            }
+
+            float dot = moveVec.x * toBox.x + moveVec.z * toBox.z;
+            isFacingBox = (dot > 0.6f);
             if (isTouchingPlayer && isFacingBox)
             {
                 // 箱が実際に動き始めた時だけ、Pushアニメを再生する

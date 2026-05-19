@@ -5,7 +5,7 @@
 
 GoalObject::GoalObject()
 {
-	SetModel("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
+
 	goalEffect = std::make_unique<Effect>("Data/Effect/goru.efkefc");
     UpdateCollider();
 }
@@ -18,6 +18,7 @@ GoalObject::~GoalObject()
 void GoalObject::Update(float elapsedTime)
 {
     UpdateCollider();
+	UpdateGoalMarkerEffect(elapsedTime);
 
 	//照射装置に当たっているとき、またはデバッグでゴール判定を有効にしているとき
 	bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
@@ -82,6 +83,22 @@ void GoalObject::PlayGoalEffect()
 	goalEffect->Play(effectPos, goalEffectScale);
 }
 
+void GoalObject::UpdateGoalMarkerEffect(float elapsedTime)
+{
+	if (!goalEffect) return;
+
+	// goru.efkefcは1回完結のエフェクトなので、ゴール目印として一定間隔で再生する
+	// 開始と終了の見た目が違うため、完全なループにはならない
+	goalMarkerEffectTimer -= elapsedTime;
+	if (goalMarkerEffectTimer > 0.0f) return;
+
+	DirectX::XMFLOAT3 effectPos = position;
+	effectPos.y += goalEffectHeight;
+	goalEffect->Play(effectPos, goalEffectScale);
+
+	goalMarkerEffectTimer = goalMarkerEffectInterval;
+}
+
 void GoalObject::DrawDebugGUI()
 {
     if (ImGui::Begin("Goal", nullptr, ImGuiWindowFlags_None))
@@ -102,6 +119,7 @@ void GoalObject::DrawDebugGUI()
 			}
 			ImGui::InputFloat("Effect Height", &goalEffectHeight);
 			ImGui::InputFloat("Effect Scale", &goalEffectScale);
+			ImGui::InputFloat("Marker Effect Interval", &goalMarkerEffectInterval);
 
 			// デバッグ確認用
 			// ゴール条件を満たさなくても、このボタンだけでエフェクトを確認できる
