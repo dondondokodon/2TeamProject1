@@ -1,4 +1,4 @@
-#include "StageObjectManager.h"
+ï»¿#include "StageObjectManager.h"
 #include "Collision.h"
 #include "StageGrid.h"
 
@@ -8,7 +8,6 @@
 
 #include "Flag.h"
 
-StageObjectManager::StageObjectManager():laserManager(nullptr) 
 StageObjectManager::StageObjectManager()
 {
 	stageDatas.push_back(std::make_unique<StageData1>());
@@ -22,7 +21,7 @@ StageObjectManager::~StageObjectManager()
 	Clear();
 }
 
-//ƒŠƒZƒbƒg
+//ãƒªã‚»ãƒƒãƒˆ
 void StageObjectManager::Reset()
 {
 	//nextStageIndex = 0;
@@ -35,11 +34,11 @@ void StageObjectManager::Reset()
 }
 
 
-//XVˆ—
+//æ›´æ–°å‡¦ç†
 void StageObjectManager::Update(float elapsedTime)
 {
 	// ---------------------------
-	// –Ø” “¯m”»’è
+	// æœ¨ç®±åŒå£«åˆ¤å®š
 	// ---------------------------
 	for (StageGrid* grid : grids)
 	{
@@ -56,24 +55,24 @@ void StageObjectManager::Update(float elapsedTime)
 		
 	}
 	// ---------------------------
-	// ƒŠƒXƒg‰Šú‰»
+	// ãƒªã‚¹ãƒˆåˆæœŸåŒ–
 	// ---------------------------
 	grids.clear();	
 	mirrors.clear();
 
 	// ---------------------------
-	// –Ø” ,‹¾ûW
+	// æœ¨ç®±,é¡åé›†
 	// ---------------------------
 	for (auto& stageObject : stageObjects)
 	{
-		// –Ø” 
+		// æœ¨ç®±
 		if (StageGrid* grid =
 			dynamic_cast<StageGrid*>(stageObject.get()))
 		{
 			grids.push_back(grid);
 		}
 
-		// ‹¾
+		// é¡
 		if (Mirror* mirror =
 			dynamic_cast<Mirror*>(stageObject.get()))
 		{
@@ -82,7 +81,7 @@ void StageObjectManager::Update(float elapsedTime)
 	}
 
 
-	//”jŠüˆ—
+	//ç ´æ£„å‡¦ç†
 	for (auto& stageObject : removes)
 	{
 		auto it = std::find_if(stageObjects.begin(),
@@ -112,7 +111,7 @@ public:
 };
 
 
-//•`‰æˆ—
+//æç”»å‡¦ç†
 void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer)
 {
 
@@ -126,7 +125,7 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 	laserManager->Render(rc, renderer);
 }
 
-//ƒXƒe[ƒWƒf[ƒ^ƒ[ƒh
+//ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ‡ãƒ¼ã‚¿ãƒ­ãƒ¼ãƒ‰
 void StageObjectManager::LoadStageData(StageData* data)
 {
 	Clear();
@@ -151,7 +150,7 @@ void StageObjectManager::LoadStageData(StageData* data)
 	
 }
 
-//ƒXƒe[ƒWƒf[ƒ^ƒ[ƒh
+//ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ‡ãƒ¼ã‚¿ãƒ­ãƒ¼ãƒ‰
 void StageObjectManager::LoadStageData(int stageNum)
 {
 	Clear();
@@ -182,7 +181,7 @@ void StageObjectManager::LoadStageData(int stageNum)
 }
 
 
-//Ÿ‚ÌƒXƒe[ƒW‚ÉˆÚ‚éˆ— trueFÅŒã‚ÌƒXƒe[ƒW
+//æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã«ç§»ã‚‹å‡¦ç† trueï¼šæœ€å¾Œã®ã‚¹ãƒ†ãƒ¼ã‚¸
 bool StageObjectManager::NextStage()
 {
 	if (nextStageIndex >= stageDatas.size())
@@ -210,7 +209,7 @@ bool StageObjectManager::NextStage()
 	return false;
 }
 
-//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒg“o˜^
+//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç™»éŒ²
 void StageObjectManager::Register(StageObject* stageObject)
 {
 	std::unique_ptr<StageObject> p(stageObject);
@@ -218,7 +217,7 @@ void StageObjectManager::Register(StageObject* stageObject)
 	stageObjects.emplace_back(std::move(p));
 }
 
-//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒg‘Síœ
+//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå…¨å‰Šé™¤
 void StageObjectManager::Clear()
 {
 	stageObjects.clear();
@@ -226,14 +225,14 @@ void StageObjectManager::Clear()
 	grids.clear();
 }
 
-//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒgíœ
+//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå‰Šé™¤
 void StageObjectManager::Remove(StageObject* stageObject)
 {
-	//”jŠüƒŠƒXƒg‚É’Ç‰Á
+	//ç ´æ£„ãƒªã‚¹ãƒˆã«è¿½åŠ 
 	removes.insert(stageObject);
 }
 
-//ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+//ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
 void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRenderer* renderer)
 {
 	for (auto& stageObject : stageObjects)
@@ -245,7 +244,7 @@ void StageObjectManager::RenderDebugPrimitive(const RenderContext& rc, ShapeRend
 	laserManager->RenderDebugPrimitive(rc, renderer);
 }
 
-//ƒfƒoƒbƒO—pGUI•`‰æ
+//ãƒ‡ãƒãƒƒã‚°ç”¨GUIæç”»
 void StageObjectManager::DrawDebugGUI()
 {
 	for (auto& stageObject : stageObjects)
@@ -259,13 +258,13 @@ void StageObjectManager::DrawDebugGUI()
 
 	if (ImGui::Begin("Stage", nullptr, ImGuiWindowFlags_None))
 	{
-			//ˆÊ’u
+			//ä½ç½®
 			ImGui::InputInt("stageindex", &nextStageIndex);
 	}
 	ImGui::End();
 }
 
-//ƒŒƒCƒLƒƒƒXƒg
+//ãƒ¬ã‚¤ã‚­ãƒ£ã‚¹ãƒˆ
 RayHitResult StageObjectManager::RayCast(
 	const DirectX::XMFLOAT3& start,
 	const DirectX::XMFLOAT3& end,
@@ -280,7 +279,7 @@ RayHitResult StageObjectManager::RayCast(
 		{0,0,0}
 	};
 
-	// ˆê”Ô‹ß‚¢‹——£
+	// ä¸€ç•ªè¿‘ã„è·é›¢
 	float nearestDistSq = FLT_MAX;
 
 	for (auto& obj : stageObjects)
@@ -298,7 +297,7 @@ RayHitResult StageObjectManager::RayCast(
 			tempHitPos,
 			tempNormal))
 		{
-			// start ¨ hitPos ‚Ì‹——£
+			// start â†’ hitPos ã®è·é›¢
 			float dx = tempHitPos.x - start.x;
 			float dy = tempHitPos.y - start.y;
 			float dz = tempHitPos.z - start.z;
@@ -308,7 +307,7 @@ RayHitResult StageObjectManager::RayCast(
 				dy * dy +
 				dz * dz;
 
-			// ‚æ‚è‹ß‚¢•¨‚¾‚¯•Û‘¶
+			// ã‚ˆã‚Šè¿‘ã„ç‰©ã ã‘ä¿å­˜
 			if (distSq < nearestDistSq)
 			{
 				nearestDistSq = distSq;
@@ -319,7 +318,7 @@ RayHitResult StageObjectManager::RayCast(
 				result.hitPos = tempHitPos;
 				result.hitNormal = tempNormal;
 
-				// o—Í—p
+				// å‡ºåŠ›ç”¨
 				hitPos = tempHitPos;
 				normal = tempNormal;
 			}
@@ -329,7 +328,7 @@ RayHitResult StageObjectManager::RayCast(
 	return result;
 }
 
-//ƒŒƒCƒLƒƒƒXƒg•¡”
+//ãƒ¬ã‚¤ã‚­ãƒ£ã‚¹ãƒˆè¤‡æ•°
 RayHitResult StageObjectManager::RayCastAny(
 	const DirectX::XMFLOAT3* starts,
 	const DirectX::XMFLOAT3* ends,

@@ -1,4 +1,4 @@
-#include "System/Graphics.h"
+ï»¿#include "System/Graphics.h"
 #include "SceneGame.h"
 #include"Camera.h"
 #include"Player.h"
@@ -35,7 +35,7 @@ void SceneGame::Initialize()
 
 	tutorialIndex = 0;
 
-	//ƒvƒŒƒCƒ„[‰Šú‰»
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–
 	players[0] = new Player();
 	//players[0]->Initialize("Data/Model/Player/Player.mdl");
 	players[0]->Initialize("Data/Model/Player/Player_animation.mdl");
@@ -53,42 +53,42 @@ void SceneGame::Initialize()
 
 	controlPlayerIndex = 0;
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[‰Šú‰»
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼åˆæœŸåŒ–
 	cameraController = new CameraController();
 
-	//ƒJƒƒ‰‰Šúİ’è
+	//ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
-		DirectX::XMFLOAT3(0, 25.0f, -40.0f),//‹“_
-		DirectX::XMFLOAT3(0.0f, 0, 0.0f),	//’‹“_
-		DirectX::XMFLOAT3(0, 1, 0)	//ã•ûŒü
+		DirectX::XMFLOAT3(0, 25.0f, -40.0f),//è¦–ç‚¹
+		DirectX::XMFLOAT3(0.0f, 0, 0.0f),	//æ³¨è¦–ç‚¹
+		DirectX::XMFLOAT3(0, 1, 0)	//ä¸Šæ–¹å‘
 	);
 	camera.SetPerspectiveFov(
-		DirectX::XMConvertToRadians(65),	//‹–ìŠp
-		graphics.GetScreenWidth() / graphics.GetScreenHeight(),//‰æ–ÊƒAƒXƒyƒNƒg”ä
-		0.1f,	//ƒNƒŠƒbƒv‹——£(‹ß)
-		1000.0f //ƒNƒŠƒbƒv‹——£(‰“)
+		DirectX::XMConvertToRadians(65),	//è¦–é‡è§’
+		graphics.GetScreenWidth() / graphics.GetScreenHeight(),//ç”»é¢ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		0.1f,	//ã‚¯ãƒªãƒƒãƒ—è·é›¢(è¿‘)
+		1000.0f //ã‚¯ãƒªãƒƒãƒ—è·é›¢(é )
 	);
 	cameraController->SetTarget({ 0,0,-10.0f });
 
 
 	changeScene = false;
 
-	//”wŒi‰Šú‰»
+	//èƒŒæ™¯åˆæœŸåŒ–
 	skyBox.SetModel("Data/Model/SkyBox/SkyBox.mdl");
 	skyBox.SetScale({ 1.0f, 1.0f, 1.0f });
 	skyBox.SetPosition({ 0.0f, 0.0f, 0.0f });
 	skyBox.SetAngle({ 0.0f, 0.0f, 0.0f });
 
 
-	//ƒtƒF[ƒh‰Šú‰»
+	//ãƒ•ã‚§ãƒ¼ãƒ‰åˆæœŸåŒ–
 	fade.Initialize();
 
 
 
-	//ƒXƒe[ƒW‰Šú‰»
-	// //ƒXƒe[ƒWI—¹‰»
+	//ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
+	// //ã‚¹ãƒ†ãƒ¼ã‚¸çµ‚äº†åŒ–
 	//std::unique_ptr<StageData> stageData = std::make_unique<StageData2>();
 	StageObjectManager& mng = StageObjectManager::Instance();
 	//mng.Clear();
@@ -96,10 +96,10 @@ void SceneGame::Initialize()
 	mng.setLaserManager(std::make_unique<LaserManager>());
 
 	mng.NextStage();
-#if 0
+
 	//mng.LoadStageData(stageData.get());
 
-	//ƒ`ƒ…[ƒgƒŠƒAƒ‹‰Šú‰»
+	//ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«åˆæœŸåŒ–
 	tutorials.push_back(std::make_unique<Tutorial1>());
 	tutorials.push_back(std::make_unique<Tutorial2>());
 
@@ -114,11 +114,11 @@ void SceneGame::Initialize()
 	tutorials[tutorialIndex]->Initialize();
 }
 
-// I—¹‰»
+// çµ‚äº†åŒ–
 void SceneGame::Finalize()
 {
 
-	//ƒvƒŒƒCƒ„[I—¹‰»
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çµ‚äº†åŒ–
 	for (int i = 0; i < 2; ++i)
 	{
 		if (players[i] != nullptr)
@@ -129,26 +129,25 @@ void SceneGame::Finalize()
 		}
 	}
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[I—¹‰»
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼çµ‚äº†åŒ–
 	if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
 	}
 
-#if 1
 	StageObjectManager::Instance().Reset();
 	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
 
-	//ƒ`ƒ…[ƒgƒŠƒAƒ‹I—¹‰»
+	//ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«çµ‚äº†åŒ–
 	for (auto& t : tutorials)
 		t->Finalize();
 
 	tutorials.clear();
 }
 
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 void SceneGame::Update(float elapsedTime)
 {
 	tutorials[tutorialIndex]->Update(elapsedTime);
@@ -161,7 +160,7 @@ void SceneGame::Update(float elapsedTime)
 		return;
 	}
 
-	//ƒS[ƒ‹‚µ‚Ä‚©‚ç­‚µŠÔ‚ğ’x‚­‚·‚é
+	//ã‚´ãƒ¼ãƒ«ã—ã¦ã‹ã‚‰å°‘ã—æ™‚é–“ã‚’é…ãã™ã‚‹
 	if (goalSlow)
 	{
 		goalSlowTimer -= elapsedTime;
@@ -175,7 +174,7 @@ void SceneGame::Update(float elapsedTime)
 
 	const float gameElapsedTime = goalSlow ? elapsedTime * 0.2f : elapsedTime;
 
-	// ƒJƒƒ‰XV
+	// ã‚«ãƒ¡ãƒ©æ›´æ–°
 	InputChangePlayer();
 
 	Player* controlPlayer = GetControlPlayer();
@@ -187,7 +186,7 @@ void SceneGame::Update(float elapsedTime)
 
 	//if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
-		// ƒvƒŒƒCƒ„[XV (ƒXƒe[ƒW0‚Å‚ÍPlayer2‚ğ”ñ•\¦‚É‚·‚é)
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ›´æ–° (ã‚¹ãƒ†ãƒ¼ã‚¸0ã§ã¯Player2ã‚’éè¡¨ç¤ºã«ã™ã‚‹)
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
 		{
@@ -205,7 +204,7 @@ void SceneGame::Update(float elapsedTime)
 
 	if (!hidePlayer2 && players[0] != nullptr && players[1] != nullptr)
 	{
-		// ƒvƒŒƒCƒ„[“¯m‚ÌÕ“Ë”»’è
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åŒå£«ã®è¡çªåˆ¤å®š
 		if (!players[0]->IsRiding())
 		{
 			int otherIndex = 1 - controlPlayerIndex;
@@ -217,14 +216,14 @@ void SceneGame::Update(float elapsedTime)
 	skyBox.Update(gameElapsedTime);
 
 
-	//ƒvƒŒƒCƒ„[XVˆ—
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ›´æ–°å‡¦ç†
 	// Player::Instance().Update(elapsedTime);
 
-	//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒgXVˆ—
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæ›´æ–°å‡¦ç†
 	StageObjectManager::Instance().Update(gameElapsedTime);
 
-	// ƒŒ[ƒU[‘¤‚ÅPlayer2‚Ì‹¾”»’è‚ğs‚¦‚é‚æ‚¤‚ÉAŒ»İ‚ÌƒvƒŒƒCƒ„[”z—ñ‚ğŠeƒŒ[ƒU[‚Ö“n‚µ‚Ä‚¨‚­B
-	// Player2‚ÍStageObject‚Å‚Í‚È‚¢¨StageObjectManager‚ÌRayCast‚¾‚¯‚Å‚ÍƒŒ[ƒU[”½Ë”»’è‚É“ü‚ç‚È‚¢
+	// ãƒ¬ãƒ¼ã‚¶ãƒ¼å´ã§Player2ã®é¡åˆ¤å®šã‚’è¡Œãˆã‚‹ã‚ˆã†ã«ã€ç¾åœ¨ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é…åˆ—ã‚’å„ãƒ¬ãƒ¼ã‚¶ãƒ¼ã¸æ¸¡ã—ã¦ãŠãã€‚
+	// Player2ã¯StageObjectã§ã¯ãªã„â†’StageObjectManagerã®RayCastã ã‘ã§ã¯ãƒ¬ãƒ¼ã‚¶ãƒ¼åå°„åˆ¤å®šã«å…¥ã‚‰ãªã„
 	LaserManager* laserManager = StageObjectManager::Instance().GetLaserManager();
 	if (laserManager)
 	{
@@ -237,20 +236,20 @@ void SceneGame::Update(float elapsedTime)
 			}
 		}
 	}
-	// ƒGƒtƒFƒNƒgXV
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæ›´æ–°
 	EffectManager::Instance().Update(gameElapsedTime);
 
-	//ƒS[ƒ‹‚µ‚½‚©
+	//ã‚´ãƒ¼ãƒ«ã—ãŸã‹
 	if (!goalSlow && Flag::Instance().getFlag(Flag::IsGoal))
 	{
 		Flag::Instance().SetFlag(Flag::IsGoal, false);
 		Flag::Instance().SetFlag(Flag::openGoal, false);
 
-		//ƒS[ƒ‹‚µ‚Ä‚½‚çŸ‚ÌƒXƒe[ƒW‚Ö
+		//ã‚´ãƒ¼ãƒ«ã—ã¦ãŸã‚‰æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã¸
 		if (!changeScene)
 		{
 			goalSlow = true;
-			goalSlowTimer = 1.5f; // ƒS[ƒ‹‚µ‚Ä‚©‚ç’x‚­‚·‚éŠÔ
+			goalSlowTimer = 1.5f; // ã‚´ãƒ¼ãƒ«ã—ã¦ã‹ã‚‰é…ãã™ã‚‹æ™‚é–“
 		}
 		//SceneManager::Instance().ChangeScene(new SceneResult());
 		/*if(StageObjectManager::Instance().NextStage())
@@ -258,7 +257,7 @@ void SceneGame::Update(float elapsedTime)
 		//return;
 	}
 
-	//ƒfƒoƒbƒO—p
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
 #if GAME_ENABLE_DEBUG_TOOLS
 	if (GetAsyncKeyState('G') & 0x0001)
 	{
@@ -267,7 +266,7 @@ void SceneGame::Update(float elapsedTime)
 #endif
 }
 
-// •`‰æˆ—
+// æç”»å‡¦ç†
 void SceneGame::Render()
 {
 	Graphics& graphics = Graphics::Instance();
@@ -275,25 +274,25 @@ void SceneGame::Render()
 	ShapeRenderer* shapeRenderer = graphics.GetShapeRenderer();
 	ModelRenderer* modelRenderer = graphics.GetModelRenderer();
 
-	//•`‰æˆ—
+	//æç”»å‡¦ç†
 	//RenderContext rc;
 
-	// •`‰æ€”õ
+	// æç”»æº–å‚™
 	RenderContext rc;
 	rc.deviceContext = dc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ƒ‰ƒCƒg•ûŒüi‰º•ûŒüj
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f };	// ãƒ©ã‚¤ãƒˆæ–¹å‘ï¼ˆä¸‹æ–¹å‘ï¼‰
 	rc.renderState = graphics.GetRenderState();
 
-	//ƒJƒƒ‰ƒpƒ‰ƒ[ƒ^İ’è
+	//ã‚«ãƒ¡ãƒ©ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
-	//// ƒrƒ…[s—ñ
+	//// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—
 	//{
-	//	DirectX::XMFLOAT3 eye = { 0, 10, -10 };	// ƒJƒƒ‰‚Ì‹“_iˆÊ’uj
-	//	DirectX::XMFLOAT3 focus = { 0, 0, 0 };	// ƒJƒƒ‰‚Ì’‹“_iƒ^[ƒQƒbƒgj
-	//	DirectX::XMFLOAT3 up = { 0, 1, 0 };		// ƒJƒƒ‰‚Ìã•ûŒü
+	//	DirectX::XMFLOAT3 eye = { 0, 10, -10 };	// ã‚«ãƒ¡ãƒ©ã®è¦–ç‚¹ï¼ˆä½ç½®ï¼‰
+	//	DirectX::XMFLOAT3 focus = { 0, 0, 0 };	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ï¼ˆã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼‰
+	//	DirectX::XMFLOAT3 up = { 0, 1, 0 };		// ã‚«ãƒ¡ãƒ©ã®ä¸Šæ–¹å‘
 
 	//	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);
 	//	DirectX::XMVECTOR Focus = DirectX::XMLoadFloat3(&focus);
@@ -301,12 +300,12 @@ void SceneGame::Render()
 	//	DirectX::XMMATRIX View = DirectX::XMMatrixLookAtLH(Eye, Focus, Up);
 	//	DirectX::XMStoreFloat4x4(&rc.view, View);
 	//}
-	//// ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
+	//// ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—
 	//{
-	//	float fovY = DirectX::XMConvertToRadians(45);	// ‹–ìŠp
-	//	float aspectRatio = graphics.GetScreenWidth() / graphics.GetScreenHeight();	// ‰æ–Êc‰¡”ä—¦
-	//	float nearZ = 0.1f;	// ƒJƒƒ‰‚ª‰f‚µo‚·‚ÌÅ‹ß‹——£
-	//	float farZ = 1000.0f;	// ƒJƒƒ‰‚ª‰f‚µo‚·‚ÌÅ‰“‹——£
+	//	float fovY = DirectX::XMConvertToRadians(45);	// è¦–é‡è§’
+	//	float aspectRatio = graphics.GetScreenWidth() / graphics.GetScreenHeight();	// ç”»é¢ç¸¦æ¨ªæ¯”ç‡
+	//	float nearZ = 0.1f;	// ã‚«ãƒ¡ãƒ©ãŒæ˜ ã—å‡ºã™ã®æœ€è¿‘è·é›¢
+	//	float farZ = 1000.0f;	// ã‚«ãƒ¡ãƒ©ãŒæ˜ ã—å‡ºã™ã®æœ€é è·é›¢
 	//	DirectX::XMMATRIX Projection = DirectX::XMMatrixPerspectiveFovLH(fovY, aspectRatio, nearZ, farZ);
 	//	DirectX::XMStoreFloat4x4(&rc.projection, Projection);
 	//}
@@ -314,9 +313,9 @@ void SceneGame::Render()
 
 
 #if 1
-	// 3Dƒ‚ƒfƒ‹•`‰æ
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
 	{
-		//ƒvƒŒƒCƒ„[•`‰æ
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æç”»
 		//for (int i = 0; i < 2; ++i)
 		//{
 		//	if (players[i] != nullptr)
@@ -325,10 +324,10 @@ void SceneGame::Render()
 		//	}
 		//}
 
-		//”wŒi•`‰æ
+		//èƒŒæ™¯æç”»
 		skyBox.Render(rc, modelRenderer);
 
-		// Player2‚ğƒXƒe[ƒW0‚Å”ñ•\¦‚É‚·‚é
+		// Player2ã‚’ã‚¹ãƒ†ãƒ¼ã‚¸0ã§éè¡¨ç¤ºã«ã™ã‚‹
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
 		{
@@ -341,17 +340,17 @@ void SceneGame::Render()
 		}
 
 
-		//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒg•`‰æ
+		//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæç”»
 		StageObjectManager::Instance().Render(rc, modelRenderer);
 
-		//ƒGƒtƒFƒNƒg•`‰æ
+		//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæç”»
 		EffectManager::Instance().Render(rc.view, rc.projection);
 	}
 
-	// 3DƒfƒoƒbƒO•`‰æ
+	// 3Dãƒ‡ãƒãƒƒã‚°æç”»
 #if GAME_ENABLE_DEBUG_TOOLS
 	{
-		//ƒvƒŒƒCƒ„[ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
 		//for (int i = 0; i < 2; ++i)
 		//{
 		//	if (players[i] != nullptr)
@@ -359,7 +358,7 @@ void SceneGame::Render()
 		//		players[i]->RenderDebugPrimitive(rc, shapeRenderer);
 		//	}
 		//}
-		// Player2‚ğƒXƒe[ƒW0‚Å”ñ•\¦‚É‚·‚é
+		// Player2ã‚’ã‚¹ãƒ†ãƒ¼ã‚¸0ã§éè¡¨ç¤ºã«ã™ã‚‹
 		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 
 		for (int i = 0; i < 2; ++i)
@@ -372,12 +371,12 @@ void SceneGame::Render()
 			}
 		}
 		
-		//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒgƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+		//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
 		StageObjectManager::Instance().RenderDebugPrimitive(rc, shapeRenderer);
 	}
 #endif
 
-	// 2DƒXƒvƒ‰ƒCƒg•`‰æ
+	// 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 	{
 		tutorials[tutorialIndex]->Render();
 		fade.Render(rc);
@@ -387,18 +386,18 @@ void SceneGame::Render()
 #endif
 }
 
-// GUI•`‰æ
+// GUIæç”»
 void SceneGame::DrawGUI()
 {
 #if GAME_ENABLE_DEBUG_TOOLS
-	//ƒvƒŒƒCƒ„[ƒfƒoƒbƒO•`‰æ
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‡ãƒãƒƒã‚°æç”»
 	for (auto& p : players)
 	{
 		p->DrawDebugGUI();
 	}
 	
 
-	//ƒXƒe[ƒWƒIƒuƒWƒFƒNƒgƒ}ƒl[ƒWƒƒ[
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 	StageObjectManager::Instance().DrawDebugGUI();
 
 	/*Player* controlPlayer = GetControlPlayer();*/
@@ -410,16 +409,16 @@ void SceneGame::DrawGUI()
 #endif
 }
 
-}
+
 
 void SceneGame::InputChangePlayer()
 {
 
 	GamePad& gamePad = Input::Instance().GetGamePad();
-	// X‚Å‘€ìƒLƒƒƒ‰Œğ‘ã
+	// Xã§æ“ä½œã‚­ãƒ£ãƒ©äº¤ä»£
 	if (gamePad.GetButtonDown() & GamePad::BTN_B)
 	{
-		//ƒXƒe[ƒW0‚Å‚Íplayer2‚ğ‘€ì‚Å‚«‚È‚¢‚æ‚¤‚É
+		//ã‚¹ãƒ†ãƒ¼ã‚¸0ã§ã¯player2ã‚’æ“ä½œã§ããªã„ã‚ˆã†ã«
 		if (StageObjectManager::Instance().GetStageIndex() == 0 && controlPlayerIndex == 0)
 		{
 			return;
@@ -434,7 +433,7 @@ void SceneGame::InputChangePlayer()
 		players[controlPlayerIndex]->SetIsControlling(true);
 	}
 
-	// ƒfƒoƒbƒO—pFNƒL[‚ÅŸ‚ÌƒXƒe[ƒW‚Öi‚Ş
+	// ãƒ‡ãƒãƒƒã‚°ç”¨ï¼šNã‚­ãƒ¼ã§æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã¸é€²ã‚€
 #if GAME_ENABLE_DEBUG_TOOLS
 	if (GetAsyncKeyState('N') & 0x0001)
 	{
@@ -459,6 +458,6 @@ Player* SceneGame::GetControlPlayer()
 
 void SceneGame::Goal()
 {
-	//ƒV[ƒ“Ø‚è‘Ö‚¦
+	//ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆ
 	SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 }
