@@ -35,19 +35,23 @@ void Mirror::Update(float elapsedTime)
     bool trgU = (nowU && !prevU);
     bool trgO = (nowO && !prevO);
 
+    Flag::Instance().SetFlag(Flag::MirrorRotateSE, false);
+
     if (trgU)
     {
         targetAngleY += step;
+        Flag::Instance().SetFlag(Flag::MirrorRotateSE, true);
         isRotating = true;
     }
 
     if (trgO)
     {
         targetAngleY -= step;
+        Flag::Instance().SetFlag(Flag::MirrorRotateSE, true);
         isRotating = true;
     }
 
-    if(isRotating) Flag::Instance().SetFlag(Flag::MirrorRotateSE, true);
+   // if(isRotating) 
 
     // -----------------------------
     // -π ～ π に正規化（target）
@@ -78,9 +82,7 @@ void Mirror::Update(float elapsedTime)
     {
         angle.y = targetAngleY;
         Flag::Instance().SetFlag(Flag::rotateMirror, true);
-        isRotating = false;
-        Flag::Instance().SetFlag(Flag::MirrorRotateSE, false);
-    }
+        isRotating = false;    }
 
     // -----------------------------
     // angleも正規化

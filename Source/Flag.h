@@ -20,10 +20,11 @@ public:
 		rotateMirror = 1 << 3, 
 
 		StageBGM = 1 << 4,
-		MirrorRotateSE = 1 << 5,
-		ResultBGM = 1 << 6,
-		GoalSE = 1 << 7,
-		GoalOpenSE = 1 << 8,
+		LaserRotateSE = 1 << 5,
+		MirrorRotateSE = 1 << 6,
+		ResultBGM = 1 << 7,
+		GoalSE = 1 << 8,
+		GoalOpenSE = 1 << 9,
 	};
 
 	void SetFlag(eventName name,bool q)

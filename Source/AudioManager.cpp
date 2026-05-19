@@ -16,6 +16,10 @@ AudioManager::AudioManager()
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
+        Audio::Instance().LoadAudioSource("Data/Sounds/Roll.wav", Flag::eventName::LaserRotateSE, false)
+    ));
+
+    audios.push_back(std::unique_ptr<AudioSource>(
         Audio::Instance().LoadAudioSource("Data/Sounds/Goal.wav", Flag::eventName::GoalSE, false)
     ));
 

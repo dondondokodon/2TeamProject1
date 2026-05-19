@@ -45,7 +45,7 @@ void SceneResult::Initialize()
 //終了化
 void SceneResult::Finalize()
 {
-
+	Flag::Instance().ClearFlag();
 }
 
 //更新処理
@@ -87,6 +87,7 @@ void SceneResult::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneGame)
 		);
+		Flag::Instance().ClearFlag();
 	}
 	AudioManager::Instance().Update(elapsedTime);
 }
