@@ -21,6 +21,7 @@
 #include "DebugConfig.h"
 
 #include "Tutorial1.h"
+#include "Tutorial2.h"
 
 
 void SceneGame::Initialize()
@@ -87,6 +88,7 @@ void SceneGame::Initialize()
 
 	//チュートリアル初期化
 	tutorials.push_back(std::make_unique<Tutorial1>());
+	tutorials.push_back(std::make_unique<Tutorial2>());
 
 	tutorialIndex = StageObjectManager::Instance().GetStageIndex();
 	if (tutorialIndex >= 1)
@@ -126,6 +128,8 @@ void SceneGame::Finalize()
 	//チュートリアル終了化
 	for (auto& t : tutorials)
 		t->Finalize();
+
+	tutorials.clear();
 }
 
 // 更新処理
