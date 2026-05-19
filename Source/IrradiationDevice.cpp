@@ -59,7 +59,7 @@ RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOA
 
 //変数として判定したい円柱の「高さ（奥行き）」を定義
     float halfHeight = 1.0f; // デバイスの厚みに合わせる
-    float radius = 1.5f;     // 大きくした半径
+    float radius = 3.0f;     // 大きくした半径
 
     //半径（横幅）のチェック
     if (distSq < (radius * radius)) {
