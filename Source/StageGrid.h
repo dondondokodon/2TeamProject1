@@ -15,7 +15,7 @@ class Mirror;
 // ------------------------------------------------------------
 // StageGrid
 // ・木箱（押せるブロック）を表すクラス
-// ・プレイヤーが触れて P を押すと 1 グリッド分だけ動く
+// ・プレイヤーが触れて箱の方へ移動すると 1 グリッド分だけ動く
 // ・AABB を使ってプレイヤーとの衝突判定を行う
 // ------------------------------------------------------------
 class StageGrid : public StageObject
@@ -69,7 +69,6 @@ private:
 public:
     bool isTouchingPlayer = false; // プレイヤーが触れているか
 private:
-    bool prevP = false;            // Pキーの前フレーム状態
     bool isMoving = false;         // 現在移動中か
     bool isFacingBox=false;
     float moveRemain = 0.0f;       // 残り移動距離（1.0f 分動く）
