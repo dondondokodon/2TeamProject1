@@ -6,6 +6,9 @@ class Sprite2D
 {
 public:
 	Sprite2D();
+
+	Sprite2D(const char* filepath, const DirectX::XMFLOAT2& position, float width, float height);
+
 	~Sprite2D();
 
 	virtual void Initialize(const char* filepath, const DirectX::XMFLOAT2& position, float width, float height);

@@ -6,6 +6,8 @@
 #include"StageData1.h"
 #include"StageData2.h"
 
+#include "Flag.h"
+
 StageObjectManager::StageObjectManager():laserManager(nullptr) 
 {
 	stageDatas.push_back(std::make_unique<StageData1>());

@@ -192,6 +192,8 @@
     <ClInclude Include="Source\System\Shader.h" />
     <ClInclude Include="Source\System\ShapeRenderer.h" />
     <ClInclude Include="Source\System\Sprite.h" />
+    <ClInclude Include="Source\Tutorial.h" />
+    <ClInclude Include="Source\Tutorial1.h" />
     <ClInclude Include="Source\WalkState.h" />
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +262,8 @@
     <ClCompile Include="Source\System\RenderState.cpp" />
     <ClCompile Include="Source\System\ShapeRenderer.cpp" />
     <ClCompile Include="Source\System\Sprite.cpp" />
+    <ClCompile Include="Source\Tutorial.cpp" />
+    <ClCompile Include="Source\Tutorial1.cpp" />
     <ClCompile Include="Source\WalkState.cpp" />
   </ItemGroup>
   <ItemGroup>

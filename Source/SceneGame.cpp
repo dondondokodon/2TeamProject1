@@ -80,6 +80,9 @@ void SceneGame::Initialize()
 	mng.setLaserManager(new LaserManager());
 	mng.NextStage();
 	//mng.LoadStageData(stageData.get());
+
+	//チュートリアル初期化
+	tutorial1.Initialize();
 }
 
 // 終了化
@@ -106,11 +109,16 @@ void SceneGame::Finalize()
 	StageObjectManager::Instance().Reset();
 	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
+
+	//チュートリアル終了化
+	tutorial1.Finalize();
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	tutorial1.Update(elapsedTime);
+
 	if (changeScene)
 	{
 		fade.Update(elapsedTime);
@@ -334,7 +342,9 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		tutorial1.Render();
 		fade.Render(rc);
+
 	}
 }
 

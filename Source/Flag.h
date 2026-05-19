@@ -13,8 +13,12 @@ public:
 
 	enum eventName
 	{
-		openGoal = 0x01,
-		IsGoal   = 0x02,
+		openGoal = 1 << 0,     
+		IsGoal = 1 << 1,  
+
+		rotateLaser = 1 << 2,  
+		rotateMirror = 1 << 3, 
+		
 	};
 
 	void SetFlag(eventName name,bool q)
