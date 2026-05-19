@@ -299,6 +299,9 @@
     <ClInclude Include="Source\Tutorial2.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AudioManager.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -503,6 +506,12 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Tutorial2.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AudioManager.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

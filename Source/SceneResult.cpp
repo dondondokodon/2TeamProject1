@@ -8,6 +8,8 @@
 #include "SceneManager.h"
 #include <DirectXMath.h>
 
+#include "AudioManager.h"
+
 SceneResult::SceneResult()
 {
 
@@ -34,13 +36,16 @@ void SceneResult::Initialize()
 	// リザルト画面右側に表示するプレイヤー
 	resultPlayerModel = std::make_unique<Model>("Data/Model/Player/Player_animation.mdl");
 	resultPlayerAnimation.setModel(resultPlayerModel.get());
+
+	AudioManager::Instance().Initialize();
+	Flag::Instance().SetFlag(Flag::eventName::ResultBGM, true);
 	resultPlayerAnimation.PlayAnimation("Goal", true); // リザルト画面だけ勝利アニメーション
 }
 
 //終了化
 void SceneResult::Finalize()
 {
-
+	Flag::Instance().ClearFlag();
 }
 
 //更新処理
@@ -82,7 +87,9 @@ void SceneResult::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneGame)
 		);
+		Flag::Instance().ClearFlag();
 	}
+	AudioManager::Instance().Update(elapsedTime);
 }
 
 //描画処理
