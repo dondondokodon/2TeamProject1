@@ -11,6 +11,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "EffectManager.h"
+#include "AudioManager.h"
 
 // 垂直同期間隔設定
 static const int syncInterval = 1;
@@ -57,6 +58,9 @@ Framework::~Framework()
 
 	//エフェクトマネージャー終了化
 	EffectManager::Instance().Finalize();
+
+	//オーディオクリア
+	AudioManager::Instance().Clear();
 
 	//オーディオ終了化
 	Audio::Instance().Finalize();

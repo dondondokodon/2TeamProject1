@@ -4,23 +4,23 @@
 AudioManager::AudioManager()
 {
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Stage_BGM.mp3", Flag::eventName::StageBGM, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Stage_BGM.wav", Flag::eventName::StageBGM, true)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/result.mp3", Flag::eventName::ResultBGM, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/result.wav", Flag::eventName::ResultBGM, true)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Roll.mp3", Flag::eventName::MirrorRotateSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Roll.wav", Flag::eventName::MirrorRotateSE, true)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Goal.mp3", Flag::eventName::GoalSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Goal.wav", Flag::eventName::GoalSE, true)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Goal_effect.mp3", Flag::eventName::GoalOpenSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Goal_effect.wav", Flag::eventName::GoalOpenSE, true)
     ));
 }
 
