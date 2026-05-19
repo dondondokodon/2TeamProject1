@@ -101,11 +101,4 @@ void Tutorial1::Render()
 
 	if(isRender)
 	sprites[renderIndex]->render(rc);
-
-	if (ImGui::Begin("Tutorial", nullptr, ImGuiWindowFlags_None))
-	{
-		//位置
-		ImGui::InputInt("index", &index);
-	}
-	ImGui::End();
 }
