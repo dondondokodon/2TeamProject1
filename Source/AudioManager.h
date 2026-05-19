@@ -15,6 +15,9 @@ public:
 		return &instance;
 	}
 
+	//初期化
+	void Initialize();
+
 	//更新処理
 	void Update(float elapsedTime);
 
