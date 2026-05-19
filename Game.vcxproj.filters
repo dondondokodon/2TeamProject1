@@ -299,6 +299,9 @@
     <ClInclude Include="Source\Tutorial2.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AudioManager.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -384,9 +387,6 @@
     </ClCompile>
     <ClCompile Include="Source\System\ImGuiRenderer.cpp">
       <Filter>External\imgui-docking</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ResourceManager.cpp">
-      <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Sprite.cpp">
       <Filter>Source\System</Filter>
@@ -506,6 +506,12 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Tutorial2.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AudioManager.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>
