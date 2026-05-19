@@ -10,6 +10,7 @@
 SceneTitle::SceneTitle()
 {
 	ButtonIndex = 0;
+	num = 0;
 }
 
 //初期化
@@ -31,6 +32,7 @@ void SceneTitle::Initialize()
 	nowChoiceButton[1].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 550.0f, 170.0f);
 
 	ButtonIndex = 0;
+	num = 0;
 	changeScene = false;
 }
 
@@ -55,10 +57,12 @@ void SceneTitle::Update(float elapsedTime)
 	if (ay>0.2f)
 	{
 		ButtonIndex = 0;
+		num = 0;
 	}
 	else if(ay<-0.2f)
 	{
 		ButtonIndex = 1;
+		num = 0;
 	}
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
@@ -112,6 +116,9 @@ void SceneTitle::Update(float elapsedTime)
 			new SceneLoading(new SceneGame)
 		);
 	}
+
+	num++;
+	if (num >= 500000) num -= 500000;
 	
 }
 
@@ -144,6 +151,8 @@ void SceneTitle::Render()
 	{
 		button.render(rc);
 	}
+
+	if(num%100<50)
 	nowChoiceButton[ButtonIndex].render(rc);
     fade.Render(rc);
 }
