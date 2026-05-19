@@ -20,12 +20,16 @@
 #include"StageData2.h"
 #include "DebugConfig.h"
 
+#include "Tutorial1.h"
+
 
 void SceneGame::Initialize()
 {
 	changeScene = false;
 	goalSlow = false;
 	goalSlowTimer = 0.0f;
+
+	tutorialIndex = 0;
 
 	//プレイヤー初期化
 	players[0] = new Player();
@@ -80,6 +84,18 @@ void SceneGame::Initialize()
 	mng.setLaserManager(new LaserManager());
 	mng.NextStage();
 	//mng.LoadStageData(stageData.get());
+
+	//チュートリアル初期化
+	tutorials.push_back(std::make_unique<Tutorial1>());
+
+	tutorialIndex = StageObjectManager::Instance().GetStageIndex();
+	if (tutorialIndex >= 1)
+	{
+		tutorialIndex = 1;
+		tutorials[1]->setEnd();
+	}
+
+	tutorials[tutorialIndex]->Initialize();
 }
 
 // 終了化
@@ -106,11 +122,17 @@ void SceneGame::Finalize()
 	StageObjectManager::Instance().Reset();
 	//StageObjectManager::Instance().Clear();
 	Flag::Instance().ClearFlag();
+
+	//チュートリアル終了化
+	for (auto& t : tutorials)
+		t->Finalize();
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	tutorials[tutorialIndex]->Update(elapsedTime);
+
 	if (changeScene)
 	{
 		fade.Update(elapsedTime);
@@ -334,7 +356,9 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		tutorials[tutorialIndex]->Render();
 		fade.Render(rc);
+
 	}
 }
 

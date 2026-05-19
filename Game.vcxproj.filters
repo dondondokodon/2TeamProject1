@@ -290,6 +290,12 @@
     <ClInclude Include="Source\LoadSprite.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Tutorial.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tutorial1.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -488,6 +494,12 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\LoadSprite.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tutorial.cpp">
+      <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tutorial1.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>

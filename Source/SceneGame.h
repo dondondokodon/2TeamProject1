@@ -8,6 +8,7 @@
 #include"Player.h"
 #include"SkyBox.h"
 #include"Fade.h"
+#include "Tutorial1.h"
 
 // ゲームシーン
 class SceneGame:public Scene
@@ -38,6 +39,8 @@ private:
 	//StageGrid* stageGrid = nullptr;
 	//Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
+	std::vector<std::unique_ptr<Tutorial>> tutorials;
+	int tutorialIndex = 0;
 
 	Player* players[2] = {};
 	int controlPlayerIndex = 0;

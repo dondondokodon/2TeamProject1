@@ -1,5 +1,6 @@
 ﻿#include "Mirror.h"
 #include<imgui.h>
+#include "Flag.h"
 
 Mirror::Mirror()
 {
@@ -71,9 +72,10 @@ void Mirror::Update(float elapsedTime)
     // -----------------------------
     // 到達判定
     // -----------------------------
-    if (fabs(diff) < 0.01f)
+    if (isRotating&&fabs(diff) < 0.01f)
     {
         angle.y = targetAngleY;
+        Flag::Instance().SetFlag(Flag::rotateMirror, true);
         isRotating = false;
     }
 
