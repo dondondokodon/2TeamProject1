@@ -7,17 +7,17 @@
 
 void Tutorial1::Initialize()
 {
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_01.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_01.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_02.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_02.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_03.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_03.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_04.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_04.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_05.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_05.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.75f), 700.0f, 500.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_06.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_06.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.75f), 700.0f, 500.0f));
 
 	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_07.png", DirectX::XMFLOAT2(SCREEN_W * 0.9f, SCREEN_H * 0.15f), 800.0f, 500.0f));
 
