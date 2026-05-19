@@ -97,6 +97,9 @@ public:
 	//ステージオブジェクトサイズ
 	int GetStageObjectSize() { return static_cast<int>(stageObjects.size()); };
 
+	//ステージインデックス取得
+	int getNowStageIndex() { return nextStageIndex - 1; }
+
 	//レーザーマネージャー取得
 	LaserManager* GetLaserManager();
 

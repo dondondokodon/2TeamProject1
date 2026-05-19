@@ -5,6 +5,18 @@ Sprite2D::Sprite2D() :sprite(nullptr)
 
 }
 
+Sprite2D::Sprite2D(const char* filepath, const DirectX::XMFLOAT2& position, float width, float height)
+{
+	sprite = std::make_unique<Sprite>(filepath);
+	this->position = position;
+	this->width = width;
+	this->height = height;
+	offset.x = width / 2.0f;
+	offset.y = height / 2.0f;
+	this->position.x -= offset.x;
+	this->position.y -= offset.y;
+}
+
 Sprite2D::~Sprite2D() 
 {
 

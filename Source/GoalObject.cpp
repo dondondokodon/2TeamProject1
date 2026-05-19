@@ -5,8 +5,8 @@
 
 GoalObject::GoalObject()
 {
-	SetModel("Data/Model/Mr.Incredible/Mr.Incredible.mdl");
-	goalEffect = std::make_unique<Effect>("Data/Effect/hansya.efkefc");
+
+	goalEffect = std::make_unique<Effect>("Data/Effect/goru.efkefc");
     UpdateCollider();
 }
 
@@ -18,9 +18,11 @@ GoalObject::~GoalObject()
 void GoalObject::Update(float elapsedTime)
 {
     UpdateCollider();
+	UpdateGoalMarkerEffect(elapsedTime);
 
-	//照射装置に当たっているとき
-	if (Flag::Instance().getFlag(Flag::eventName::openGoal))
+	//照射装置に当たっているとき、またはデバッグでゴール判定を有効にしているとき
+	bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
+	if (goalJudgeEnabled)
 	{
         Flag::Instance().SetFlag(Flag::IsGoal, isHit);
 	}
@@ -61,7 +63,8 @@ void GoalObject::CollisionVsPlayer(Player& p)
         isHit = true;
 
 		// ゴール専用素材がまだ無いので、反射エフェクトを仮でゴール用に使う
-		if (!wasHit && Flag::Instance().getFlag(Flag::eventName::openGoal) && goalEffect)
+		bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
+		if (!wasHit && goalJudgeEnabled && goalEffect)
 		{
 			PlayGoalEffect();
 		}
@@ -76,16 +79,24 @@ void GoalObject::PlayGoalEffect()
 
 	DirectX::XMFLOAT3 effectPos = position;
 
-	// エフェクトの高さ
-	// 値を大きくすると上に出る
-	const float effectHeight = 0.5f;
+	effectPos.y += goalEffectHeight;
+	goalEffect->Play(effectPos, goalEffectScale);
+}
 
-	// エフェクトの大きさ
-	// 値を大きくすると大きく表示される
-	const float effectScale = 0.5f;
+void GoalObject::UpdateGoalMarkerEffect(float elapsedTime)
+{
+	if (!goalEffect) return;
 
-	effectPos.y += effectHeight;
-	goalEffect->Play(effectPos, effectScale);
+	// goru.efkefcは1回完結のエフェクトなので、ゴール目印として一定間隔で再生する
+	// 開始と終了の見た目が違うため、完全なループにはならない
+	goalMarkerEffectTimer -= elapsedTime;
+	if (goalMarkerEffectTimer > 0.0f) return;
+
+	DirectX::XMFLOAT3 effectPos = position;
+	effectPos.y += goalEffectHeight;
+	goalEffect->Play(effectPos, goalEffectScale);
+
+	goalMarkerEffectTimer = goalMarkerEffectInterval;
 }
 
 void GoalObject::DrawDebugGUI()
@@ -98,6 +109,17 @@ void GoalObject::DrawDebugGUI()
             ImGui::InputFloat3("pos", &position.x);
             //位置
             ImGui::CheckboxFlags("isHit", (unsigned int*)&isHit, true);
+			ImGui::Checkbox("Debug Goal Judge Enabled", &debugGoalJudgeEnabled);
+			if (ImGui::Button("Force Goal"))
+			{
+				isHit = true;
+				wasHit = true;
+				Flag::Instance().SetFlag(Flag::eventName::IsGoal, true);
+				PlayGoalEffect();
+			}
+			ImGui::InputFloat("Effect Height", &goalEffectHeight);
+			ImGui::InputFloat("Effect Scale", &goalEffectScale);
+			ImGui::InputFloat("Marker Effect Interval", &goalMarkerEffectInterval);
 
 			// デバッグ確認用
 			// ゴール条件を満たさなくても、このボタンだけでエフェクトを確認できる

@@ -36,5 +36,7 @@ private:
 	Fade fade;
 
 	bool changeScene = false;
+
+	int num=0;	//点滅用
 };
 
