@@ -32,9 +32,9 @@ void SceneResult::Initialize()
 	nextSceneButton.Initialize("Data/Sprite/NEXT.png", DirectX::XMFLOAT2(SCREEN_W * 0.25f, SCREEN_H * 0.6f), 600.0f, 350.0f);
 
 	// リザルト画面右側に表示するプレイヤー
-	resultPlayerModel = std::make_unique<Model>("Data/Model/Player/Playerwin.mdl");
+	resultPlayerModel = std::make_unique<Model>("Data/Model/Player/Player_animation.mdl");
 	resultPlayerAnimation.setModel(resultPlayerModel.get());
-	resultPlayerAnimation.PlayAnimation("win", true); // リザルト画面だけ勝利アニメーション
+	resultPlayerAnimation.PlayAnimation("Goal", true); // リザルト画面だけ勝利アニメーション
 }
 
 //終了化

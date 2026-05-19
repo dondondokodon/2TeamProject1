@@ -1,4 +1,4 @@
-ï»¿#include <windows.h>
+#include <windows.h>
 #include <memory>
 #include <assert.h>
 #include <tchar.h>
@@ -44,12 +44,12 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 
 	RECT rc = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	//HWND hWnd = CreateWindow(_T("Game"), _T(""), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
+	/*HWND hWnd = CreateWindow(_T("Game"), _T(""), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);*/
 	
 	HWND hWnd = CreateWindow(
 		_T("Game"),
 		_T(""),
-		WS_POPUP | WS_VISIBLE,   // â†ã“ã“å¤‰æ›´ã—ã¦ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã«ã—ãŸ
+		WS_POPUP | WS_VISIBLE,   // ©‚±‚±•ÏX‚µ‚Äƒtƒ‹ƒXƒNƒŠ[ƒ“‚É‚µ‚½
 		0, 0,
 		GetSystemMetrics(SM_CXSCREEN),
 		GetSystemMetrics(SM_CYSCREEN),
@@ -69,7 +69,7 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 		Framework f(hWnd);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
 		result = f.Run();
-	} // â˜…ã“ã“ã§ Framework ã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒå¿…ãšå‘¼ã°ã‚Œã‚‹
+	} // š‚±‚±‚Å Framework ‚ÌƒfƒXƒgƒ‰ƒNƒ^‚ª•K‚¸ŒÄ‚Î‚ê‚é
 
 	return result;
 }
