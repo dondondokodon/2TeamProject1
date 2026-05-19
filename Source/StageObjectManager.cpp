@@ -301,6 +301,7 @@ RayHitResult StageObjectManager::RayCast(
 				result.object = obj.get();
 				result.type = obj->GetRayHitType();
 				result.hitPos = tempHitPos;
+				result.hitNormal = tempNormal;
 
 				// 出力用
 				hitPos = tempHitPos;

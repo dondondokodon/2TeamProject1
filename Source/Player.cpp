@@ -454,6 +454,7 @@ void Player::StopBoxPush()
 //ステージとの衝突処理
 void Player::CollisionPlayerVsStage()
 {
+
 	StageObjectManager& stageObjectManager = StageObjectManager::Instance();
 
 	//レイを飛ばす位置調整用　元々0.5だったが階段が高いので多めにした
@@ -587,7 +588,8 @@ void Player::CollisionPlayerVsStage()
 			}
 		}
 	}
-	LaserManager* laserManager = stageObjectManager.GetLaserManager();
+
+	LaserManager* laserManager = StageObjectManager::Instance().GetLaserManager();
 
 	for (int i = 0; i < laserManager->GetLaserCount(); ++i)
 	{
@@ -674,35 +676,56 @@ void Player::CollisionPlayerVsStage()
 
 				//position.y = 1.34;
 
-				position.y = hit.point.y-0.15f;	//コライダーが0.15飛び出てるので
+				position.y = hit.point.y - 0.15f;	//コライダーが0.15飛び出てるので
 
 				isGround = true;
 				OnLanding();
 			}
 			else
 			{
-				// ? 押し出し（余裕付き）
+				UpdateCollider();
+
+				// 押し出し量
 				float push = hit.penetration + 0.001f;
 
-				position.x += hit.normal.x * push;
-				position.z += hit.normal.z * push;
+				// 正しい高さ（腰の高さ）で先読み用のスタートとエンドを設定する
+				DirectX::XMFLOAT3 rayStart = { position.x, position.y + playerRayOffsetY, position.z };
+				DirectX::XMFLOAT3 rayEnd = {
+					position.x + hit.normal.x * (push + 0.5f), // 押し出し量 ＋ プレイヤーの半径(0.5f) 分まで先読み
+					position.y + playerRayOffsetY,
+					position.z + hit.normal.z * (push + 0.5f)
+				};
 
-				// ? めり込み防止（速度殺し）
-				float dot =
-					velocity.x * hit.normal.x +
-					velocity.z * hit.normal.z;
+				RayHitResult ray = { false, nullptr, RayHitType::None, {0,0,0}, {0,0,0}, {0,0,0} };
+				ray = StageObjectManager::Instance().RayCast(rayStart, rayEnd, ray.hitPos, ray.hitNormal);
 
-				if (dot < 0.0f)
+				if (ray.hit)
 				{
-					velocity.x -= hit.normal.x * dot;
-					velocity.z -= hit.normal.z * dot;
+					//何もしない
 				}
+				else
+				{
+					position.x += hit.normal.x * push;
+					position.z += hit.normal.z * push;
+					// ? めり込み防止（速度殺し）
+					float dot =
+						velocity.x * hit.normal.x +
+						velocity.z * hit.normal.z;
+
+					if (dot < 0.0f)
+					{
+						velocity.x -= hit.normal.x * dot;
+						velocity.z -= hit.normal.z * dot;
+					}
+				}
+
 			}
 
 			UpdateCollider();
 
 		} while (isHit && loopCount < 10);
 	}
+
 
 	//ステージグリッドとゴールオブジェクト
 	// 全てのステージオブジェクトに対してループ
@@ -736,6 +759,8 @@ void Player::CollisionPlayerVsStage()
 		stageObjectManager.GetStageMinZ(),
 		stageObjectManager.GetStageMaxZ()
 	);
+
+	UpdateCollider();
 
 }
 
