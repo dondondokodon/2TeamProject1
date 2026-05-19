@@ -234,6 +234,7 @@ void SceneGame::Update(float elapsedTime)
 	if (!goalSlow && Flag::Instance().getFlag(Flag::IsGoal))
 	{
 		Flag::Instance().SetFlag(Flag::IsGoal, false);
+		Flag::Instance().SetFlag(Flag::GoalSE, true);
 		Flag::Instance().SetFlag(Flag::openGoal, false);
 
 		//ゴールしてたら次のステージへ

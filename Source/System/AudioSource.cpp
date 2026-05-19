@@ -73,7 +73,7 @@ void AudioSource::Update(float elapsedTime)
 	{
 		Play(loop);
 	}
-	else if(!flag)
+	else if(!flag&&loop)
 		Stop();
 	
 	oldPlay = flag;

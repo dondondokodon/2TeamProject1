@@ -12,15 +12,15 @@ AudioManager::AudioManager()
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Roll.wav", Flag::eventName::MirrorRotateSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Roll.wav", Flag::eventName::MirrorRotateSE, false)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Goal.wav", Flag::eventName::GoalSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Goal.wav", Flag::eventName::GoalSE, false)
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Goal_effect.wav", Flag::eventName::GoalOpenSE, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/Goal_effect.wav", Flag::eventName::openGoal, false)
     ));
 }
 

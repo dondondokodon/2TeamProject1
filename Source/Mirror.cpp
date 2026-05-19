@@ -47,6 +47,8 @@ void Mirror::Update(float elapsedTime)
         isRotating = true;
     }
 
+    if(isRotating) Flag::Instance().SetFlag(Flag::MirrorRotateSE, true);
+
     // -----------------------------
     // -π ～ π に正規化（target）
     // -----------------------------
@@ -77,6 +79,7 @@ void Mirror::Update(float elapsedTime)
         angle.y = targetAngleY;
         Flag::Instance().SetFlag(Flag::rotateMirror, true);
         isRotating = false;
+        Flag::Instance().SetFlag(Flag::MirrorRotateSE, false);
     }
 
     // -----------------------------
