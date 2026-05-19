@@ -8,7 +8,7 @@
 
 #include "Flag.h"
 
-StageObjectManager::StageObjectManager():laserManager(nullptr) 
+StageObjectManager::StageObjectManager()
 {
 	stageDatas.push_back(std::make_unique<StageData1>());
 	stageDatas.push_back(std::make_unique<StageData2>());
@@ -19,8 +19,6 @@ StageObjectManager::StageObjectManager():laserManager(nullptr)
 StageObjectManager::~StageObjectManager() 
 {
 	Clear();
-	laserManager->Clear();
-	delete laserManager; 
 }
 
 //リセット
@@ -54,12 +52,13 @@ void StageObjectManager::Update(float elapsedTime)
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
-		// ---------------------------
-		// リスト初期化
-		// ---------------------------
-		grids.clear();
-		mirrors.clear();
+		
 	}
+	// ---------------------------
+	// リスト初期化
+	// ---------------------------
+	grids.clear();	
+	mirrors.clear();
 
 	// ---------------------------
 	// 木箱,鏡収集
@@ -102,6 +101,14 @@ void StageObjectManager::Update(float elapsedTime)
 	if (laserManager)
 		laserManager->Update(elapsedTime);
 }
+
+
+class Test
+{
+public:
+	Test() {}
+	int a;
+};
 
 
 //描画処理
@@ -152,17 +159,25 @@ void StageObjectManager::LoadStageData(int stageNum)
 	for (auto& objData : stageDatas[stageNum]->objects)
 	{
 		StageObject* obj = objData->CreateStageObject();
+		if (obj == nullptr)
+			return;
+
 		if (objData->type == ObjectType::Laser)
 		{
 			Laser* laser = dynamic_cast<Laser*>(obj);
 			laser->setManager(this);
 			laserManager->Register(laser);
 		}
-		else
+		else {
 			Register(obj);
+		}
 	}
 
+
+
 	Register(stageDatas[stageNum]->MyStage.release());
+
+
 }
 
 
@@ -197,14 +212,14 @@ bool StageObjectManager::NextStage()
 //ステージオブジェクト登録
 void StageObjectManager::Register(StageObject* stageObject)
 {
-	stageObjects.emplace_back(stageObject);
+	std::unique_ptr<StageObject> p(stageObject);
+
+	stageObjects.emplace_back(std::move(p));
 }
 
 //ステージオブジェクト全削除
 void StageObjectManager::Clear()
 {
-	if(laserManager)
-	laserManager->Clear();
 	stageObjects.clear();
 	mirrors.clear();
 	grids.clear();
@@ -352,15 +367,12 @@ RayHitResult StageObjectManager::RayCastAny(
 }
 
 
-LaserManager* StageObjectManager::GetLaserManager() { return laserManager; }
-
-void StageObjectManager::setLaserManager(LaserManager* mgr)
+LaserManager* StageObjectManager::GetLaserManager()
 {
-	if (laserManager)
-	{
-		//laserManager->Clear();
-		delete laserManager;
-		laserManager = nullptr;
-	}
-	laserManager = mgr;
+	return laserManager.get();
+}
+
+void StageObjectManager::setLaserManager(std::unique_ptr<LaserManager> mgr)
+{
+    laserManager = std::move(mgr);
 }

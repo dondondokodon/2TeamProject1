@@ -6,6 +6,7 @@
 #include "ScreenSize.h"
 
 
+
 //初期化
 void SceneLoading::Initialize()
 {
@@ -33,7 +34,9 @@ void SceneLoading::Finalize()
 	if (thread)
 	{
 		thread->join();
-
+		delete thread;
+		thread = nullptr;
+	
 	}
 
 	//スプライト終了化
@@ -42,6 +45,9 @@ void SceneLoading::Finalize()
 		delete sprite;
 		sprite = nullptr;
 	}*/
+
+
+	
 }
 
 //更新処理

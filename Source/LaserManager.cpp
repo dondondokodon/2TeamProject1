@@ -118,7 +118,9 @@ void LaserManager::Render(const RenderContext& rc, ModelRenderer* renderer)
 //ステージオブジェクト登録
 void LaserManager::Register(Laser* stageObject)
 {
-	Lasers.emplace_back(stageObject);
+	std::unique_ptr<Laser> p(stageObject);
+
+	Lasers.emplace_back(std::move(p));
 }
 
 //ステージオブジェクト全削除
@@ -131,6 +133,7 @@ void LaserManager::Clear()
 	{
 		laser->GetBeam().StopEffect();
 	}
+
 	Lasers.clear();
 }
 

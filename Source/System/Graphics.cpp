@@ -175,6 +175,15 @@ void Graphics::Finalize()
 		IID_ID3D11Debug,
 		reinterpret_cast<void**>(&debug)
 	);
+#endif
+	
+	swapchain.Reset();
+	immediateContext.Reset();
+	device.Reset();
+
+#ifdef _DEBUG
+
+
 
 	if (SUCCEEDED(hr))
 	{
@@ -188,7 +197,5 @@ void Graphics::Finalize()
 
 #endif
 
-	swapchain.Reset();
-	immediateContext.Reset();
-	device.Reset();
+	
 }

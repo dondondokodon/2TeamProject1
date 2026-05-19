@@ -92,6 +92,8 @@ void IrradiationDevice::DrawDebugGUI()
 		{
 			//位置
 			ImGui::CheckboxFlags("isHit", (unsigned int*)&isHit, true);
+
+            ImGui::Text("isHit: %d oldHit: %d", isHit, oldHit);
 		}
 	}
 	ImGui::End();

@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include"Stage.h"
 #include"StageGrid.h"
@@ -10,29 +10,29 @@
 #include"Fade.h"
 #include "Tutorial1.h"
 
-// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
-class SceneGame:public Scene
+// ƒQ[ƒ€ƒV[ƒ“
+class SceneGame :public Scene
 {
 public:
-	SceneGame(){}
+	SceneGame() {}
 	~SceneGame()override {}
 
-	// åˆæœŸåŒ–
+	// ‰Šú‰»
 	void Initialize()override;
 
-	// çµ‚äº†åŒ–
+	// I—¹‰»
 	void Finalize()override;
 
-	// æ›´æ–°å‡¦ç†
+	// XVˆ—
 	void Update(float elapsedTime)override;
 
-	// æç”»å‡¦ç†
+	// •`‰æˆ—
 	void Render()override;
 
-	// GUIæç”»
+	// GUI•`‰æ
 	void DrawGUI()override;
 
-	// ã‚´ãƒ¼ãƒ«ã®å‡¦ç†
+	// ƒS[ƒ‹‚Ìˆ—
 	void Goal();
 private:
 	//Stage* stage = nullptr;
@@ -44,7 +44,6 @@ private:
 
 	Player* players[2] = {};
 	int controlPlayerIndex = 0;
-
 	void InputChangePlayer();
 	Player* GetControlPlayer();
 	SkyBox skyBox;

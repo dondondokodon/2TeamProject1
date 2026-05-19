@@ -1,33 +1,33 @@
-#include <filesystem>
+ï»¿#include <filesystem>
 #include <imgui.h>
 #include "System/Graphics.h"
 #include "ResourceManager.h"
 
-// ƒ‚ƒfƒ‹ƒŠƒ\[ƒX“Ç‚İ‚İ
+// ãƒ¢ãƒ‡ãƒ«ãƒªã‚½ãƒ¼ã‚¹èª­ã¿è¾¼ã¿
 std::shared_ptr<ModelResource> ResourceManager::LoadModelResource(const char* filename)
 {
-	//Šù‚É“Ç‚İ‚Ü‚ê‚Ä‚¢‚½ê‡‚Í“Ç‚İ‚İÏ‚İ‚ÌƒŠƒ\[ƒX‚ğ•Ô‚·
-	auto it = models.find(filename);	//filename‚ÌƒL[‚ªŒ©‚Â‚©‚Á‚½‚ç‚»‚ÌêŠ‚ª“ü‚è@‚È‚©‚Á‚½‚çend‚Ì’l‚ª“ü‚é
-	if (it != models.end())				//Œ©‚Â‚©‚Á‚½‚©
+	//æ—¢ã«èª­ã¿è¾¼ã¾ã‚Œã¦ã„ãŸå ´åˆã¯èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’è¿”ã™
+	auto it = models.find(filename);	//filenameã®ã‚­ãƒ¼ãŒè¦‹ã¤ã‹ã£ãŸã‚‰ãã®å ´æ‰€ãŒå…¥ã‚Šã€€ãªã‹ã£ãŸã‚‰endã®å€¤ãŒå…¥ã‚‹
+	if (it != models.end())				//è¦‹ã¤ã‹ã£ãŸã‹
 	{
-		if (!it->second.expired())		//‚Ü‚¾QÆ‚µ‚Ä‚¢‚é‚©
+		if (!it->second.expired())		//ã¾ã å‚ç…§ã—ã¦ã„ã‚‹ã‹
 		{
 			return it->second.lock();
 		}
 	}
 
-	//V‹Kƒ‚ƒfƒ‹ƒŠƒ\[ƒXì¬•“Ç‚İ‚İ
+	//æ–°è¦ãƒ¢ãƒ‡ãƒ«ãƒªã‚½ãƒ¼ã‚¹ä½œæˆï¼†èª­ã¿è¾¼ã¿
 	std::shared_ptr<ModelResource> p = std::make_shared<ModelResource>();
 	p->Load(Graphics::Instance().GetDevice(), filename);
 
-	//“Ç‚İ‚İŠÇ——p‚Ì•Ï”‚É“o˜^
+	//èª­ã¿è¾¼ã¿ç®¡ç†ç”¨ã®å¤‰æ•°ã«ç™»éŒ²
 	models[filename] = p;
 
-	//ì¬‚µ‚½ƒŠƒ\[ƒX‚ğ•Ô‚·
+	//ä½œæˆã—ãŸãƒªã‚½ãƒ¼ã‚¹ã‚’è¿”ã™
 	return p;
 }
 
-// ƒfƒoƒbƒOGUI•`‰æ
+// ãƒ‡ãƒãƒƒã‚°GUIæç”»
 void ResourceManager::DrawDebugGUI()
 {
 	if (ImGui::CollapsingHeader("Resource", ImGuiTreeNodeFlags_DefaultOpen))
@@ -42,3 +42,7 @@ void ResourceManager::DrawDebugGUI()
 	}
 }
 
+void ResourceManager::Clear()  
+{  
+    models.clear(); // map ã‚„ vector ã§ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ãƒŠã‚’å…¨éƒ¨ clear  
+}

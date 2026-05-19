@@ -103,8 +103,10 @@ public:
 	//レーザーマネージャー取得
 	LaserManager* GetLaserManager();
 
+
 	//セッター
-	void setLaserManager(LaserManager* mgr);
+	void setLaserManager(std::unique_ptr<LaserManager> mgr);
+
 
 	void setStageIndex(int num) { nextStageIndex = num; }
 
@@ -119,7 +121,7 @@ private:
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::set<StageObject*> removes;
-	LaserManager* laserManager;	//循環するから前方宣言で使えるようにポインタにする
+	std::unique_ptr<LaserManager> laserManager;
 	std::vector<std::unique_ptr<StageData>> stageDatas;
 	int nextStageIndex = 0;
 	std::vector<StageGrid*> grids;

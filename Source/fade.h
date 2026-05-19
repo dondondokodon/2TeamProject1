@@ -25,6 +25,7 @@ public:
 
 	void Initialize();
 
+
     void Update(float elapsedTime);
     void Render(const RenderContext& rc);
 
@@ -36,7 +37,7 @@ public:
 
 private:
 
-    Sprite* sprite = nullptr;
+    std::unique_ptr<Sprite> sprite;
 
     State state = State::None;
 
