@@ -7,11 +7,11 @@
 
 void Tutorial2::Initialize()
 {
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_08.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_08.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.75f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_09.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_09.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.75f), 700.0f, 400.0f));
 
-	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial10.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 600.0f, 400.0f));
+	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial10.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.75f), 700.0f, 400.0f));
 
 	sprites.push_back(std::make_unique<Sprite2D>("Data/Sprite/Tutorials/tutorial_11.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.7f), 800.0f, 600.0f));
 
