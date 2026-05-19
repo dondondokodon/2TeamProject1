@@ -296,6 +296,7 @@
     <ClInclude Include="Source\Tutorial1.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Tutorial2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -501,6 +502,9 @@
     </ClCompile>
     <ClCompile Include="Source\Tutorial1.cpp">
       <Filter>Source\.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tutorial2.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
