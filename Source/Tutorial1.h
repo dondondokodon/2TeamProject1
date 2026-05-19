@@ -14,7 +14,6 @@ public:
 	void Render() override;
 
 private:
-	int renderIndex = 0;
 	unsigned int buttonState[2] = { 0,0 };
 	unsigned int buttonDown = 0;
 	bool isRender = true;

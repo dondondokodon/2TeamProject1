@@ -15,9 +15,12 @@ public:
 	virtual void Update(float elapsedTime) = 0;
 	virtual void Render()=0;
 
+	void setEnd() { isEnd = true;renderIndex=sprites.size()-1; }
+
 	protected:
 		std::vector<std::unique_ptr<Sprite2D>> sprites;
 		int index = 0;
+		int renderIndex = 0;
 		bool isEnd = false;
 };
 

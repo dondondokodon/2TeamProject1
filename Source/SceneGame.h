@@ -39,7 +39,8 @@ private:
 	//StageGrid* stageGrid = nullptr;
 	//Mirror* mirror = nullptr;
 	CameraController* cameraController = nullptr;
-	Tutorial1 tutorial1;
+	std::vector<std::unique_ptr<Tutorial>> tutorials;
+	int tutorialIndex = 0;
 
 	Player* players[2] = {};
 	int controlPlayerIndex = 0;
