@@ -23,6 +23,7 @@
 #include "Tutorial1.h"
 #include "Tutorial2.h"
 
+#include "AudioManager.h"
 
 void SceneGame::Initialize()
 {
@@ -99,6 +100,10 @@ void SceneGame::Initialize()
 	}
 	else
 	tutorials[tutorialIndex]->Initialize();
+
+	//音初期化
+	AudioManager::Instance().Initialize();
+	Flag::Instance().SetFlag(Flag::eventName::StageBGM, true);
 }
 
 // 終了化
@@ -242,6 +247,9 @@ void SceneGame::Update(float elapsedTime)
 			Goal();*/
 		//return;
 	}
+
+	//音
+	AudioManager::Instance().Update(elapsedTime);
 
 	//デバッグ用
 #if GAME_ENABLE_DEBUG_TOOLS

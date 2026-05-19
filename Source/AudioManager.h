@@ -9,10 +9,10 @@ class AudioManager
 	~AudioManager() { Clear(); };
 
 public:
-	static AudioManager* Instance()
+	static AudioManager& Instance()
 	{
 		static AudioManager instance;
-		return &instance;
+		return instance;
 	}
 
 	//初期化
