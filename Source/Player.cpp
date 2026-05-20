@@ -25,7 +25,7 @@ void Player::Initialize(const char* modelPath)
 	//hitEffect = new Effect("Data/Effect/Hit.efk");
 
 	//ヒットSE読み込み
-	hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
+	//hitSE = Audio::Instance().LoadAudioSource("Data/Sound/Hit.wav");
 
 	//アニメーションコントローラーにモデルをセット
 	animation.setModel(model.get());
@@ -51,7 +51,7 @@ void Player::Initialize(const char* modelPath)
 //デストラクタ
 void Player::Finalize()
 {
-	delete hitSE;
+	//delete hitSE;
 	//delete hitEffect;
 	//delete model;
 }

@@ -6,7 +6,7 @@ class IrradiationDevice:public StageObject
 public:
 	IrradiationDevice():modelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDevice2.mdl"),isActiveModelFilename("Data/Model/Objects/IrradiationDevice/IrradiationDeviceIsActive2.mdl")
 	{
-		SetModel(modelFilename);
+		SetModel(isActiveModelFilename);	//最初こっちにしたら　正しく動いた
 	}
 	~IrradiationDevice() = default;
 

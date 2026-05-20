@@ -165,7 +165,7 @@ private:
 	float rideOffsetY = 0.5f;
 
 	//Effect* hitEffect = nullptr;
-	AudioSource* hitSE = nullptr;
+	//AudioSource* hitSE = nullptr;
 	AnimationController animation;
 	std::unique_ptr<PlayerState> state = nullptr;
 	//BoxCollider bodyCollider;

@@ -11,6 +11,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "EffectManager.h"
+#include "AudioManager.h"
 #include "ResourceManager.h"
 
 // 垂直同期間隔設定
@@ -54,6 +55,11 @@ Framework::~Framework()
 	ImGuiRenderer::Finalize();
 	ReleaseDC(hWnd, hDC);
 	EffectManager::Instance().Finalize();
+
+	//オーディオクリア
+	AudioManager::Instance().Clear();
+
+	//オーディオ終了化
 	Audio::Instance().Finalize();
 
 #ifdef _DEBUG

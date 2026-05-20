@@ -10,16 +10,20 @@ void LaserManager::Update(float elapsedTime)
 	// --- 回転入力処理 ---
 	float step = DirectX::XM_PI / 4.0f;
 
+	Flag::Instance().SetFlag(Flag::eventName::LaserRotateSE, false);
+
 	if (!isRotating)
 	{
 		if (gamePad.GetButtonDown() & GamePad::BTN_LEFT_SHOULDER)
 		{
 			targetAngleY -= step;
+			Flag::Instance().SetFlag(Flag::eventName::LaserRotateSE, true);
 			isRotating = true;
 		}
 		if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_SHOULDER)
 		{
 			targetAngleY += step;
+			Flag::Instance().SetFlag(Flag::eventName::LaserRotateSE, true);
 			isRotating = true;
 		}
 	}
