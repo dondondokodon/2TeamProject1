@@ -631,58 +631,11 @@ void Player::CollisionPlayerVsStage()
 
 			isHit = true;
 
-			// ロボットは正面に鏡を持っているので、
-			// レーザーが正面側から当たっている場合だけ、レーザー内に入れるようにする。
-			// 横や背中側から当たっている場合は鏡で受けられないため、通常通り押し出す。
+			// Player2はレーザーを止める側なので、レーザーで押し戻さない
+			// レーザーの反射・停止は LaserBeam 側で処理する
 			if (isRobot)
 			{
-				bool laserFromFront = false;
-
-				// ロボットの正面方向
-				DirectX::XMFLOAT3 forward = GetForward();
-
-				for (const auto& seg : laser->GetBeam().segments)
-				{
-					// レーザー線分の進行方向を求める
-					DirectX::XMFLOAT3 segDir = {
-						seg.end.x - seg.start.x,
-						seg.end.y - seg.start.y,
-						seg.end.z - seg.start.z
-					};
-
-					float len = sqrtf(
-						segDir.x * segDir.x +
-						segDir.y * segDir.y +
-						segDir.z * segDir.z
-					);
-
-					// 長さがない線分は判定できないので飛ばす
-					if (len <= 0.0001f) continue;
-
-					// 方向ベクトルを正規化
-					segDir.x /= len;
-					segDir.y /= len;
-					segDir.z /= len;
-
-					// レーザーは segDir 方向へ進んでいる。
-					// ロボットから見ると、レーザーが来る方向は -segDir。
-					// それがロボットの正面 forward と近ければ、正面から受けている。
-					float frontDot =
-						(-segDir.x) * forward.x +
-						(-segDir.z) * forward.z;
-
-					if (frontDot > 0.1f)
-					{
-						laserFromFront = true;
-						break;
-					}
-				}
-
-				// 正面側から受けている場合は、鏡で反射できるので押し出さない
-				if (laserFromFront)
-				{
-					break;
-				}
+				break;
 			}
 
 			// 上に乗る処理
