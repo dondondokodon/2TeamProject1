@@ -1,6 +1,7 @@
 ﻿#include "StageGrid.h"
 #include"Collision.h"
 #include"Player.h"
+#include <imgui.h>
 
 
 
@@ -33,6 +34,7 @@ void StageGrid::Update(float elapsedTime)
 {
     float moveSpeed = 2.0f;
 
+ 
     // ---------------------------------------------------------
     // ★ 移動中：ゆっくり moveSpeed で動く
     // ---------------------------------------------------------
@@ -289,90 +291,167 @@ bool StageGrid::StartMove(Player& player)
 
 void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
 {
-    if (!isMoving) return;
+    if (!isMoving)
+        return;
 
-    // --------------------------------------
-    // ★ 進行方向ベクトル
-    // --------------------------------------
-    DirectX::XMFLOAT3 forward =
+    const float boxRadius = 2.4f;
+    const float skin = 0.05f;
+    const float rayLength = boxRadius + skin;
+
+    DirectX::XMFLOAT3 rayDir =
     {
         moveDir.x,
         0.0f,
         moveDir.z
     };
 
-    // --------------------------------------
-    // ★ 箱の半径（AABB基準）
-    // --------------------------------------
-    float startOffset = 2.4f;
-
-    // --------------------------------------
-    // ★ レイ発射位置（箱の外側）
-    // --------------------------------------
-    DirectX::XMFLOAT3 start =
+    DirectX::XMFLOAT3 sideDir =
     {
-        position.x + forward.x * startOffset,
-        position.y + 0.5f,
-        position.z + forward.z * startOffset
+        -rayDir.z,
+        0.0f,
+        rayDir.x
     };
 
-    // --------------------------------------
-    // ★ 進行方向へ少しだけレイを飛ばす
-    // --------------------------------------
-    float rayLength = 0.6f;
+    const float sideOffset = boxRadius * 0.7f;
 
-    const float offset = 0.3f;
+    // 高さを上げる
+    const float rayHeight = 2.0f;
 
-    DirectX::XMFLOAT3 starts[3] =
-    {
-        start,
-        { start.x, start.y, start.z + offset },
-        { start.x, start.y, start.z - offset }
-    };
-
-    DirectX::XMFLOAT3 ends[3] =
+    DirectX::XMFLOAT3 origins[3] =
     {
         {
-            starts[0].x + moveDir.x * rayLength,
-            starts[0].y,
-            starts[0].z + moveDir.z * rayLength
+            position.x,
+            position.y + rayHeight,
+            position.z
         },
+
         {
-            starts[1].x + moveDir.x * rayLength,
-            starts[1].y,
-            starts[1].z + moveDir.z * rayLength
+            position.x + sideDir.x * sideOffset,
+            position.y + rayHeight,
+            position.z + sideDir.z * sideOffset
         },
+
         {
-            starts[2].x + moveDir.x * rayLength,
-            starts[2].y,
-            starts[2].z + moveDir.z * rayLength
+            position.x - sideDir.x * sideOffset,
+            position.y + rayHeight,
+            position.z - sideDir.z * sideOffset
         }
     };
 
-    DirectX::XMFLOAT3 hitPos, hitNormal;
-    RayHitResult result = stageObjectManager.RayCastAny(
-        starts,
-        ends,
-        3,
-        this,
-        hitPos,
-        hitNormal);
+    for (const auto& origin : origins)
+    {
+        DirectX::XMFLOAT3 end =
+        {
+            origin.x + rayDir.x * rayLength,
+            origin.y,
+            origin.z + rayDir.z * rayLength
+        };
 
-    if (result.hit)
+        DirectX::XMFLOAT3 hitPos, hitNormal;
+
+        RayHitResult result =
+            stageObjectManager.RayCast(
+                origin,
+                end,
+                hitPos,
+                hitNormal);
+
+        if (result.hit)
+        {
+            // 壁だけ止める
+            if (result.type == RayHitType::Stop)
+            {
+                isMoving = false;
+                moveRemain = 0.0f;
+
+                if (pushingPlayer)
+                {
+                    pushingPlayer->StopBoxPush();
+                }
+
+                pushingPlayer = nullptr;
+
+                return;
+            }
+        }
+    }
+}
+
+
+void StageGrid::CollisionVsFloor(StageObjectManager& mgr)
+{
+    if (!isMoving)
+        return;
+
+    // ★ 進行方向に少し前へオフセット
+    const float forwardOffset = 2.2f; // ← 好きに調整できる（2.4f より少し小さく）
+    DirectX::XMFLOAT3 forward =
+    {
+        position.x + moveDir.x * forwardOffset,
+        position.y,
+        position.z + moveDir.z * forwardOffset
+    };
+
+    // レイ開始位置（少し上）
+    DirectX::XMFLOAT3 origin =
+    {
+        forward.x,
+        forward.y + 1.0f,
+        forward.z
+    };
+
+    // レイ終了位置（下方向）
+    DirectX::XMFLOAT3 end =
+    {
+        forward.x,
+        forward.y - 5.0f,
+        forward.z
+    };
+
+    DirectX::XMFLOAT3 hitPos, hitNormal;
+
+    RayHitResult result = mgr.RayCast(origin, end, hitPos, hitNormal);
+
+    // ★床が無い（＝レイが何も当たらない）
+    if (!result.hit)
     {
         isMoving = false;
         moveRemain = 0.0f;
 
-		//固定用・消す
         if (pushingPlayer)
-        {
             pushingPlayer->StopBoxPush();
-        }
 
         pushingPlayer = nullptr;
-        return;
     }
 }
+
+void StageGrid::PushRobots(const std::vector<Player*>& robots)
+{
+    for (Player* robot : robots)
+    {
+        if (!robot || !robot->GetIsRobot()) continue;
+
+        DirectX::XMFLOAT3 rpos = robot->GetPosition();
+        DirectX::XMFLOAT3 push;
+
+        if (Collision::IntersectCylinderVsAABB(
+            rpos,
+            robot->GetRadius(),
+            robot->GetHeight(),
+            aabbMin,
+            aabbMax,
+            push))
+        {
+            rpos.x += push.x;
+            rpos.z += push.z;
+            robot->SetPosition(rpos);
+        }
+    }
+}
+
+
+
+
 
 void StageGrid::CollisionVsGrid(
     std::vector<StageGrid*>& grids)
@@ -495,3 +574,103 @@ void StageGrid::CollisionVsMirror(
         }
     }
 }
+
+void StageGrid::CollisionVsIrradiationDevice(
+    std::vector<IrradiationDevice*>& devices)
+{
+    if (!isMoving)
+        return;
+
+    // 次位置
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // 次AABB
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    for (IrradiationDevice* device : devices)
+    {
+        if (Collision::IntersectAABBVsAABB(
+            nextMin,
+            nextMax,
+            device->GetAABBMin(),
+            device->GetAABBMax()))
+        {
+            // 停止
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            if (pushingPlayer)
+            {
+                pushingPlayer->StopBoxPush();
+            }
+
+            pushingPlayer = nullptr;
+
+            return;
+        }
+    }
+}
+
+void StageGrid::CollisionVsStairs(std::vector<Stairs*>& stairsList)
+{
+    if (!isMoving) return;
+
+    // 次位置
+    DirectX::XMFLOAT3 nextPos =
+    {
+        position.x + moveDir.x * moveRemain,
+        position.y,
+        position.z + moveDir.z * moveRemain
+    };
+
+    // 次AABB
+    DirectX::XMFLOAT3 nextMin =
+    {
+        nextPos.x - 2.4f,
+        nextPos.y - 2.4f,
+        nextPos.z - 2.4f
+    };
+
+    DirectX::XMFLOAT3 nextMax =
+    {
+        nextPos.x + 2.4f,
+        nextPos.y + 2.4f,
+        nextPos.z + 2.4f
+    };
+
+    for (Stairs* stairs : stairsList)
+    {
+        if (Collision::IntersectAABBVsAABB(
+            nextMin, nextMax,
+            stairs->aabbMin, stairs->aabbMax))
+        {
+            // 階段にぶつかったら木箱を止める
+            isMoving = false;
+            moveRemain = 0.0f;
+
+            if (pushingPlayer)
+                pushingPlayer->StopBoxPush();
+
+            pushingPlayer = nullptr;
+            return;
+        }
+    }
+}
+

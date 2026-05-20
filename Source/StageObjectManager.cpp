@@ -47,6 +47,10 @@ void StageObjectManager::Update(float elapsedTime)
 		grid->CollisionVsGrid(grids);
 
 		grid->CollisionVsMirror(mirrors);
+
+		grid->CollisionVsFloor(*this);
+
+		grid->CollisionVsStairs(stairsList);
 	}
 
 	for (auto& stageObject : stageObjects)
@@ -59,6 +63,7 @@ void StageObjectManager::Update(float elapsedTime)
 	// ---------------------------
 	grids.clear();	
 	mirrors.clear();
+	stairsList.clear();
 
 	// ---------------------------
 	// 木箱,鏡収集
@@ -78,7 +83,14 @@ void StageObjectManager::Update(float elapsedTime)
 		{
 			mirrors.push_back(mirror);
 		}
+
+		if (Stairs* stairs =
+			dynamic_cast<Stairs*>(stageObject.get()))
+		{
+			stairsList.push_back(stairs);
+		}
 	}
+
 
 
 	//破棄処理
@@ -102,13 +114,6 @@ void StageObjectManager::Update(float elapsedTime)
 		laserManager->Update(elapsedTime);
 }
 
-
-class Test
-{
-public:
-	Test() {}
-	int a;
-};
 
 
 //描画処理

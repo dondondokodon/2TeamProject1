@@ -4,6 +4,24 @@
 
 void IrradiationDevice::Update(float elapsedTime)
 {
+
+
+
+    aabbMin =
+    {
+        position.x,
+        position.y,
+        position.z  
+    };
+
+    aabbMax =
+    {
+        position.x,
+        position.y,
+        position.z  
+    };
+
+
     //フラグの更新
     Flag::Instance().SetFlag(Flag::Instance().openGoal,isHit);
 

@@ -7,6 +7,8 @@
 #include"RayHitType.h"
 #include"StageData.h"
 #include "Mirror.h"
+#include "IrradiationDevice.h"
+#include <Stairs.h>
 //#include"LaserManager.h"
 
 class StageGrid;
@@ -23,6 +25,12 @@ public:
 		static StageObjectManager instance;
 		return instance;
 	}
+
+	const std::vector<StageGrid*>& GetGrids() const { return grids; }
+
+	std::vector<Stairs*> stairsList;
+	const std::vector<Stairs*>& GetStairs() const { return stairsList; }
+
 
 	//更新処理
 	void Update(float elapsedTime);
@@ -126,5 +134,6 @@ private:
 	int nextStageIndex = 0;
 	std::vector<StageGrid*> grids;
 	std::vector<Mirror*> mirrors;
+	std::vector<IrradiationDevice*> devices;
 };
 

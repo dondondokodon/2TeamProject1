@@ -505,6 +505,9 @@
     <ClCompile Include="Source\Tutorial2.cpp">
       <Filter>Source\.cpp</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Sprite.hlsli">

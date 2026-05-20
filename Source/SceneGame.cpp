@@ -220,7 +220,23 @@ void SceneGame::Update(float elapsedTime)
 	// Player::Instance().Update(elapsedTime);
 
 	//ステージオブジェクト更新処理
-	StageObjectManager::Instance().Update(gameElapsedTime);
+	StageObjectManager& mgr = StageObjectManager::Instance();
+	mgr.Update(gameElapsedTime);
+
+	// ロボット一覧を作成
+	std::vector<Player*> robots;
+	for (int i = 0; i < 2; ++i)
+	{
+		if (players[i] && players[i]->GetIsRobot())
+			robots.push_back(players[i]);
+	}
+
+	// 木箱ごとにロボット押し戻し
+	for (StageGrid* grid : mgr.GetGrids())
+	{
+		grid->PushRobots(robots);
+	}
+
 
 	// レーザー側でPlayer2の鏡判定を行えるように、現在のプレイヤー配列を各レーザーへ渡しておく。
 	// Player2はStageObjectではない→StageObjectManagerのRayCastだけではレーザー反射判定に入らない

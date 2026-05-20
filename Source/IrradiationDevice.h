@@ -33,10 +33,17 @@ public:
 		renderer->RenderBox(rc, position, angle, scale, DirectX::XMFLOAT4(0, 0, 1, 1));
 	}*/
 
+
+
+	const DirectX::XMFLOAT3& GetAABBMin() const { return aabbMin; }
+	const DirectX::XMFLOAT3& GetAABBMax() const { return aabbMax; }
+
 private:
 	const char* modelFilename;
 	const char* isActiveModelFilename;
 	bool isHit = false;
 	bool oldHit = false;
+	DirectX::XMFLOAT3 aabbMin;
+	DirectX::XMFLOAT3 aabbMax;
 };
 

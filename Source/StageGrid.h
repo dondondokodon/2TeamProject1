@@ -9,6 +9,8 @@
 #include"StageObjectManager.h"
 #include"Mirror.h"
 #include"Effect.h"
+#include"IrradiationDevice.h"
+#include"Stairs.h"
 
 class Mirror;
 
@@ -42,11 +44,21 @@ public:
 
     void CollisionVsStage(StageObjectManager& stageObjectManager);
 
+    void CollisionVsFloor(StageObjectManager& mgr);
+
+    void PushRobots(const std::vector<Player*>& robots);
+
     void CollisionVsGrid(
         std::vector<StageGrid*>& grids);
 
     void CollisionVsMirror(
         std::vector<Mirror*>& mirrors);
+
+    void CollisionVsIrradiationDevice(
+        std::vector<IrradiationDevice*>& devices);
+
+    void CollisionVsStairs(std::vector<Stairs*>& stairsList);
+
 
     DirectX::XMFLOAT3 GetAABBMin() const { return aabbMin; }
     DirectX::XMFLOAT3 GetAABBMax() const { return aabbMax; }

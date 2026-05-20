@@ -10,6 +10,10 @@ public:
     Stairs();
     ~Stairs();
 
+    DirectX::XMFLOAT3 aabbMin;
+    DirectX::XMFLOAT3 aabbMax;
+
+
     void Update(float elapsedTime) override;
     void Render(const RenderContext& rc, ModelRenderer* renderer) override;
     void CollisionVsPlayer(Player& p);
