@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "type": "Laser",
     "PosX": 7.5,
@@ -77,7 +77,7 @@
   {
     "type": "Box",
     "PosX": -12.5,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": 0,
     "angleX": 0,
     "angleY": 0,
@@ -91,8 +91,8 @@
   },
   {
     "type": "Box",
-    "PosX": -1,
-    "PosY": 1,
+    "PosX": 3,
+    "PosY": 0.8,
     "PosZ": 10,
     "angleX": 0,
     "angleY": 0,
@@ -107,7 +107,7 @@
   {
     "type": "Box",
     "PosX": -5.5,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": 2,
     "angleX": 0,
     "angleY": 0,
@@ -122,7 +122,7 @@
   {
     "type": "Box",
     "PosX": 10.5,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": 6.5,
     "angleX": 0,
     "angleY": 0,
@@ -137,7 +137,7 @@
   {
     "type": "Box",
     "PosX": 11,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": -5,
     "angleX": 0,
     "angleY": 0,
@@ -152,7 +152,7 @@
   {
     "type": "Box",
     "PosX": 7,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": -10.5,
     "angleX": 0,
     "angleY": 0,
@@ -211,7 +211,7 @@
   },
   {
     "type": "Mirror",
-    "PosX": -6.5,
+    "PosX": -7.5,
     "PosY": 2,
     "PosZ": -7,
     "angleX": 0,
@@ -227,7 +227,7 @@
   {
     "type": "Box",
     "PosX": -3,
-    "PosY": 1,
+    "PosY": 0.8,
     "PosZ": -10.5,
     "angleX": 0,
     "angleY": 0,
