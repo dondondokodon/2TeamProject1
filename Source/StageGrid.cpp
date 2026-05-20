@@ -209,6 +209,18 @@ void StageGrid::CollisionVsPlayer(Player& p)
         auto playerPos = p.GetPosition();
         auto moveVec = p.GetMoveVec();
 
+
+        //箱の上に乗っているときなどに押せてしまうので
+        float playerFootY = playerPos.y;
+
+        float boxTopY = aabbMax.y - 0.7f;
+
+        // もしプレイヤーの足元が、箱の上面よりも高い位置にあるなら乗っているとみなして処理を抜ける
+        if (playerFootY >= boxTopY)
+        {
+            return;
+        }
+
         // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
         if (!isMoving && p.GetIsControlling() && !p.GetIsRobot())
         {
