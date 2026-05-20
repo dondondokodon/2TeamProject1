@@ -447,7 +447,16 @@ void Player::StopBoxPush()
 
 	ResetMove();
 
-	animation.PlayAnimation("Idle", true);
+	//移動入力があるときはRunアニメーション、ないときはIdleアニメーションにする
+	DirectX::XMFLOAT3 moveVec = GetMoveVec();
+	if ((fabsf(moveVec.x) > 0.01f || fabsf(moveVec.z) > 0.01f))
+	{
+		animation.PlayAnimation("Run", true);
+	}
+	else
+	{
+		animation.PlayAnimation("Idle", true);
+	}
 }
 //ここまで
 
