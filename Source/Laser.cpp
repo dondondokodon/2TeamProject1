@@ -168,7 +168,10 @@ void LaserBeam::Update(float elapsedTime)
 						hit.object = nullptr;
 						hit.type = RayHitType::Stop;
 						hit.hitPos = closest;
-						hit.hitNormal = { 0.0f, 1.0f, 0.0f };
+
+						// Player2本体で止めた時のヒットエフェクト用の向き
+						// 上向き(0,1,0)にするとエフェクトが上から出るので、レーザーが来た方向へ向ける
+						hit.hitNormal = { -dir.x, -dir.y, -dir.z };
 
 						hitPos = closest;
 						hitNormal = hit.hitNormal;
