@@ -1,12 +1,12 @@
-#include "RideState.h"
+ï»¿#include "RideState.h"
 #include "Player.h"
 
 void RideState::Initialize(Player& player)
 {
-	//Œ¨Ôó‘Ô‚É“ü‚Á‚½uŠÔ‚ÉˆÚ“®“ü—Í‚ğ~‚ß‚é
+	//è‚©è»ŠçŠ¶æ…‹ã«å…¥ã£ãŸç¬é–“ã«ç§»å‹•å…¥åŠ›ã‚’æ­¢ã‚ã‚‹
 	player.ResetMove();
 
-	//Å‰‚Í‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“‚É‚·‚é
+	//æœ€åˆã¯å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«ã™ã‚‹
 	isWalkAnimation = false;
 	player.GetAnimation().PlayAnimation("Idle", true);
 }
@@ -17,14 +17,14 @@ void RideState::Finalize(Player& player)
 
 void RideState::Update(Player& player, float elapsedTime, bool canControl)
 {
-	//Œ¨ÔˆÊ’u‚Ü‚Åã‚ª‚è‚«‚Á‚Ä‚¢‚È‚¢ŠÔ‚ÍA‘€ì‚¹‚¸‚ä‚Á‚­‚èã‚ª‚é
+	//è‚©è»Šä½ç½®ã¾ã§ä¸ŠãŒã‚Šãã£ã¦ã„ãªã„é–“ã¯ã€æ“ä½œã›ãšã‚†ã£ãã‚Šä¸ŠãŒã‚‹
 	if (!player.IsRideReady())
 	{
 		player.UpdateRiding(elapsedTime);
 		return;
 	}
 
-	//‘€ì’†‚È‚çAŒ¨Ô’†‚Å‚àPlayer1‚ğ“®‚©‚·
+	//æ“ä½œä¸­ãªã‚‰ã€è‚©è»Šä¸­ã§ã‚‚Player1ã‚’å‹•ã‹ã™
 	if (canControl)
 	{
 		player.InputMove(elapsedTime);
@@ -33,13 +33,13 @@ void RideState::Update(Player& player, float elapsedTime, bool canControl)
 		DirectX::XMFLOAT3 moveVec = player.GetMoveVec();
 		bool isMoving = (fabsf(moveVec.x) > 0.0f || fabsf(moveVec.z) > 0.0f);
 
-		//ˆÚ“®‚µn‚ß‚½uŠÔ‚¾‚¯•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“‚ÉØ‚è‘Ö‚¦‚é
+		//ç§»å‹•ã—å§‹ã‚ãŸç¬é–“ã ã‘æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«åˆ‡ã‚Šæ›¿ãˆã‚‹
 		if (isMoving && !isWalkAnimation)
 		{
 			isWalkAnimation = true;
-			player.GetAnimation().PlayAnimation("Running", true);
+			player.GetAnimation().PlayAnimation("Run", true);
 		}
-		//~‚Ü‚Á‚½uŠÔ‚¾‚¯‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“‚ÉØ‚è‘Ö‚¦‚é
+		//æ­¢ã¾ã£ãŸç¬é–“ã ã‘å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«åˆ‡ã‚Šæ›¿ãˆã‚‹
 		else if (!isMoving && isWalkAnimation)
 		{
 			isWalkAnimation = false;
@@ -49,6 +49,6 @@ void RideState::Update(Player& player, float elapsedTime, bool canControl)
 		return;
 	}
 
-	//‘€ì’†‚Å‚È‚¢‚È‚çAæ‚Á‚Ä‚¢‚é‘Šè‚É‚Â‚¢‚Ä‚¢‚­
+	//æ“ä½œä¸­ã§ãªã„ãªã‚‰ã€ä¹—ã£ã¦ã„ã‚‹ç›¸æ‰‹ã«ã¤ã„ã¦ã„ã
 	player.UpdateRiding(elapsedTime);
 }

@@ -107,29 +107,38 @@ if (isRiding && !rideReady)
 UpdateVelocity(elapsedTime);
 
 // 肩車中の位置固定処理
-if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+if (isRiding && ridingTarget != nullptr && rideReady)
 {
-	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
-
-	float dx = position.x - targetPosition.x;
-	float dz = position.z - targetPosition.z;
-	float distanceSq = dx * dx + dz * dz;
-
-	float standRadius = radius + ridingTarget->GetRadius();
-
-	if (distanceSq < standRadius * standRadius)
+	if (!canControl)
 	{
-		float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
-
-		position.y = targetY;
-		velocity.y = 0.0f;
-		isGround = true;
+		// 操作していない肩車中は、速度更新後にもう一度位置を合わせる
+		// これをしないと待機中でも重力や残った速度で少しずつ滑る
+		UpdateRiding(elapsedTime);
 	}
 	else
 	{
-		isRiding = false;
-		ridingTarget = nullptr;
-		isGround = false;
+		DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+		float dx = position.x - targetPosition.x;
+		float dz = position.z - targetPosition.z;
+		float distanceSq = dx * dx + dz * dz;
+
+		float standRadius = radius + ridingTarget->GetRadius();
+
+		if (distanceSq < standRadius * standRadius)
+		{
+			float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
+
+			position.y = targetY;
+			velocity.y = 0.0f;
+			isGround = true;
+		}
+		else
+		{
+			isRiding = false;
+			ridingTarget = nullptr;
+			isGround = false;
+		}
 	}
 }
 
