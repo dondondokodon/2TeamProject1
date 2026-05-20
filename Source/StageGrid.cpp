@@ -22,6 +22,8 @@ StageGrid::StageGrid()
 
     gridX = 0;
     gridZ = 0;
+
+    isEffectPlaying = false;
 }
 
 
@@ -39,6 +41,32 @@ void StageGrid::Update(float elapsedTime)
     if (isMoving)
     {
         float delta = moveSpeed * elapsedTime;  // 今フレームで動く量
+
+        // プッシュエフェクト再生
+        if (pushEffect&&!isEffectPlaying)
+        {
+            DirectX::XMFLOAT3 effectPos = position;
+
+            // エフェクトを箱の中心から押している側へずらす距離
+            // 値を大きくすると、エフェクトが箱から離れる
+            const float effectBackOffset = 0.6f;
+
+            // エフェクトの高さ
+            // 値を大きくすると上に出る
+            // 値をマイナスにすると下に出る
+            const float effectHeight = -0.8f;
+
+            // エフェクトの大きさ
+            // 値を大きくすると、エフェクトが大きく表示される
+            const float effectScale = 0.09f;
+
+            effectPos.x -= moveDir.x * effectBackOffset;
+            effectPos.z -= moveDir.z * effectBackOffset;
+            effectPos.y += effectHeight;
+
+            pushEffect->Play(effectPos, effectScale);
+            isEffectPlaying = true;
+        }
 
         // 残り距離を超えないように調整
         if (delta > moveRemain)
@@ -78,6 +106,7 @@ void StageGrid::Update(float elapsedTime)
             }
 
             pushingPlayer = nullptr;
+            isEffectPlaying = false;
         }
     }
 
@@ -214,31 +243,6 @@ void StageGrid::CollisionVsPlayer(Player& p)
                 if (StartMove(p)) //木箱押すまでの固定用
                 {
                     p.StartBoxPush();
-
-					// プッシュエフェクト再生
-                    if (pushEffect)
-                    {
-                        DirectX::XMFLOAT3 effectPos = position;
-
-                        // エフェクトを箱の中心から押している側へずらす距離
-                        // 値を大きくすると、エフェクトが箱から離れる
-                        const float effectBackOffset = 0.6f;
-
-                        // エフェクトの高さ
-                        // 値を大きくすると上に出る
-                        // 値をマイナスにすると下に出る
-                        const float effectHeight = -0.8f;
-
-                        // エフェクトの大きさ
-                        // 値を大きくすると、エフェクトが大きく表示される
-                        const float effectScale = 0.09f;
-
-                        effectPos.x -= moveDir.x * effectBackOffset;
-                        effectPos.z -= moveDir.z * effectBackOffset;
-                        effectPos.y += effectHeight;
-
-                        pushEffect->Play(effectPos, effectScale);
-                    }
                 }
             }
         }
@@ -283,7 +287,7 @@ bool StageGrid::StartMove(Player& player)
 
     isMoving = true;
     moveRemain = 1.0f;
-
+  
     return true;
 }
 
