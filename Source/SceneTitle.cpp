@@ -3,6 +3,7 @@
 #include "System/Input.h"
 #include "SceneGame.h"
 #include "SceneLoading.h"
+#include "SceneStageSelect.h"
 #include "SceneManager.h"
 
 #include "ScreenSize.h"
@@ -114,8 +115,12 @@ void SceneTitle::Update(float elapsedTime)
 	
 	if (!fade.IsFading()&&changeScene)
 	{
-		SceneManager::Instance().ChangeScene(
+		/*SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneGame)
+		);*/
+
+		SceneManager::Instance().ChangeScene(
+			new SceneLoading(new SceneStageSelect)
 		);
 	}
 

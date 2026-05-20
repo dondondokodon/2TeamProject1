@@ -302,7 +302,9 @@
     <ClInclude Include="Source\AudioManager.h">
       <Filter>Source\.h</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneStageSelect.h" />
+    <ClInclude Include="Source\SceneStageSelect.h">
+      <Filter>Source\.h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui-docking\imgui.cpp">
@@ -516,7 +518,7 @@
       <Filter>Source\.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneStageSelect.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\.cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
