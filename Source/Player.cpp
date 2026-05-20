@@ -107,29 +107,38 @@ if (isRiding && !rideReady)
 UpdateVelocity(elapsedTime);
 
 // 肩車中の位置固定処理
-if (isRiding && ridingTarget != nullptr && canControl && rideReady)
+if (isRiding && ridingTarget != nullptr && rideReady)
 {
-	DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
-
-	float dx = position.x - targetPosition.x;
-	float dz = position.z - targetPosition.z;
-	float distanceSq = dx * dx + dz * dz;
-
-	float standRadius = radius + ridingTarget->GetRadius();
-
-	if (distanceSq < standRadius * standRadius)
+	if (!canControl)
 	{
-		float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
-
-		position.y = targetY;
-		velocity.y = 0.0f;
-		isGround = true;
+		// 操作していない肩車中は、速度更新後にもう一度位置を合わせる
+		// これをしないと待機中でも重力や残った速度で少しずつ滑る
+		UpdateRiding(elapsedTime);
 	}
 	else
 	{
-		isRiding = false;
-		ridingTarget = nullptr;
-		isGround = false;
+		DirectX::XMFLOAT3 targetPosition = ridingTarget->GetPosition();
+
+		float dx = position.x - targetPosition.x;
+		float dz = position.z - targetPosition.z;
+		float distanceSq = dx * dx + dz * dz;
+
+		float standRadius = radius + ridingTarget->GetRadius();
+
+		if (distanceSq < standRadius * standRadius)
+		{
+			float targetY = targetPosition.y + ridingTarget->GetHeight() - rideOffsetY;
+
+			position.y = targetY;
+			velocity.y = 0.0f;
+			isGround = true;
+		}
+		else
+		{
+			isRiding = false;
+			ridingTarget = nullptr;
+			isGround = false;
+		}
 	}
 }
 
@@ -447,7 +456,16 @@ void Player::StopBoxPush()
 
 	ResetMove();
 
-	animation.PlayAnimation("Idle", true);
+	//移動入力があるときはRunアニメーション、ないときはIdleアニメーションにする
+	DirectX::XMFLOAT3 moveVec = GetMoveVec();
+	if ((fabsf(moveVec.x) > 0.01f || fabsf(moveVec.z) > 0.01f))
+	{
+		animation.PlayAnimation("Run", true);
+	}
+	else
+	{
+		animation.PlayAnimation("Idle", true);
+	}
 }
 //ここまで
 
@@ -615,58 +633,11 @@ void Player::CollisionPlayerVsStage()
 
 			isHit = true;
 
-			// ロボットは正面に鏡を持っているので、
-			// レーザーが正面側から当たっている場合だけ、レーザー内に入れるようにする。
-			// 横や背中側から当たっている場合は鏡で受けられないため、通常通り押し出す。
+			// Player2はレーザーを止める側なので、レーザーで押し戻さない
+			// レーザーの反射・停止は LaserBeam 側で処理する
 			if (isRobot)
 			{
-				bool laserFromFront = false;
-
-				// ロボットの正面方向
-				DirectX::XMFLOAT3 forward = GetForward();
-
-				for (const auto& seg : laser->GetBeam().segments)
-				{
-					// レーザー線分の進行方向を求める
-					DirectX::XMFLOAT3 segDir = {
-						seg.end.x - seg.start.x,
-						seg.end.y - seg.start.y,
-						seg.end.z - seg.start.z
-					};
-
-					float len = sqrtf(
-						segDir.x * segDir.x +
-						segDir.y * segDir.y +
-						segDir.z * segDir.z
-					);
-
-					// 長さがない線分は判定できないので飛ばす
-					if (len <= 0.0001f) continue;
-
-					// 方向ベクトルを正規化
-					segDir.x /= len;
-					segDir.y /= len;
-					segDir.z /= len;
-
-					// レーザーは segDir 方向へ進んでいる。
-					// ロボットから見ると、レーザーが来る方向は -segDir。
-					// それがロボットの正面 forward と近ければ、正面から受けている。
-					float frontDot =
-						(-segDir.x) * forward.x +
-						(-segDir.z) * forward.z;
-
-					if (frontDot > 0.1f)
-					{
-						laserFromFront = true;
-						break;
-					}
-				}
-
-				// 正面側から受けている場合は、鏡で反射できるので押し出さない
-				if (laserFromFront)
-				{
-					break;
-				}
+				break;
 			}
 
 			// 上に乗る処理

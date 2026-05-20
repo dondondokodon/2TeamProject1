@@ -33,7 +33,8 @@ public:
 
 private:
 	void PlayGoalEffect();
-	void UpdateGoalMarkerEffect(float elapsedTime);
+	void StopGoalEffect();
+	void UpdateGoalHitEffect(float elapsedTime);
 
 	DirectX::XMFLOAT3 aabbMin = { 0,0,0 };
 	DirectX::XMFLOAT3 aabbMax = { 0,0,0 };
@@ -43,8 +44,10 @@ private:
 	bool debugGoalJudgeEnabled = false;
 	float goalEffectHeight = 0.2f;
 	float goalEffectScale = 2.0f;
-	float goalMarkerEffectInterval = 2.1665f;
-	float goalMarkerEffectTimer = 0.0f;
+	float goalHitEffectInterval = 2.1665f;
+	float goalHitEffectTimer = 0.0f;
+	bool goalEffectPlaying = false;
+	Effekseer::Handle goalEffectHandle = -1;
 	std::unique_ptr<Effect> goalEffect = nullptr;
 };
 

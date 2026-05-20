@@ -174,6 +174,14 @@ void StageGrid::CollisionVsPlayer(Player& p)
         //pos.z += push.z;
         //p.SetPosition(pos);
 
+        // 箱の上に乗っている時は、横から箱を押している扱いにしない
+        // 上下の着地判定はプレイヤー側のレイキャストに任せる
+        const float topMargin = 0.15f;
+        if (p.GetPosition().y >= aabbMax.y - topMargin)
+        {
+            return;
+        }
+
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
 
@@ -181,7 +189,7 @@ void StageGrid::CollisionVsPlayer(Player& p)
         auto moveVec = p.GetMoveVec();
 
         // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
-        if (!isMoving && p.GetIsControlling() && !p.GetIsRobot())
+        if (!isMoving && p.GetIsControlling() && !p.GetIsRobot() && !p.IsRiding())
         {
             DirectX::XMFLOAT3 toBox = {
             position.x - playerPos.x,
