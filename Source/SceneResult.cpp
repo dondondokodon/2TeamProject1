@@ -5,6 +5,7 @@
 #include "SceneLoading.h"
 #include "SceneGame.h"
 #include "StageObjectManager.h"
+#include "SceneStageSelect.h"
 #include "SceneManager.h"
 #include <DirectXMath.h>
 
@@ -79,13 +80,13 @@ void SceneResult::Update(float elapsedTime)
 	fade.Update(elapsedTime);
 	if (!fade.IsFading() && changeScene)
 	{
-		if(isClear)
+		if(isClear)	//最期のステージクリアしたらタイトルに戻るようにしてる（仮）
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneTitle)
 		);
-		else
+		else //それ以外の時はステージセレクトに行く
 		SceneManager::Instance().ChangeScene(
-			new SceneLoading(new SceneGame)
+			new SceneLoading(new SceneStageSelect)
 		);
 		Flag::Instance().ClearFlag();
 	}

@@ -337,7 +337,7 @@ void SceneGame::Render()
 		skyBox.Render(rc, modelRenderer);
 
 		// Player2をステージ0で非表示にする
-		/*bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
 		for (int i = 0; i < 2; ++i)
 		{
 			if (hidePlayer2 && i == 1) continue;
@@ -346,7 +346,7 @@ void SceneGame::Render()
 			{
 				players[i]->Render(rc, modelRenderer);
 			}
-		}*/
+		}
 
 
 		//ステージオブジェクト描画

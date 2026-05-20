@@ -38,7 +38,10 @@ void SceneStageSelect::Initialize()
 	selectButtons[2].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.75f), 490.0f, 390.0f);
 	selectButtons[3].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.75f), 490.0f, 390.0f);
 
-	ButtonIndex = 0;
+	//ButtonIndex = 0;
+	ButtonIndex = StageObjectManager::Instance().GetStageIndex();
+	if (ButtonIndex < 0)ButtonIndex = 0;
+
 	prevAx = 0.0f;
 	prevAy = 0.0f;
 	num = 0;
