@@ -11,6 +11,7 @@ void LaserManager::Update(float elapsedTime)
 	float step = DirectX::XM_PI / 4.0f;
 
 	Flag::Instance().SetFlag(Flag::eventName::LaserRotateSE, false);
+	Flag::Instance().SetFlag(Flag::eventName::rotateLaser, false);
 
 	if (!isRotating)
 	{

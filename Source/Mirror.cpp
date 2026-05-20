@@ -36,6 +36,7 @@ void Mirror::Update(float elapsedTime)
     bool trgO = (nowO && !prevO);
 
     Flag::Instance().SetFlag(Flag::MirrorRotateSE, false);
+    Flag::Instance().SetFlag(Flag::rotateMirror, false);
 
     if (trgU)
     {
