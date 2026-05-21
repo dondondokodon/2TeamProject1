@@ -116,6 +116,7 @@ void SceneGame::Initialize()
 
 	//音初期化
 	AudioManager::Instance().Initialize();
+	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::StageBGM, true);
 }
 

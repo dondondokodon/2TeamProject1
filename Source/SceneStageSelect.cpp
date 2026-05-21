@@ -7,6 +7,8 @@
 #include"SceneLoading.h"
 #include"SceneGame.h"
 
+#include "AudioManager.h"
+
 SceneStageSelect::SceneStageSelect()
 {
 	ButtonIndex = 0;
@@ -46,6 +48,10 @@ void SceneStageSelect::Initialize()
 	prevAy = 0.0f;
 	num = 0;
 	changeScene = false;
+
+	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
+	Flag::Instance().SetFlag(Flag::eventName::ResultBGM, false);
+	Flag::Instance().SetFlag(Flag::eventName::StageBGM, false);
 }
 
 void SceneStageSelect::Update(float elapsedTime)
@@ -134,6 +140,8 @@ void SceneStageSelect::Update(float elapsedTime)
 
 	//フェード更新
 	fade.Update(elapsedTime);
+
+	AudioManager::Instance().Update(elapsedTime);
 }
 
 void SceneStageSelect::Render()

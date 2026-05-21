@@ -39,6 +39,7 @@ void SceneResult::Initialize()
 	resultPlayerAnimation.setModel(resultPlayerModel.get());
 
 	AudioManager::Instance().Initialize();
+	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::ResultBGM, true);
 	resultPlayerAnimation.PlayAnimation("Goal", true); // リザルト画面だけ勝利アニメーション
 }
