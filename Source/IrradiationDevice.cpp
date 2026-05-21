@@ -88,12 +88,14 @@ RayHitResult IrradiationDevice::ReallyHit(DirectX::XMFLOAT3 dir, DirectX::XMFLOA
             DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&transform);
             DirectX::XMVECTOR deviceForward = world.r[2];
             DirectX::XMVECTOR laserDir = DirectX::XMLoadFloat3(&dir);
+            laserDir = DirectX::XMVector3Normalize(laserDir);
+
 
             float dot;
             DirectX::XMStoreFloat(&dot, DirectX::XMVector3Dot(deviceForward, laserDir));
 
             // 正面（逆方向）から衝突している場合のみ
-            if (dot < 0.5f) {
+            if (dot < 0.0f) {
                 result.hit = true;
             }
         }

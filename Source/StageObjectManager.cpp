@@ -128,6 +128,7 @@ void StageObjectManager::Render(const RenderContext& rc, ModelRenderer* renderer
 	
 	if (laserManager)
 	laserManager->Render(rc, renderer);
+	stageFloor->Render(rc, renderer);
 }
 
 //ステージデータロード
@@ -178,11 +179,8 @@ void StageObjectManager::LoadStageData(int stageNum)
 		}
 	}
 
-
-
 	Register(stageDatas[stageNum]->MyStage.release());
-
-
+	stageFloor = std::move(stageDatas[stageNum]->StageFloor);
 }
 
 
@@ -332,6 +330,101 @@ RayHitResult StageObjectManager::RayCast(
 
 	return result;
 }
+
+//レイキャスト
+RayHitResult StageObjectManager::RayCastFloor(
+	const DirectX::XMFLOAT3& start,
+	const DirectX::XMFLOAT3& end
+	)
+{
+	RayHitResult result =
+	{
+		false,
+		nullptr,
+		RayHitType::Stop,
+		{0,0,0}
+	};
+
+
+	DirectX::XMFLOAT3 tempHitPos;
+	DirectX::XMFLOAT3 tempNormal;
+
+	// 一番近い距離
+	float nearestDistSq = FLT_MAX;
+
+	if (Collision::RayCast(
+		start,
+		end,
+		stageFloor->GetTransform(),
+		stageFloor->GetModel(),
+		tempHitPos,
+		tempNormal))
+	{
+		// start → hitPos の距離
+		float dx = tempHitPos.x - start.x;
+		float dy = tempHitPos.y - start.y;
+		float dz = tempHitPos.z - start.z;
+
+		float distSq =
+			dx * dx +
+			dy * dy +
+			dz * dz;
+
+		// より近い物だけ保存
+		if (distSq < nearestDistSq)
+		{
+			nearestDistSq = distSq;
+			result.hit = true;
+			result.object = stageFloor.get();
+			result.type = stageFloor->GetRayHitType();
+			result.hitPos = tempHitPos;
+			result.hitNormal = tempNormal;
+		}
+
+		
+	}
+
+	for (auto& obj : stageObjects)
+	{
+		DirectX::XMFLOAT3 tempHitPos;
+		DirectX::XMFLOAT3 tempNormal;
+		if (obj->GetRayHitType() == RayHitType::None)continue;
+		if (obj->GetModel() == nullptr)continue;
+
+		if (Collision::RayCast(
+			start,
+			end,
+			obj->GetTransform(),
+			obj->GetModel(),
+			tempHitPos,
+			tempNormal))
+		{
+			// start → hitPos の距離
+			float dx = tempHitPos.x - start.x;
+			float dy = tempHitPos.y - start.y;
+			float dz = tempHitPos.z - start.z;
+
+			float distSq =
+				dx * dx +
+				dy * dy +
+				dz * dz;
+
+			// より近い物だけ保存
+			if (distSq < nearestDistSq)
+			{
+				nearestDistSq = distSq;
+
+				result.hit = true;
+				result.object = obj.get();
+				result.type = obj->GetRayHitType();
+				result.hitPos = tempHitPos;
+				result.hitNormal = tempNormal;
+			}
+		}
+	}
+	return result;
+}
+
 
 //レイキャスト複数
 RayHitResult StageObjectManager::RayCastAny(

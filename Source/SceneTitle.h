@@ -38,5 +38,6 @@ private:
 	bool changeScene = false;
 
 	int num=0;	//点滅用
+	int nextSceneIndex=0;	//適当
 };
 

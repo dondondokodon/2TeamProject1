@@ -18,7 +18,6 @@ GoalObject::~GoalObject()
 void GoalObject::Update(float elapsedTime)
 {
     UpdateCollider();
-	UpdateGoalMarkerEffect(elapsedTime);
 
 	//照射装置に当たっているとき、またはデバッグでゴール判定を有効にしているとき
 	bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
@@ -27,8 +26,15 @@ void GoalObject::Update(float elapsedTime)
         Flag::Instance().SetFlag(Flag::IsGoal, isHit);
 	}
 
-	if (!isHit)
+	// ゴールエフェクトは、照射装置にレーザーが当たってゴール判定が有効な間だけ出す
+	// 実際にゴールしたかどうかは、上の IsGoal に isHit を入れる処理で判定する
+	if (goalJudgeEnabled)
 	{
+		UpdateGoalHitEffect(elapsedTime);
+	}
+	else
+	{
+		StopGoalEffect();
 		wasHit = false;
 	}
 
@@ -61,14 +67,6 @@ void GoalObject::CollisionVsPlayer(Player& p)
         push))
     {
         isHit = true;
-
-		// ゴール専用素材がまだ無いので、反射エフェクトを仮でゴール用に使う
-		bool goalJudgeEnabled = Flag::Instance().getFlag(Flag::eventName::openGoal) || debugGoalJudgeEnabled;
-		if (!wasHit && goalJudgeEnabled && goalEffect)
-		{
-			PlayGoalEffect();
-		}
-
 		wasHit = true;
     }
 }
@@ -80,23 +78,32 @@ void GoalObject::PlayGoalEffect()
 	DirectX::XMFLOAT3 effectPos = position;
 
 	effectPos.y += goalEffectHeight;
-	goalEffect->Play(effectPos, goalEffectScale);
+	goalEffectHandle = goalEffect->Play(effectPos, goalEffectScale);
+	goalEffectPlaying = true;
 }
+//ゴールエフェクトの停止
+void GoalObject::StopGoalEffect()
+{
+	if (!goalEffect || !goalEffectPlaying) return;
 
-void GoalObject::UpdateGoalMarkerEffect(float elapsedTime)
+	goalEffect->Stop(goalEffectHandle);
+	goalEffectPlaying = false;
+	goalEffectHandle = -1;
+	goalHitEffectTimer = 0.0f;
+}
+//ゴールエフェクトの更新
+void GoalObject::UpdateGoalHitEffect(float elapsedTime)
 {
 	if (!goalEffect) return;
 
-	// goru.efkefcは1回完結のエフェクトなので、ゴール目印として一定間隔で再生する
-	// 開始と終了の見た目が違うため、完全なループにはならない
-	goalMarkerEffectTimer -= elapsedTime;
-	if (goalMarkerEffectTimer > 0.0f) return;
+	// goru.efkefcは1回完結の素材なので、ゴール判定が有効な間だけ一定間隔で再再生する
+	// 完全なループ素材ではないため、開始と終了のつなぎ目が見える可能性はある
+	goalHitEffectTimer -= elapsedTime;
+	if (goalEffectPlaying && goalHitEffectTimer > 0.0f) return;
 
-	DirectX::XMFLOAT3 effectPos = position;
-	effectPos.y += goalEffectHeight;
-	goalEffect->Play(effectPos, goalEffectScale);
-
-	goalMarkerEffectTimer = goalMarkerEffectInterval;
+	StopGoalEffect();
+	PlayGoalEffect();
+	goalHitEffectTimer = goalHitEffectInterval;
 }
 
 void GoalObject::DrawDebugGUI()
@@ -119,7 +126,7 @@ void GoalObject::DrawDebugGUI()
 			}
 			ImGui::InputFloat("Effect Height", &goalEffectHeight);
 			ImGui::InputFloat("Effect Scale", &goalEffectScale);
-			ImGui::InputFloat("Marker Effect Interval", &goalMarkerEffectInterval);
+			ImGui::InputFloat("Hit Effect Interval", &goalHitEffectInterval);
 
 			// デバッグ確認用
 			// ゴール条件を満たさなくても、このボタンだけでエフェクトを確認できる

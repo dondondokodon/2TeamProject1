@@ -82,6 +82,13 @@ public:
 		DirectX::XMFLOAT3& hitPos,
 		DirectX::XMFLOAT3& normal);
 
+	//床とのレイキャスト
+	RayHitResult StageObjectManager::RayCastFloor(
+		const DirectX::XMFLOAT3& start,
+		const DirectX::XMFLOAT3& end
+	);
+
+
 	//ステージの範囲設定
 	void SetStageBounds(float minX, float maxX, float minZ, float maxZ)
 	{
@@ -111,6 +118,9 @@ public:
 	//レーザーマネージャー取得
 	LaserManager* GetLaserManager();
 
+	//ゲット床取得
+	StageObject* GetStageFloor() { return stageFloor.get(); }
+
 
 	//セッター
 	void setLaserManager(std::unique_ptr<LaserManager> mgr);
@@ -128,6 +138,7 @@ private:
 	float stageMaxZ = 25.0f;
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
+	std::unique_ptr<StageObject> stageFloor;
 	std::set<StageObject*> removes;
 	std::unique_ptr<LaserManager> laserManager;
 	std::vector<std::unique_ptr<StageData>> stageDatas;

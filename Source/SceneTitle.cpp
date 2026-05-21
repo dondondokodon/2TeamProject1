@@ -3,6 +3,7 @@
 #include "System/Input.h"
 #include "SceneGame.h"
 #include "SceneLoading.h"
+#include "SceneStageSelect.h"
 #include "SceneManager.h"
 
 #include "ScreenSize.h"
@@ -10,6 +11,7 @@
 SceneTitle::SceneTitle()
 {
 	ButtonIndex = 0;
+	nextSceneIndex = 0;
 	num = 0;
 }
 
@@ -32,6 +34,7 @@ void SceneTitle::Initialize()
 	nowChoiceButton[1].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 550.0f, 170.0f);
 
 	ButtonIndex = 0;
+	nextSceneIndex = 0;
 	num = 0;
 	changeScene = false;
 }
@@ -68,6 +71,7 @@ void SceneTitle::Update(float elapsedTime)
 	}
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
+		nextSceneIndex = ButtonIndex;
 		buttons[ButtonIndex].OnClick();
 		if (!changeScene)
 		{
@@ -114,8 +118,13 @@ void SceneTitle::Update(float elapsedTime)
 	
 	if (!fade.IsFading()&&changeScene)
 	{
+		if(nextSceneIndex)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneGame)
+		);
+		else
+		SceneManager::Instance().ChangeScene(
+			new SceneLoading(new SceneStageSelect)
 		);
 	}
 

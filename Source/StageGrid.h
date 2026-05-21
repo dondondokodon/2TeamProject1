@@ -95,6 +95,7 @@ private:
 
     // 木箱を押した瞬間に出すエフェクト
     std::unique_ptr<Effect> pushEffect = nullptr;
+    bool isEffectPlaying = false;
 
 
     // --------------------------------------------------------

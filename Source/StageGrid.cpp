@@ -23,6 +23,8 @@ StageGrid::StageGrid()
 
     gridX = 0;
     gridZ = 0;
+
+    isEffectPlaying = false;
 }
 
 
@@ -41,6 +43,32 @@ void StageGrid::Update(float elapsedTime)
     if (isMoving)
     {
         float delta = moveSpeed * elapsedTime;  // 今フレームで動く量
+
+        // プッシュエフェクト再生
+        if (pushEffect&&!isEffectPlaying)
+        {
+            DirectX::XMFLOAT3 effectPos = position;
+
+            // エフェクトを箱の中心から押している側へずらす距離
+            // 値を大きくすると、エフェクトが箱から離れる
+            const float effectBackOffset = 0.6f;
+
+            // エフェクトの高さ
+            // 値を大きくすると上に出る
+            // 値をマイナスにすると下に出る
+            const float effectHeight = -0.8f;
+
+            // エフェクトの大きさ
+            // 値を大きくすると、エフェクトが大きく表示される
+            const float effectScale = 0.09f;
+
+            effectPos.x -= moveDir.x * effectBackOffset;
+            effectPos.z -= moveDir.z * effectBackOffset;
+            effectPos.y += effectHeight;
+
+            pushEffect->Play(effectPos, effectScale);
+            isEffectPlaying = true;
+        }
 
         // 残り距離を超えないように調整
         if (delta > moveRemain)
@@ -80,6 +108,7 @@ void StageGrid::Update(float elapsedTime)
             }
 
             pushingPlayer = nullptr;
+            isEffectPlaying = false;
         }
     }
 
@@ -176,14 +205,34 @@ void StageGrid::CollisionVsPlayer(Player& p)
         //pos.z += push.z;
         //p.SetPosition(pos);
 
+        // 箱の上に乗っている時は、横から箱を押している扱いにしない
+        // 上下の着地判定はプレイヤー側のレイキャストに任せる
+        const float topMargin = 0.15f;
+        if (p.GetPosition().y >= aabbMax.y - topMargin)
+        {
+            return;
+        }
+
         // プレイヤーが触れているフラグを立てる
         isTouchingPlayer = true;
 
         auto playerPos = p.GetPosition();
         auto moveVec = p.GetMoveVec();
 
+
+        //箱の上に乗っているときなどに押せてしまうので
+        float playerFootY = playerPos.y;
+
+        float boxTopY = aabbMax.y - 0.7f;
+
+        // もしプレイヤーの足元が、箱の上面よりも高い位置にあるなら乗っているとみなして処理を抜ける
+        if (playerFootY >= boxTopY)
+        {
+            return;
+        }
+
         // 操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
-        if (!isMoving && p.GetIsControlling() && !p.GetIsRobot())
+        if (!isMoving && p.GetIsControlling() && !p.GetIsRobot() && !p.IsRiding())
         {
             DirectX::XMFLOAT3 toBox = {
             position.x - playerPos.x,
@@ -216,31 +265,6 @@ void StageGrid::CollisionVsPlayer(Player& p)
                 if (StartMove(p)) //木箱押すまでの固定用
                 {
                     p.StartBoxPush();
-
-					// プッシュエフェクト再生
-                    if (pushEffect)
-                    {
-                        DirectX::XMFLOAT3 effectPos = position;
-
-                        // エフェクトを箱の中心から押している側へずらす距離
-                        // 値を大きくすると、エフェクトが箱から離れる
-                        const float effectBackOffset = 0.6f;
-
-                        // エフェクトの高さ
-                        // 値を大きくすると上に出る
-                        // 値をマイナスにすると下に出る
-                        const float effectHeight = -0.8f;
-
-                        // エフェクトの大きさ
-                        // 値を大きくすると、エフェクトが大きく表示される
-                        const float effectScale = 0.09f;
-
-                        effectPos.x -= moveDir.x * effectBackOffset;
-                        effectPos.z -= moveDir.z * effectBackOffset;
-                        effectPos.y += effectHeight;
-
-                        pushEffect->Play(effectPos, effectScale);
-                    }
                 }
             }
         }
@@ -285,7 +309,7 @@ bool StageGrid::StartMove(Player& player)
 
     isMoving = true;
     moveRemain = 1.0f;
-
+  
     return true;
 }
 
