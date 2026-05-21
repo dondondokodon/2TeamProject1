@@ -51,4 +51,5 @@ private:
 	bool changeScene = false;
 	bool goalSlow = false;
 	float goalSlowTimer = 0.0f;
+	float rotateLockTimer = 0.0f;
 };
