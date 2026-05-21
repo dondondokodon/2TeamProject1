@@ -19,7 +19,7 @@ SceneTitle::SceneTitle()
 void SceneTitle::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/Load_back.png");
+	sprite = new Sprite("Data/Sprite/Title_background.png");
 
 	//フェード初期化
 	fade.Initialize();
