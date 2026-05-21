@@ -216,11 +216,11 @@ void SceneTitle::Render()
 		rc.lightDirection = { 0.0f, -1.0f, 0.0f };
 
 		// タイトル画面右側のプレイヤー位置
-		DirectX::XMFLOAT3 titlePlayerPos = { 3.0f, 0.75f, 0.0f };
+		DirectX::XMFLOAT3 titlePlayerPos = { 3.0f, 0.0f, 0.0f };
 
 		// タイトル画面の見た目用レーザー位置
-		DirectX::XMFLOAT3 titleLaserStart = { -5.0f, -0.2f, 0.0f };
-		DirectX::XMFLOAT3 titleLaserEnd = { 5.0f, -0.2f, 0.0f };
+		DirectX::XMFLOAT3 titleLaserStart = { -5.0f, -0.18f, 0.0f };
+		DirectX::XMFLOAT3 titleLaserEnd = { 5.0f, -0.18f, 0.0f };
 
 		if (titleLaserEffect && titleLaserHandle >= 0)
 		{
@@ -257,8 +257,9 @@ void SceneTitle::Render()
 
 		if (titlePlayerModel)
 		{
-			DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.5f, 0.5f, 0.5f);
-			DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(0.0f, DirectX::XMConvertToRadians(205.0f), 0.0f);
+			// タイトル画面の見た目用プレイヤー調整
+			DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.35f, 0.35f, 0.35f);
+			DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(0.0f, DirectX::XMConvertToRadians(200.0f), 0.0f);
 			DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(titlePlayerPos.x, titlePlayerPos.y, titlePlayerPos.z);
 			DirectX::XMMATRIX world = scale * rotation * translation;
 
