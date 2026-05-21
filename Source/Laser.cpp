@@ -184,11 +184,14 @@ void LaserBeam::Update(float elapsedTime)
 		//反射
 		if (hit.object)
 		{
-			//それぞれのヒット条件と見比べる
-			hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
-			if (hit.hit)
+			if (!isRotating)
 			{
-				hit.object->OnHit(true); //ヒット通知
+				//それぞれのヒット条件と見比べる
+				hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
+				if (hit.hit)
+				{
+					hit.object->OnHit(true); //ヒット通知
+				}
 			}
 		}
 		else if (!hit.hit)
