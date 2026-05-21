@@ -6,6 +6,7 @@
 #include "Sprite2D.h"
 #include "System/Model.h"
 #include "AnimationController.h"
+#include "Effect.h"
 #include <memory>
 
 class SceneTitle :public Scene
@@ -36,6 +37,8 @@ private:
 	Sprite2D nowChoiceButton[2];
 	std::unique_ptr<Model> titlePlayerModel;
 	AnimationController titlePlayerAnimation;
+	std::unique_ptr<Effect> titleLaserEffect;
+	Effekseer::Handle titleLaserHandle = -1;
 	short ButtonIndex = 0;
 
 	Fade fade;

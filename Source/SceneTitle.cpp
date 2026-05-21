@@ -8,6 +8,7 @@
 
 #include "ScreenSize.h"
 #include "AudioManager.h"
+#include "EffectManager.h"
 #include <DirectXMath.h>
 
 SceneTitle::SceneTitle()
@@ -40,6 +41,10 @@ void SceneTitle::Initialize()
 	titlePlayerModel = std::make_unique<Model>("Data/Model/Player/Player_animation.mdl");
 	titlePlayerAnimation.setModel(titlePlayerModel.get());
 	titlePlayerAnimation.PlayAnimation("Idle", true);
+	// タイトル用の見た目だけのレーザー。
+	// 本編のLaserクラスは使わないので、当たり判定や反射処理は発生しない。
+	titleLaserEffect = std::make_unique<Effect>("Data/Effect/reizar.efkefc");
+	titleLaserHandle = titleLaserEffect->Play({ -5.0f, -0.2f, 0.0f }, 1.0f);
 
 	ButtonIndex = 0;
 	nextSceneIndex = 0;
@@ -60,6 +65,15 @@ void SceneTitle::Finalize()
 	}
 
 	titlePlayerModel.reset();
+	if (titleLaserEffect)
+	{
+		if (titleLaserHandle >= 0)
+		{
+			titleLaserEffect->Stop(titleLaserHandle);
+		}
+		titleLaserEffect.reset();
+		titleLaserHandle = -1;
+	}
 	
 }
 
@@ -125,6 +139,7 @@ void SceneTitle::Update(float elapsedTime)
 		titlePlayerAnimation.UpdateAnimation(elapsedTime);
 		titlePlayerModel->UpdateTransform();
 	}
+	EffectManager::Instance().Update(elapsedTime);
 
 	fade.Update(elapsedTime);
 
@@ -200,13 +215,51 @@ void SceneTitle::Render()
 		DirectX::XMStoreFloat4x4(&rc.projection, projection);
 		rc.lightDirection = { 0.0f, -1.0f, 0.0f };
 
-		//ここで場所変える
-		const DirectX::XMFLOAT3 titlePlayerPos = { 1.0f, 0.35f, 0.0f };
+		// タイトル画面右側のプレイヤー位置
+		DirectX::XMFLOAT3 titlePlayerPos = { 3.0f, 0.0f, 0.0f };
+
+		// タイトル画面の見た目用レーザー位置
+		DirectX::XMFLOAT3 titleLaserStart = { -5.0f, -0.18f, 0.0f };
+		DirectX::XMFLOAT3 titleLaserEnd = { 5.0f, -0.18f, 0.0f };
+
+		if (titleLaserEffect && titleLaserHandle >= 0)
+		{
+			DirectX::XMVECTOR start = DirectX::XMLoadFloat3(&titleLaserStart);
+			DirectX::XMVECTOR end = DirectX::XMLoadFloat3(&titleLaserEnd);
+			DirectX::XMVECTOR direction = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(end, start));
+			float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(end, start)));
+
+			// 見た目用なので判定は作らず、レーザーエフェクトだけを緑線方向に伸ばす。
+			direction = DirectX::XMVectorNegate(direction);
+			DirectX::XMVECTOR worldUp = DirectX::XMVectorSet(0, 1, 0, 0);
+			DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, direction));
+			DirectX::XMVECTOR up = DirectX::XMVector3Cross(direction, right);
+
+			const float baseEffectSize = 28.0f;
+			DirectX::XMMATRIX laserWorld = DirectX::XMMATRIX(
+				DirectX::XMVectorScale(right, 1.0f),
+				DirectX::XMVectorScale(up, 1.0f),
+				DirectX::XMVectorScale(direction, length / baseEffectSize),
+				DirectX::XMVectorSetW(start, 1.0f)
+			);
+
+			Effekseer::Matrix43 effekseerMatrix;
+			DirectX::XMFLOAT4X4 matrix;
+			DirectX::XMStoreFloat4x4(&matrix, laserWorld);
+			effekseerMatrix.Value[0][0] = matrix._11; effekseerMatrix.Value[0][1] = matrix._12; effekseerMatrix.Value[0][2] = matrix._13;
+			effekseerMatrix.Value[1][0] = matrix._21; effekseerMatrix.Value[1][1] = matrix._22; effekseerMatrix.Value[1][2] = matrix._23;
+			effekseerMatrix.Value[2][0] = matrix._31; effekseerMatrix.Value[2][1] = matrix._32; effekseerMatrix.Value[2][2] = matrix._33;
+			effekseerMatrix.Value[3][0] = matrix._41; effekseerMatrix.Value[3][1] = matrix._42; effekseerMatrix.Value[3][2] = matrix._43;
+
+			EffectManager::Instance().GetEffekseerManager()->SetMatrix(titleLaserHandle, effekseerMatrix);
+			EffectManager::Instance().Render(rc.view, rc.projection);
+		}
 
 		if (titlePlayerModel)
 		{
-			DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.5f, 0.5f, 0.5f);
-			DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(0.0f, DirectX::XMConvertToRadians(205.0f), 0.0f);
+			// タイトル画面の見た目用プレイヤー調整
+			DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.35f, 0.35f, 0.35f);
+			DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(0.0f, DirectX::XMConvertToRadians(200.0f), 0.0f);
 			DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(titlePlayerPos.x, titlePlayerPos.y, titlePlayerPos.z);
 			DirectX::XMMATRIX world = scale * rotation * translation;
 
