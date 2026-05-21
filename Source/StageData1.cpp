@@ -8,9 +8,9 @@ StageData1::StageData1():StageData("Data/Json/stage1.json")
 
 	//自分自身のオブジェクト（ステージ）
 	//MyStage = new Stage("Data/Model/Stage/ExampleStage.mdl");//前のやつ
-	MyStage =std::make_unique<Stage>("Data/Model/Stage/tutorial_wall.mdl");
+	MyStage =std::make_unique<Stage>("Data/Model/Stage/tutorial1_wall.mdl");
 	//MyStage =std::make_unique<Stage>("Data/Model/Stage/main_stage.mdl");
 	//MyStage->SetScale({ 0.3f,0.3f,0.3f });
 	MyStage->SetScale({ 1.0f,1.0f,1.0f });
-	StageFloor = std::make_unique<Stage>("Data/Model/Stage/tutorial_floor.mdl");
+	StageFloor = std::make_unique<Stage>("Data/Model/Stage/main_stage_floor.mdl");
 }
