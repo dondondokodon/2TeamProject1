@@ -30,7 +30,7 @@ class LaserBeam
 public:
 	DirectX::XMFLOAT3 origin = {0,0,0};
 	DirectX::XMFLOAT3 direction;
-	float maxLength = 50.0f;
+	float maxLength = 100.0f;
 	float isActive = true;
 	float radius = 0.5f;
 	int maxReflection = 10;
