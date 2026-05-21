@@ -15,7 +15,7 @@ SceneStageSelect::SceneStageSelect()
 
 void SceneStageSelect::Initialize()
 {
-	back.Initialize("Data/Sprite/Load_back.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
+	back.Initialize("Data/Sprite/Title_background.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.5f), SCREEN_W, SCREEN_H);
 
 	//フェード初期化
 	fade.Initialize();

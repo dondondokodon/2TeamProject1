@@ -16,6 +16,8 @@ void Stage::Update(float elapsedTime)
 	//今は特にやることはない
 }
 
+
+
 //描画処理
 //void Stage::Render(const RenderContext& rc, ModelRenderer* renderer)
 //{

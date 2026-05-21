@@ -7,6 +7,7 @@
 #include "SceneManager.h"
 
 #include "ScreenSize.h"
+#include "AudioManager.h"
 
 SceneTitle::SceneTitle()
 {
@@ -19,7 +20,7 @@ SceneTitle::SceneTitle()
 void SceneTitle::Initialize()
 {
 	//スプライト初期化
-	sprite = new Sprite("Data/Sprite/Load_back.png");
+	sprite = new Sprite("Data/Sprite/Title_background.png");
 
 	//フェード初期化
 	fade.Initialize();
@@ -37,6 +38,9 @@ void SceneTitle::Initialize()
 	nextSceneIndex = 0;
 	num = 0;
 	changeScene = false;
+
+	AudioManager::Instance().Initialize();
+	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 }
 
 //終了化
@@ -126,11 +130,14 @@ void SceneTitle::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
+		Flag::Instance().SetFlag(Flag::eventName::TitleBGM, false);
 	}
 
 	num++;
 	if (num >= 500000) num -= 500000;
 	
+	//音
+	AudioManager::Instance().Update(elapsedTime);
 }
 
 //描画処理

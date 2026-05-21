@@ -14,6 +14,8 @@ public:
 	//更新処理
 	void Update(float elapsedTime)override;
 
+	RayHitType GetRayHitType();
+
 	//更新処理
 	//void Render(const RenderContext& rc, ModelRenderer* renderer);
 
