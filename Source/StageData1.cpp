@@ -12,4 +12,5 @@ StageData1::StageData1():StageData("Data/Json/stage1.json")
 	//MyStage =std::make_unique<Stage>("Data/Model/Stage/main_stage.mdl");
 	//MyStage->SetScale({ 0.3f,0.3f,0.3f });
 	MyStage->SetScale({ 1.0f,1.0f,1.0f });
+	StageFloor = std::make_unique<Stage>("Data/Model/Stage/main_stage_floor.mdl");
 }

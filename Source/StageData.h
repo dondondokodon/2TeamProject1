@@ -35,4 +35,5 @@ public:
 	virtual ~StageData() { for (auto obj : objects) { delete obj; } }
 	std::vector<ObjectData*> objects;
 	std::unique_ptr<Stage> MyStage = nullptr;
+	std::unique_ptr<Stage> StageFloor = nullptr;
 };

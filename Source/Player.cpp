@@ -487,12 +487,12 @@ void Player::CollisionPlayerVsStage()
 		if (isGround) end.y -= 0.2f;
 
 		DirectX::XMFLOAT3 hitPos, hitNormal;
-		RayHitResult result = stageObjectManager.RayCast(start, end, hitPos, hitNormal);
 
+		RayHitResult result = StageObjectManager::Instance().RayCastFloor(start, end);
 		if (result.hit)
 		{
 			//地面に当たった位置に高さを合わせる
-			position.y = hitPos.y;
+			position.y = result.hitPos.y;
 			velocity.y = 0.0f;
 			isGround = true;
 
@@ -502,6 +502,24 @@ void Player::CollisionPlayerVsStage()
 		{
 			isGround = false;
 		}
+
+		//result = stageObjectManager.RayCast(start, end, hitPos, hitNormal);
+
+		//if (result.hit)
+		//{
+		//	//地面に当たった位置に高さを合わせる
+		//	position.y = hitPos.y;
+		//	velocity.y = 0.0f;
+		//	isGround = true;
+
+		//	if (!wasGround) OnLanding();
+		//}
+		//else
+		//{
+		//	isGround = false;
+		//}
+		//
+		
 	}
 
 	// 壁判定（3本レイ）
