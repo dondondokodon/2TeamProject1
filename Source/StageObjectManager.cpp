@@ -38,13 +38,6 @@ void StageObjectManager::Reset()
 void StageObjectManager::Update(float elapsedTime)
 {
 	// ---------------------------
-	// リスト初期化
-	// ---------------------------
-	grids.clear();	
-	mirrors.clear();
-	stairsList.clear();
-	
-	// ---------------------------
 	// 木箱同士判定
 	// ---------------------------
 	for (StageGrid* grid : grids)
@@ -66,6 +59,12 @@ void StageObjectManager::Update(float elapsedTime)
 		
 	}
 	
+	// ---------------------------
+	// リスト初期化
+	// ---------------------------
+	grids.clear();
+	mirrors.clear();
+	stairsList.clear();
 
 	// ---------------------------
 	// 木箱,鏡収集
