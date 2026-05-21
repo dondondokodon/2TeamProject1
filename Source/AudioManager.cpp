@@ -28,7 +28,7 @@ AudioManager::AudioManager()
     ));
 
     audios.push_back(std::unique_ptr<AudioSource>(
-        Audio::Instance().LoadAudioSource("Data/Sounds/Title.wav", Flag::eventName::TitleBGM, true)
+        Audio::Instance().LoadAudioSource("Data/Sounds/title.wav", Flag::eventName::TitleBGM, true)
     ));
 }
 

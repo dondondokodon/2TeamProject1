@@ -7,6 +7,7 @@
 #include "SceneManager.h"
 
 #include "ScreenSize.h"
+#include "AudioManager.h"
 
 SceneTitle::SceneTitle()
 {
@@ -37,6 +38,8 @@ void SceneTitle::Initialize()
 	nextSceneIndex = 0;
 	num = 0;
 	changeScene = false;
+
+	AudioManager::Instance().Initialize();
 	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 }
 
@@ -133,6 +136,8 @@ void SceneTitle::Update(float elapsedTime)
 	num++;
 	if (num >= 500000) num -= 500000;
 	
+	//音
+	AudioManager::Instance().Update(elapsedTime);
 }
 
 //描画処理
