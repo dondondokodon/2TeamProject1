@@ -283,6 +283,9 @@ void SceneGame::Update(float elapsedTime)
 	//ゴールしたか
 	if (!goalSlow && Flag::Instance().getFlag(Flag::IsGoal))
 	{
+		int stageIndex = StageObjectManager::Instance().GetStageIndex();
+		StageObjectManager::Instance().SetCleared(stageIndex);  
+
 		Flag::Instance().SetFlag(Flag::IsGoal, false);
 		Flag::Instance().SetFlag(Flag::GoalSE, true);
 		Flag::Instance().SetFlag(Flag::openGoal, false);

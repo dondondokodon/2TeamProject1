@@ -26,6 +26,8 @@ private:
 	short ButtonIndex = 0;
 	Fade fade;
 
+	std::unique_ptr<Sprite> checkMarks[4];
+
 	float prevAx = 0.0f;
 	float prevAy = 0.0f;
 

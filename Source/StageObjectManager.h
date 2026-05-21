@@ -118,6 +118,23 @@ public:
 	//レーザーマネージャー取得
 	LaserManager* GetLaserManager();
 
+
+
+	bool clearedStages[4] = { false, false, false, false };
+	
+	void SetCleared(int index)      // ← ここに追加
+	{
+		if (index >= 0 && index < 10)
+			cleared[index] = true;
+	}
+
+	bool IsCleared(int index) const // ← ここに追加
+	{
+		if (index >= 0 && index < 10)
+			return cleared[index];
+		return false;
+	}
+
 	//ゲット床取得
 	StageObject* GetStageFloor() { return stageFloor.get(); }
 
@@ -136,6 +153,8 @@ private:
 	float stageMaxX = 25.0f;
 	float stageMinZ = -25.0f;
 	float stageMaxZ = 25.0f;
+
+	bool cleared[4] = { false };
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::unique_ptr<StageObject> stageFloor;

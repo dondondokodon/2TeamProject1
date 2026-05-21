@@ -38,9 +38,11 @@ void SceneStageSelect::Initialize()
 	selectButtons[2].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.75f), 490.0f, 390.0f);
 	selectButtons[3].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.75f), 490.0f, 390.0f);
 
-	//ButtonIndex = 0;
-	ButtonIndex = StageObjectManager::Instance().GetStageIndex();
-	if (ButtonIndex < 0)ButtonIndex = 0;
+	checkMarks[0] = std::make_unique<Sprite>("Data/Sprite/check.png");
+	checkMarks[1] = std::make_unique<Sprite>("Data/Sprite/check.png");
+	checkMarks[2] = std::make_unique<Sprite>("Data/Sprite/check.png");
+	checkMarks[3] = std::make_unique<Sprite>("Data/Sprite/check.png");
+
 
 	prevAx = 0.0f;
 	prevAy = 0.0f;
@@ -156,6 +158,34 @@ void SceneStageSelect::Render()
 
 	if (num % 80 < 40)
 	selectButtons[ButtonIndex].render(rc);
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (StageObjectManager::Instance().IsCleared(i))
+		{
+			// ボタンの中心位置
+			float cx = (i % 2 == 0) ? SCREEN_W * 0.3f : SCREEN_W * 0.7f;
+			float cy = (i < 2) ? SCREEN_H * 0.25f : SCREEN_H * 0.75f;
+
+			// Sprite は左上座標なので補正
+			float x = cx - 60;   // 120px の半分
+			float y = cy - 60;
+
+			checkMarks[i]->Render(
+				rc,
+				x - 150, y - 150,   // 中心補正（半分引く）
+				0.0f,
+				450, 450,           // 幅・高さを拡大
+				0.0f,
+				1, 1, 1, 1
+			);
+
+
+		}
+	}
+
+
+
 
 	//フェード
 	fade.Render(rc);
