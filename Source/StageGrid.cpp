@@ -314,26 +314,23 @@ void StageGrid::CollisionVsStage(StageObjectManager& stageObjectManager)
 
     const float sideOffset = boxRadius * 0.7f;
 
-    // 高さを上げる
-    const float rayHeight = 2.0f;
-
     DirectX::XMFLOAT3 origins[3] =
     {
         {
             position.x,
-            position.y + rayHeight,
+            position.y  ,
             position.z
         },
 
         {
             position.x + sideDir.x * sideOffset,
-            position.y + rayHeight,
+            position.y,
             position.z + sideDir.z * sideOffset
         },
 
         {
             position.x - sideDir.x * sideOffset,
-            position.y + rayHeight,
+            position.y,
             position.z - sideDir.z * sideOffset
         }
     };
