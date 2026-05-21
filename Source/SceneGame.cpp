@@ -33,6 +33,7 @@ void SceneGame::Initialize()
 	changeScene = false;
 	goalSlow = false;
 	goalSlowTimer = 0.0f;
+	rotateLockTimer = 0.0f;
 
 	tutorialIndex = 0;
 
@@ -183,6 +184,24 @@ void SceneGame::Update(float elapsedTime)
 	InputChangePlayer();
 
 	Player* controlPlayer = GetControlPlayer();
+	LaserManager* laserManager = StageObjectManager::Instance().GetLaserManager();
+	const bool laserRotating = (laserManager != nullptr && laserManager->GetIsRotating());
+
+	//レーザー回転後に追加で操作を止める時間
+	const float rotateLockTime = 0.0f;//追加停止
+
+	if (laserRotating)
+	{
+		rotateLockTimer = rotateLockTime;
+	}
+	else if (rotateLockTimer > 0.0f)
+	{
+		rotateLockTimer -= elapsedTime;
+		if (rotateLockTimer < 0.0f)
+		{
+			rotateLockTimer = 0.0f;
+		}
+	}
 
 	DirectX::XMFLOAT3 target = controlPlayer->GetPosition();
 	target.y += 0.5f;
@@ -199,7 +218,9 @@ void SceneGame::Update(float elapsedTime)
 
 			if (players[i] != nullptr)
 			{
-				bool canControl = (!goalSlow && i == controlPlayerIndex);
+				// レーザー回転中はプレイヤー操作だけ止める。
+				// Update自体は動かして、重力や衝突などの通常処理は残す。
+				bool canControl = (!goalSlow && !laserRotating && rotateLockTimer <= 0.0f && i == controlPlayerIndex);
 				players[i]->Update(gameElapsedTime, canControl);
 			}
 		}
@@ -229,7 +250,6 @@ void SceneGame::Update(float elapsedTime)
 
 	// レーザー側でPlayer2の鏡判定を行えるように、現在のプレイヤー配列を各レーザーへ渡しておく。
 	// Player2はStageObjectではない→StageObjectManagerのRayCastだけではレーザー反射判定に入らない
-	LaserManager* laserManager = StageObjectManager::Instance().GetLaserManager();
 	if (laserManager)
 	{
 		for (int i = 0; i < laserManager->GetLaserCount(); ++i)
