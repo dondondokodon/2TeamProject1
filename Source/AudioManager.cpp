@@ -26,6 +26,10 @@ AudioManager::AudioManager()
     audios.push_back(std::unique_ptr<AudioSource>(
         Audio::Instance().LoadAudioSource("Data/Sounds/Goal_effect.wav", Flag::eventName::openGoal, false)
     ));
+
+    audios.push_back(std::unique_ptr<AudioSource>(
+        Audio::Instance().LoadAudioSource("Data/Sounds/title.wav", Flag::eventName::TitleBGM, true)
+    ));
 }
 
 //初期化

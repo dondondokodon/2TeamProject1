@@ -25,6 +25,7 @@ public:
 		ResultBGM = 1 << 7,
 		GoalSE = 1 << 8,
 		GoalOpenSE = 1 << 9,
+		TitleBGM=1<<10
 	};
 
 	void SetFlag(eventName name,bool q)
