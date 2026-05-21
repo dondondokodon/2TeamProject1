@@ -37,6 +37,7 @@ void SceneTitle::Initialize()
 	nextSceneIndex = 0;
 	num = 0;
 	changeScene = false;
+	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 }
 
 //終了化
@@ -126,6 +127,7 @@ void SceneTitle::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
+		Flag::Instance().SetFlag(Flag::eventName::TitleBGM, false);
 	}
 
 	num++;
