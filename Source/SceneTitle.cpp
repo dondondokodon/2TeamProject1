@@ -8,6 +8,7 @@
 
 #include "ScreenSize.h"
 #include "AudioManager.h"
+#include <DirectXMath.h>
 
 SceneTitle::SceneTitle()
 {
@@ -34,6 +35,12 @@ void SceneTitle::Initialize()
 	nowChoiceButton[0].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.59f), 340.0f, 170.0f);
 	nowChoiceButton[1].Initialize("Data/Sprite/selectbox.png", DirectX::XMFLOAT2(SCREEN_W * 0.5f, SCREEN_H * 0.8f), 550.0f, 170.0f);
 
+	// タイトル画面の右側に出すプレイヤー。
+	// 本編のPlayer処理は使わず、見た目用のモデルとしてIdleだけ再生する。
+	titlePlayerModel = std::make_unique<Model>("Data/Model/Player/Player_animation.mdl");
+	titlePlayerAnimation.setModel(titlePlayerModel.get());
+	titlePlayerAnimation.PlayAnimation("Idle", true);
+
 	ButtonIndex = 0;
 	nextSceneIndex = 0;
 	num = 0;
@@ -52,6 +59,7 @@ void SceneTitle::Finalize()
 		sprite = nullptr;
 	}
 
+	titlePlayerModel.reset();
 	
 }
 
@@ -112,6 +120,11 @@ void SceneTitle::Update(float elapsedTime)
 	}
 
 	title.Update(elapsedTime);
+	if (titlePlayerModel)
+	{
+		titlePlayerAnimation.UpdateAnimation(elapsedTime);
+		titlePlayerModel->UpdateTransform();
+	}
 
 	fade.Update(elapsedTime);
 
@@ -162,6 +175,46 @@ void SceneTitle::Render()
 			0,
 			1, 1, 1, 1);
 		title.render(rc);
+	}
+
+	// タイトル用3D演出。
+	// 右側にIdle中のプレイヤーだけ表示する。
+	{
+		ModelRenderer* modelRenderer = graphics.GetModelRenderer();
+
+		float aspect = static_cast<float>(graphics.GetScreenWidth()) / static_cast<float>(graphics.GetScreenHeight());
+
+		DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(
+			DirectX::XMVectorSet(0.0f, 1.8f, -6.0f, 0.0f),
+			DirectX::XMVectorSet(0.0f, 0.9f, 0.0f, 0.0f),
+			DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+		);
+		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(
+			DirectX::XMConvertToRadians(45.0f),
+			aspect,
+			0.1f,
+			100.0f
+		);
+
+		DirectX::XMStoreFloat4x4(&rc.view, view);
+		DirectX::XMStoreFloat4x4(&rc.projection, projection);
+		rc.lightDirection = { 0.0f, -1.0f, 0.0f };
+
+		//ここで場所変える
+		const DirectX::XMFLOAT3 titlePlayerPos = { 1.0f, 0.35f, 0.0f };
+
+		if (titlePlayerModel)
+		{
+			DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(0.5f, 0.5f, 0.5f);
+			DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationRollPitchYaw(0.0f, DirectX::XMConvertToRadians(205.0f), 0.0f);
+			DirectX::XMMATRIX translation = DirectX::XMMatrixTranslation(titlePlayerPos.x, titlePlayerPos.y, titlePlayerPos.z);
+			DirectX::XMMATRIX world = scale * rotation * translation;
+
+			DirectX::XMFLOAT4X4 worldTransform;
+			DirectX::XMStoreFloat4x4(&worldTransform, world);
+
+			modelRenderer->Render(rc, worldTransform, titlePlayerModel.get(), ShaderId::Lambert);
+		}
 	}
 
 

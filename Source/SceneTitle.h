@@ -4,6 +4,9 @@
 #include "Button.h"
 #include "Fade.h"
 #include "Sprite2D.h"
+#include "System/Model.h"
+#include "AnimationController.h"
+#include <memory>
 
 class SceneTitle :public Scene
 {
@@ -31,6 +34,8 @@ private:
 	Button buttons[2];
 	Sprite2D title;
 	Sprite2D nowChoiceButton[2];
+	std::unique_ptr<Model> titlePlayerModel;
+	AnimationController titlePlayerAnimation;
 	short ButtonIndex = 0;
 
 	Fade fade;
