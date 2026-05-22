@@ -7,6 +7,7 @@
 #include "StageObjectManager.h"
 #include "SceneStageSelect.h"
 #include "SceneManager.h"
+#include "System/GpuResourceUtils.h"
 #include <DirectXMath.h>
 
 #include "AudioManager.h"
@@ -38,6 +39,12 @@ void SceneResult::Initialize()
 	resultPlayerModel = std::make_unique<Model>("Data/Model/Player/Player_animation.mdl");
 	resultPlayerAnimation.setModel(resultPlayerModel.get());
 
+	// 顔テクスチャは最初に2枚だけ読み込む
+	LoadResultFaceTextures();
+
+	// 最初は通常顔にしておく
+	SetResultFaceTexture(false);
+
 	AudioManager::Instance().Initialize();
 	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::ResultBGM, true);
@@ -47,6 +54,12 @@ void SceneResult::Initialize()
 //終了化
 void SceneResult::Finalize()
 {
+	// モデルリソースは共有されるので、リザルトを抜ける時は通常顔に戻す
+	if (resultPlayerModel)
+	{
+		SetResultFaceTexture(false);
+	}
+
 	Flag::Instance().ClearFlag();
 }
 
@@ -58,7 +71,10 @@ void SceneResult::Update(float elapsedTime)
 
 	if (resultPlayerModel)
 	{
-		resultPlayerAnimation.UpdateAnimation(elapsedTime);
+		UpdateResultPlayerAnimation(elapsedTime);
+
+		// Goalモーションの時間に合わせて顔を切り替える
+		UpdateResultFaceTexture();
 	}
 
 	nextSceneButton.Update(elapsedTime);
@@ -159,4 +175,93 @@ void SceneResult::Render()
 void SceneResult::DrawGUI()
 {
 
+}
+
+void SceneResult::LoadResultFaceTextures()
+{
+	ID3D11Device* device = Graphics::Instance().GetDevice();
+
+	// 通常顔のテクスチャを読み込む
+	GpuResourceUtils::LoadTexture(
+		device,
+		"Data/Model/Player/Textures/Player_C.png",
+		resultNormalFaceTexture.GetAddressOf());
+
+	// ハート中に使う目閉じ顔のテクスチャを読み込む
+	GpuResourceUtils::LoadTexture(
+		device,
+		"Data/Model/Player/Textures/Player__smile_C.png",
+		resultCloseEyeFaceTexture.GetAddressOf());
+}
+
+void SceneResult::UpdateResultPlayerAnimation(float elapsedTime)
+{
+	// ハートの見せ場で止めている間は、アニメーション時間を進めない
+	if (resultHeartStopTimer > 0.0f)
+	{
+		resultHeartStopTimer -= elapsedTime;
+		return;
+	}
+
+	float beforeTime = resultPlayerAnimation.GetAnimationSeconds();
+	resultPlayerAnimation.UpdateAnimation(elapsedTime);
+	float afterTime = resultPlayerAnimation.GetAnimationSeconds();
+
+	// Goalはループ再生なので、時間が戻ったら次のループとして停止判定を戻す
+	if (afterTime < beforeTime)
+	{
+		resultHeartStopDone = false;
+	}
+
+	// ハートの見せ場で少し止める。
+	// 止めたいタイミングと止める長さは、この2つだけ調整する。
+	const float HEART_STOP_TIME = 2.0f;
+	const float HEART_STOP_SECONDS = 0.2f;
+
+	if (!resultHeartStopDone && beforeTime < HEART_STOP_TIME && afterTime >= HEART_STOP_TIME)
+	{
+		resultHeartStopDone = true;
+		resultHeartStopTimer = HEART_STOP_SECONDS;
+	}
+}
+
+void SceneResult::UpdateResultFaceTexture()
+{
+	// 今のGoalモーション時間を見て、必要なら顔を切り替える
+	SetResultFaceTexture(IsResultCloseEyeTime());
+}
+
+void SceneResult::SetResultFaceTexture(bool closeEye)
+{
+	// すでに同じ顔なら何もしない
+	if (resultCloseEye == closeEye)
+	{
+		return;
+	}
+
+	resultCloseEye = closeEye;
+
+	auto& materials = resultPlayerModel->GetResource()->GetMaterials();
+	if (materials.empty())
+	{
+		return;
+	}
+
+	// モデルの1番目のマテリアルに顔テクスチャが入っている想定。
+	// 読み込み済みの画像に差し替えるだけなので、毎フレーム読み込まない。
+	materials[0].shaderResourceView =
+		resultCloseEye ? resultCloseEyeFaceTexture : resultNormalFaceTexture;
+}
+
+bool SceneResult::IsResultCloseEyeTime() const
+{
+	// ハート中に目を開ける時間。
+	// ハートのタイミングに合わせて、この2つだけ調整する
+	const float OPEN_EYE_START = 1.2f;
+	const float OPEN_EYE_END = 2.2f;
+
+	float animationTime = resultPlayerAnimation.GetAnimationSeconds();
+
+	// 指定した時間だけ通常顔にして、それ以外は目閉じ顔にする
+	return !(animationTime >= OPEN_EYE_START && animationTime <= OPEN_EYE_END);
 }
