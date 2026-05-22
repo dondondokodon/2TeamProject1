@@ -52,6 +52,7 @@ void SceneTitle::Initialize()
 	changeScene = false;
 
 	AudioManager::Instance().Initialize();
+	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 }
 
@@ -158,7 +159,6 @@ void SceneTitle::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
-		Flag::Instance().SetFlag(Flag::eventName::TitleBGM, false);
 	}
 
 	num++;
