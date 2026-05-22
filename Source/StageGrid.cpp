@@ -664,16 +664,16 @@ void StageGrid::CollisionVsStairs(std::vector<Stairs*>& stairsList)
     // 次AABB
     DirectX::XMFLOAT3 nextMin =
     {
-        nextPos.x - 2.4f,
-        nextPos.y - 2.4f,
-        nextPos.z - 2.4f
+        nextPos.x - 2.0f,
+        nextPos.y - 2.0f,
+        nextPos.z - 2.0f
     };
 
     DirectX::XMFLOAT3 nextMax =
     {
-        nextPos.x + 2.4f,
-        nextPos.y + 2.4f,
-        nextPos.z + 2.4f
+        nextPos.x + 2.0f,
+        nextPos.y + 2.0f,
+        nextPos.z + 2.0f
     };
 
     for (Stairs* stairs : stairsList)

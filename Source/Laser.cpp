@@ -307,10 +307,10 @@ void LaserBeam::Render()
 	
 		const float baseEffectSize = 28.0f;
 		DirectX::XMMATRIX mat = DirectX::XMMATRIX(
-			DirectX::XMVectorScale(right, 1.0f),
-			DirectX::XMVectorScale(up, 1.0f),
+			DirectX::XMVectorScale(right, 2.5f),
+			DirectX::XMVectorScale(up, 2.5f),
 			DirectX::XMVectorScale(dir, length / baseEffectSize),
-			DirectX::XMVectorSetW(s, 1.0f)
+			DirectX::XMVectorSetW(s, 2.5f)
 		);
 	
 		Effekseer::Matrix43 effekMat;
