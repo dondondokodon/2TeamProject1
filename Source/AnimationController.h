@@ -22,6 +22,9 @@ public:
 	//アニメーション中か
 	bool IsPlaying() const { return animationPlaying; }
 
+	// 今のアニメーションが何秒まで進んでいるか
+	float GetAnimationSeconds() const { return animationSeconds; }
+
 private:
 	Model*				model;
 	int									animationIndex = -1;
