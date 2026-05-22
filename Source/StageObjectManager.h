@@ -120,7 +120,7 @@ public:
 
 
 
-	bool clearedStages[4] = { false, false, false, false };
+	
 	
 	void SetCleared(int index)      // ← ここに追加
 	{

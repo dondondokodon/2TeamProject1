@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <memory>
 #include <assert.h>
 #include <tchar.h>
@@ -49,7 +49,7 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 	HWND hWnd = CreateWindow(
 		_T("Game"),
 		_T(""),
-		WS_POPUP | WS_VISIBLE,   // ©‚±‚±•ÏX‚µ‚Äƒtƒ‹ƒXƒNƒŠ[ƒ“‚É‚µ‚½
+		WS_POPUP | WS_VISIBLE,   // â†ã“ã“å¤‰æ›´ã—ã¦ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã«ã—ãŸ
 		0, 0,
 		GetSystemMetrics(SM_CXSCREEN),
 		GetSystemMetrics(SM_CYSCREEN),
@@ -69,7 +69,7 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 		Framework f(hWnd);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
 		result = f.Run();
-	} // š‚±‚±‚Å Framework ‚ÌƒfƒXƒgƒ‰ƒNƒ^‚ª•K‚¸ŒÄ‚Î‚ê‚é
+	} // â˜…ã“ã“ã§ Framework ã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒå¿…ãšå‘¼ã°ã‚Œã‚‹
 
 	return result;
 }
