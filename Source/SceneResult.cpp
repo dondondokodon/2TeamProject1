@@ -255,12 +255,13 @@ void SceneResult::SetResultFaceTexture(bool closeEye)
 
 bool SceneResult::IsResultCloseEyeTime() const
 {
-	// ハートしている時間に合わせて、この2つだけ調整する
-	const float CLOSE_EYE_START = 1.2f;
-	const float CLOSE_EYE_END = 2.2f;
+	// ハート中に目を開ける時間。
+	// ハートのタイミングに合わせて、この2つだけ調整する
+	const float OPEN_EYE_START = 1.2f;
+	const float OPEN_EYE_END = 2.2f;
 
 	float animationTime = resultPlayerAnimation.GetAnimationSeconds();
 
-	// 指定した時間の間だけ目閉じ顔にする
-	return animationTime >= CLOSE_EYE_START && animationTime <= CLOSE_EYE_END;
+	// 指定した時間だけ通常顔にして、それ以外は目閉じ顔にする
+	return !(animationTime >= OPEN_EYE_START && animationTime <= OPEN_EYE_END);
 }
