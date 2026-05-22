@@ -219,7 +219,13 @@ bool StageObjectManager::NextStage()
 		20.5f, // ステージ3
 	};
 
-	float halfSize = stageBounds[nextStageIndex];
+	int boundsIndex = nextStageIndex;
+	if (boundsIndex >= _countof(stageBounds))
+	{
+		boundsIndex = _countof(stageBounds) - 1;
+	}
+
+	float halfSize = stageBounds[boundsIndex];
 
 	SetStageBounds(-halfSize, halfSize, -halfSize, halfSize);
 
