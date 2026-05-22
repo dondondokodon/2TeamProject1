@@ -117,6 +117,7 @@ void SceneGame::Initialize()
 
 	//音初期化
 	AudioManager::Instance().Initialize();
+	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::StageBGM, true);
 }
 
@@ -266,11 +267,12 @@ void SceneGame::Update(float elapsedTime)
 
 	// レーザー側でPlayer2の鏡判定を行えるように、現在のプレイヤー配列を各レーザーへ渡しておく。
 	// Player2はStageObjectではない→StageObjectManagerのRayCastだけではレーザー反射判定に入らない
-	if (laserManager)
+	if (!hidePlayer2 && laserManager)
 	{
 		for (int i = 0; i < laserManager->GetLaserCount(); ++i)
 		{
 			Laser* laser = laserManager->GetLaser(i);
+
 			if (laser)
 			{
 				laser->SetMirrorPlayers(players, 2);

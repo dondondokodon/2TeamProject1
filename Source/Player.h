@@ -125,6 +125,7 @@ public:
 	// ロボットがレーザー反射用の鏡を持っているか
 	bool IsLaserMirror() const { return isRobot; }
 
+	bool IsStage1RobotDisabled() const;
 
 protected:
 	//着地したときに呼ばれる

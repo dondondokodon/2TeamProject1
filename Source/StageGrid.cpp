@@ -431,7 +431,7 @@ void StageGrid::CollisionVsFloor(StageObjectManager& mgr)
 
     DirectX::XMFLOAT3 hitPos, hitNormal;
 
-    RayHitResult result = mgr.RayCast(origin, end, hitPos, hitNormal);
+    RayHitResult result = mgr.RayCastFloor(origin, end);
 
     // ★床が無い（＝レイが何も当たらない）
     if (!result.hit)

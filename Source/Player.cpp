@@ -316,7 +316,10 @@ bool Player::RayCastLaserMirror(
 	DirectX::XMFLOAT3& hitPos,
 	DirectX::XMFLOAT3& hitNormal) const
 {
-	// ロボット以外は鏡を持っていないので判定しない
+	// ステージ1ではロボット鏡判定を無効
+	if (IsStage1RobotDisabled()) return false;
+
+	// ロボット以外は鏡を持っていない
 	if (!isRobot) return false;
 
 	// ロボットの正面方向を、鏡面の法線として使う。ロボットの正面に鏡が付いている扱い
@@ -405,6 +408,12 @@ bool Player::RayCastLaserMirror(
 	return true;
 }
 
+
+bool Player::IsStage1RobotDisabled() const
+{
+	return isRobot &&
+		StageObjectManager::Instance().GetStageIndex() == 0;
+}
 
 //着地したときの処理
 void Player::OnLanding()
@@ -632,6 +641,11 @@ void Player::CollisionPlayerVsStage()
 		Laser* laser = laserManager->GetLaser(i);
 		if (!laser || !laser->IsActive()) continue;
 
+		if (IsStage1RobotDisabled())
+		{
+			continue;
+		}
+
 		bool isHit = false;
 		int loopCount = 0;
 		const float skinWidth = 0.002f;
@@ -757,6 +771,9 @@ void Player::CollisionPlayerVsStage()
 // 肩車対応あり
 void Player::CollisionVsPlayer(Player& other, bool canRide)
 {
+	if (IsStage1RobotDisabled()) return;
+	if (other.IsStage1RobotDisabled()) return;
+
 	DirectX::XMFLOAT3 otherPosition = other.GetPosition();
 		
 	float dx = position.x - otherPosition.x;
@@ -954,6 +971,9 @@ bool Player::IsRideReady() const
 //操作中のプレイヤーだけ、かつロボット以外だけ木箱を押せる
 void Player::InputRotate()
 {
+
+	if (IsStage1RobotDisabled()) return;
+
 	if (!isRobot) return;
 
 	GamePad& gamePad = Input::Instance().GetGamePad();

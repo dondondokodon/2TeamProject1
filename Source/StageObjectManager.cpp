@@ -38,17 +38,34 @@ void StageObjectManager::Reset()
 void StageObjectManager::Update(float elapsedTime)
 {
 	// ---------------------------
-	// リスト初期化
+	// 木箱同士判定
 	// ---------------------------
-	grids.clear();	
-	mirrors.clear();
-	stairsList.clear();
+	for (StageGrid* grid : grids)
+	{
+		grid->CollisionVsStage(*this);
+
+		grid->CollisionVsGrid(grids);
+
+		grid->CollisionVsMirror(mirrors);
+
+		grid->CollisionVsFloor(*this);
+
+		grid->CollisionVsStairs(stairsList);
+	}
+
 	for (auto& stageObject : stageObjects)
 	{
 		stageObject->Update(elapsedTime);
 		
 	}
 	
+	// ---------------------------
+	// リスト初期化
+	// ---------------------------
+	grids.clear();
+	mirrors.clear();
+	stairsList.clear();
+
 	// ---------------------------
 	// 木箱,鏡収集
 	// ---------------------------
@@ -90,14 +107,6 @@ void StageObjectManager::Update(float elapsedTime)
 
 		grid->CollisionVsStairs(stairsList);
 	}
-
-	
-	
-	
-	
-	
-
-
 
 	//破棄処理
 	for (auto& stageObject : removes)
