@@ -89,7 +89,7 @@ void SceneResult::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
-		Flag::Instance().ClearFlag();
+		//Flag::Instance().ClearFlag();
 	}
 	AudioManager::Instance().Update(elapsedTime);
 }
