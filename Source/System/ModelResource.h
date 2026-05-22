@@ -121,6 +121,8 @@ public:
 	const std::vector<Node>& GetNodes() const { return nodes; }
 	const std::vector<Animation>& GetAnimations() const { return animations; }
 	const std::vector<Material>& GetMaterials() const { return materials; }
+	// テクスチャを差し替えるために、書き換え可能なマテリアルを取得する
+	std::vector<Material>& GetMaterials() { return materials; }
 
 	// 読み込み
 	void Load(ID3D11Device* device, const char* filename);

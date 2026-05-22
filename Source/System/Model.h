@@ -34,6 +34,8 @@ public:
 
 	// リソース取得
 	const ModelResource* GetResource() const { return resource.get(); }
+	// テクスチャを差し替えるために、書き換え可能なリソースを取得する
+	ModelResource* GetResource() { return resource.get(); }
 
 	void CalcBoundingBox();
 	const DirectX::XMFLOAT3& GetMinBounds() const { return minBounds; }
