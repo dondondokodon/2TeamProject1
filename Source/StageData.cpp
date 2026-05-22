@@ -98,16 +98,16 @@ StageData::StageData(const char* filename)
 		//タイプ
 		if (type == "Laser")
 			o = ObjectType::Laser;
-		else if (type == "Device")
-			o = ObjectType::IrradiationDevice;
+		/*else if (type == "Device")
+			o = ObjectType::IrradiationDevice;*/
 		else if (type == "Mirror")
 			o = ObjectType::Mirror;
-		else if (type == "Box")
+		/*else if (type == "Box")
 			o = ObjectType::Box;
 		else if (type == "Goal")
 			o = ObjectType::Goal;
 		else if(type =="Stairs")
-			o=ObjectType::Stairs;
+			o=ObjectType::Stairs;*/
 		else
 			continue;	//例外
 

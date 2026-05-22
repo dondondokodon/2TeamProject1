@@ -194,7 +194,7 @@ void StageObjectManager::LoadStageData(int stageNum)
 		}
 	}
 
-	Register(stageDatas[stageNum]->MyStage.release());
+	//Register(stageDatas[stageNum]->MyStage.release());
 	stageFloor = std::move(stageDatas[stageNum]->StageFloor);
 }
 
@@ -283,6 +283,70 @@ void StageObjectManager::DrawDebugGUI()
 }
 
 //レイキャスト
+//RayHitResult StageObjectManager::RayCast(
+//	const DirectX::XMFLOAT3& start,
+//	const DirectX::XMFLOAT3& end,
+//	DirectX::XMFLOAT3& hitPos,
+//	DirectX::XMFLOAT3& normal)
+//{
+//	RayHitResult result =
+//	{
+//		false,
+//		nullptr,
+//		RayHitType::Stop,
+//		{0,0,0}
+//	};
+//
+//	// 一番近い距離
+//	float nearestDistSq = FLT_MAX;
+//
+//	for (auto& obj : stageObjects)
+//	{
+//		DirectX::XMFLOAT3 tempHitPos;
+//		DirectX::XMFLOAT3 tempNormal;
+//		if(obj->GetRayHitType() == RayHitType::None)continue;
+//		if (obj->GetModel() == nullptr)continue;
+//
+//		if (Collision::RayCast(
+//			start,
+//			end,
+//			obj->GetTransform(),
+//			obj->GetModel(),
+//			tempHitPos,
+//			tempNormal))
+//		{
+//			// start → hitPos の距離
+//			float dx = tempHitPos.x - start.x;
+//			float dy = tempHitPos.y - start.y;
+//			float dz = tempHitPos.z - start.z;
+//
+//			float distSq =
+//				dx * dx +
+//				dy * dy +
+//				dz * dz;
+//
+//			// より近い物だけ保存
+//			if (distSq < nearestDistSq)
+//			{
+//				nearestDistSq = distSq;
+//
+//				result.hit = true;
+//				result.object = obj.get();
+//				result.type = obj->GetRayHitType();
+//				result.hitPos = tempHitPos;
+//				result.hitNormal = tempNormal;
+//
+//				// 出力用
+//				hitPos = tempHitPos;
+//				normal = tempNormal;
+//			}
+//		}
+//	}
+//
+//	return result;
+//}
+
+// レイキャスト（鏡透ける問題解決）
 RayHitResult StageObjectManager::RayCast(
 	const DirectX::XMFLOAT3& start,
 	const DirectX::XMFLOAT3& end,
@@ -297,16 +361,17 @@ RayHitResult StageObjectManager::RayCast(
 		{0,0,0}
 	};
 
-	// 一番近い距離
 	float nearestDistSq = FLT_MAX;
 
 	for (auto& obj : stageObjects)
 	{
+		if (obj->GetRayHitType() == RayHitType::None) continue;
+		if (obj->GetModel() == nullptr) continue;
+
 		DirectX::XMFLOAT3 tempHitPos;
 		DirectX::XMFLOAT3 tempNormal;
-		if(obj->GetRayHitType() == RayHitType::None)continue;
-		if (obj->GetModel() == nullptr)continue;
 
+		// 1. まずは物理的なメッシュの衝突判定を行う
 		if (Collision::RayCast(
 			start,
 			end,
@@ -315,28 +380,31 @@ RayHitResult StageObjectManager::RayCast(
 			tempHitPos,
 			tempNormal))
 		{
+			// 2. ★超重要：衝突したら、そのオブジェクト固有の ReallyHit を呼び出して
+			//    回転状態などを考慮した「正しいヒット結果（Stop や reflection）」を取得する
+			DirectX::XMFLOAT3 dir;
+			dir.x = end.x - start.x;
+			dir.y = end.y - start.y;
+			dir.z = end.z - start.z;
+
+			// オブジェクトごとの詳細判定を仰ぐ
+			RayHitResult objResult = obj->ReallyHit(dir, tempHitPos, tempNormal);
+
 			// start → hitPos の距離
 			float dx = tempHitPos.x - start.x;
 			float dy = tempHitPos.y - start.y;
 			float dz = tempHitPos.z - start.z;
-
-			float distSq =
-				dx * dx +
-				dy * dy +
-				dz * dz;
+			float distSq = dx * dx + dy * dy + dz * dz;
 
 			// より近い物だけ保存
 			if (distSq < nearestDistSq)
 			{
 				nearestDistSq = distSq;
 
-				result.hit = true;
-				result.object = obj.get();
-				result.type = obj->GetRayHitType();
-				result.hitPos = tempHitPos;
-				result.hitNormal = tempNormal;
+				// ★オブジェクトが ReallyHit で返してきた結果（Stopなど）をそのまま尊重する
+				result = objResult;
 
-				// 出力用
+				// 出力用パラメータへの書き込み
 				hitPos = tempHitPos;
 				normal = tempNormal;
 			}
