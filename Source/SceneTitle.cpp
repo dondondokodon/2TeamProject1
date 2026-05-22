@@ -52,6 +52,7 @@ void SceneTitle::Initialize()
 	changeScene = false;
 
 	AudioManager::Instance().Initialize();
+	Flag::Instance().ClearFlag();
 	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 }
 
