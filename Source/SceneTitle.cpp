@@ -158,7 +158,7 @@ void SceneTitle::Update(float elapsedTime)
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
-		Flag::Instance().SetFlag(Flag::eventName::TitleBGM, false);
+		//Flag::Instance().SetFlag(Flag::eventName::TitleBGM, false);
 	}
 
 	num++;
