@@ -45,6 +45,7 @@ void SceneStageSelect::Initialize()
 	checkMarks[2] = std::make_unique<Sprite>("Data/Sprite/check.png");
 	checkMarks[3] = std::make_unique<Sprite>("Data/Sprite/check.png");
 
+	stageNumberSprite = std::make_unique<Sprite>("Data/Sprite/number.png");
 
 	prevAx = 0.0f;
 	prevAy = 0.0f;
@@ -164,6 +165,24 @@ void SceneStageSelect::Render()
 	for(auto& button : buttons)
 		button.render(rc);
 
+	for (int i = 0; i < 4; ++i)
+	{
+		float cx = (i % 2 == 0) ? SCREEN_W * 0.3f : SCREEN_W * 0.7f;
+		float cy = (i < 2) ? SCREEN_H * 0.25f : SCREEN_H * 0.75f;
+
+		const float STAGE_BUTTON_WIDTH = 500.0f;
+		const float STAGE_BUTTON_HEIGHT = 400.0f;
+		const float NUMBER_OFFSET_X = 35.0f;
+		const float NUMBER_OFFSET_Y = 30.0f;
+
+		// ステージ画像の左上から同じ位置に数字を置く。
+		// 数字の場所を変えたい時は NUMBER_OFFSET_X/Y を調整する。
+		float numberX = cx - STAGE_BUTTON_WIDTH * 0.5f + NUMBER_OFFSET_X;
+		float numberY = cy - STAGE_BUTTON_HEIGHT * 0.5f + NUMBER_OFFSET_Y;
+
+		RenderStageNumber(rc, i + 1, numberX, numberY);
+	}
+
 	if (num % 80 < 40)
 	selectButtons[ButtonIndex].render(rc);
 
@@ -207,4 +226,43 @@ void SceneStageSelect::Finalize()
 void SceneStageSelect::DrawGUI()
 {
 
+}
+
+void SceneStageSelect::RenderStageNumber(const RenderContext& rc, int number, float x, float y)
+{
+	if (!stageNumberSprite)
+	{
+		return;
+	}
+
+
+	const float NUMBER_SRC_WIDTH = 48.0f;   // 元画像から切り抜く横幅。
+	const float NUMBER_SRC_HEIGHT = 53.0f;  // 元画像から切り抜く縦幅。
+
+	const float NUMBER_DRAW_WIDTH = 72.0f;   // 表示する横サイズ。大きさ調整用
+	const float NUMBER_DRAW_HEIGHT = 80.0f;  // 表示する縦サイズ。大きさ調整用
+	const float NUMBER_INTERVAL = 72.0f;     // 2桁以上のときの数字間隔、大体NUMBER_DRAW_WIDTHと同じでいい
+
+	std::string text = std::to_string(number);
+
+	// 数字画像は横に0～9が48px間隔で並んでいる。
+	// ステージが10以上になっても、1桁ずつ48px間隔で描けばそのまま使える。
+	float startX = x;
+
+	for (size_t i = 0; i < text.length(); ++i)
+	{
+		int digit = text[i] - '0';
+		float sx = NUMBER_SRC_WIDTH * static_cast<float>(digit);
+
+		stageNumberSprite->Render(
+			rc,
+			startX + NUMBER_INTERVAL * static_cast<float>(i), y,
+			0.0f,
+			NUMBER_DRAW_WIDTH, NUMBER_DRAW_HEIGHT,
+			sx, 0.0f,
+			NUMBER_SRC_WIDTH, NUMBER_SRC_HEIGHT,
+			0.0f,
+			1, 1, 1, 1
+		);
+	}
 }

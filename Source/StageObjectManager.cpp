@@ -209,16 +209,23 @@ bool StageObjectManager::NextStage()
 
 	LoadStageData(nextStageIndex);
 
-	const float defaultSize = 17.5f;
-	const float wideHalfSize1 = 20.5f;
-
-	float halfSize = defaultSize;
-
-	if (nextStageIndex >= 2)
+	// 各ステージの場外判定の広さ。
+	// ステージを増やした時は、ここに数値を1つ足すだけで調整できる。
+	const float stageBounds[] =
 	{
-		halfSize = wideHalfSize1;
+		20.5f, // チュートリアル
+		17.5f, // ステージ1
+		20.5f, // ステージ2
+		20.5f, // ステージ3
+	};
+
+	int boundsIndex = nextStageIndex;
+	if (boundsIndex >= _countof(stageBounds))
+	{
+		boundsIndex = _countof(stageBounds) - 1;
 	}
 
+	float halfSize = stageBounds[boundsIndex];
 
 	SetStageBounds(-halfSize, halfSize, -halfSize, halfSize);
 
