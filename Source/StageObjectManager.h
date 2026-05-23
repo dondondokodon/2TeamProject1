@@ -88,6 +88,14 @@ public:
 		const DirectX::XMFLOAT3& end
 	);
 
+	//ステージ床だけとのレイキャスト
+	//木箱が次の位置へ動けるか調べる時に使う。
+	//RayCastFloor は箱や鏡なども見るので、ここでは stageFloor だけを見る。
+	RayHitResult RayCastStageFloorOnly(
+		const DirectX::XMFLOAT3& start,
+		const DirectX::XMFLOAT3& end
+	);
+
 
 	//ステージの範囲設定
 	void SetStageBounds(float minX, float maxX, float minZ, float maxZ)
