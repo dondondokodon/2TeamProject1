@@ -655,7 +655,22 @@ void StageGrid::CollisionVsStairs(std::vector<Stairs*>& stairsList)
 {
     if (!isMoving) return;
 
-    // 次位置
+    // 現在AABB
+    DirectX::XMFLOAT3 curMin =
+    {
+        position.x - 2.0f,
+        position.y - 2.0f,
+        position.z - 2.0f
+    };
+
+    DirectX::XMFLOAT3 curMax =
+    {
+        position.x + 2.0f,
+        position.y + 2.0f,
+        position.z + 2.0f
+    };
+
+    // 次AABB
     DirectX::XMFLOAT3 nextPos =
     {
         position.x + moveDir.x * moveRemain,
@@ -663,7 +678,6 @@ void StageGrid::CollisionVsStairs(std::vector<Stairs*>& stairsList)
         position.z + moveDir.z * moveRemain
     };
 
-    // 次AABB
     DirectX::XMFLOAT3 nextMin =
     {
         nextPos.x - 2.0f,
@@ -680,11 +694,17 @@ void StageGrid::CollisionVsStairs(std::vector<Stairs*>& stairsList)
 
     for (Stairs* stairs : stairsList)
     {
-        if (Collision::IntersectAABBVsAABB(
+        bool nowHit = Collision::IntersectAABBVsAABB(
+            curMin, curMax,
+            stairs->aabbMin, stairs->aabbMax);
+
+        bool nextHit = Collision::IntersectAABBVsAABB(
             nextMin, nextMax,
-            stairs->aabbMin, stairs->aabbMax))
+            stairs->aabbMin, stairs->aabbMax);
+
+        // ★ 今は当たっていないのに、次で初めて当たる → ブロック
+        if (!nowHit && nextHit)
         {
-            // 階段にぶつかったら木箱を止める
             isMoving = false;
             moveRemain = 0.0f;
 

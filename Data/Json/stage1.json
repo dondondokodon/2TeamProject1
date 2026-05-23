@@ -227,8 +227,8 @@
   {
     "type": "Stairs",
     "PosX": 10.5,
-    "PosY": -0.8,
-    "PosZ": -2,
+    "PosY": 0.2,
+    "PosZ": -2.5,
     "angleX": 0,
     "angleY": 180,
     "angleZ": 0,

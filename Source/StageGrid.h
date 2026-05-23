@@ -97,6 +97,7 @@ private:
     std::unique_ptr<Effect> pushEffect = nullptr;
     bool isEffectPlaying = false;
 
+    DirectX::XMFLOAT3 initialPos;
 
     // --------------------------------------------------------
     // ★ AABB（当たり判定用）
