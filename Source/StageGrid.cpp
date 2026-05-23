@@ -431,7 +431,9 @@ void StageGrid::CollisionVsFloor(StageObjectManager& mgr)
 
     DirectX::XMFLOAT3 hitPos, hitNormal;
 
-    RayHitResult result = mgr.RayCastFloor(origin, end);
+    // 木箱の下にステージ床があるかだけを見る。
+    // 箱や鏡との衝突は別の関数で見ているので、ここでは床だけを調べる。
+    RayHitResult result = mgr.RayCastStageFloorOnly(origin, end);
 
     // ★床が無い（＝レイが何も当たらない）
     if (!result.hit)

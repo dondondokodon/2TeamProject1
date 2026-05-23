@@ -447,6 +447,47 @@ RayHitResult StageObjectManager::RayCastFloor(
 	return result;
 }
 
+//ステージ床だけとのレイキャスト
+//木箱の落下チェック用。stageObjects は見ず、ステージ床だけを見る。
+//箱・鏡・壁との衝突は別の処理で見ているので、ここでは床の有無だけ確認する。
+RayHitResult StageObjectManager::RayCastStageFloorOnly(
+	const DirectX::XMFLOAT3& start,
+	const DirectX::XMFLOAT3& end
+)
+{
+	RayHitResult result =
+	{
+		false,
+		nullptr,
+		RayHitType::Stop,
+		{0,0,0}
+	};
+
+	if (!stageFloor || !stageFloor->GetModel()) return result;
+
+	DirectX::XMFLOAT3 tempHitPos;
+	DirectX::XMFLOAT3 tempNormal;
+
+	// stageFloor だけに RayCast する。
+	// RayCastFloor のように stageObjects 全体は回さないので、木箱移動時の負荷を減らせる。
+	if (Collision::RayCast(
+		start,
+		end,
+		stageFloor->GetTransform(),
+		stageFloor->GetModel(),
+		tempHitPos,
+		tempNormal))
+	{
+		result.hit = true;
+		result.object = stageFloor.get();
+		result.type = stageFloor->GetRayHitType();
+		result.hitPos = tempHitPos;
+		result.hitNormal = tempNormal;
+	}
+
+	return result;
+}
+
 
 //レイキャスト複数
 RayHitResult StageObjectManager::RayCastAny(
