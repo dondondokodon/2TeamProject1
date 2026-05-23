@@ -77,7 +77,7 @@
   {
     "type": "Box",
     "PosX": -8.3,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": 0,
     "angleX": 0,
     "angleY": 0,
@@ -92,7 +92,7 @@
   {
     "type": "Box",
     "PosX": 3,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": 10,
     "angleX": 0,
     "angleY": 0,
@@ -107,8 +107,8 @@
   {
     "type": "Box",
     "PosX": -2,
-    "PosY": 0.8,
-    "PosZ": 2,
+    "PosY": 1,
+    "PosZ": 0.5,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
@@ -122,7 +122,7 @@
   {
     "type": "Box",
     "PosX": 6.5,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": 5,
     "angleX": 0,
     "angleY": 0,
@@ -137,7 +137,7 @@
   {
     "type": "Box",
     "PosX": 11,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": -5,
     "angleX": 0,
     "angleY": 0,
@@ -152,7 +152,7 @@
   {
     "type": "Box",
     "PosX": 7,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": -10.5,
     "angleX": 0,
     "angleY": 0,
@@ -227,7 +227,7 @@
   {
     "type": "Box",
     "PosX": 1,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": -6,
     "angleX": 0,
     "angleY": 0,
@@ -241,7 +241,7 @@
   },
   {
     "type": "Mirror",
-    "PosX": -1.5,
+    "PosX": -2,
     "PosY": 2,
     "PosZ": -6,
     "angleX": 0,
@@ -257,7 +257,7 @@
   {
     "type": "Box",
     "PosX": -8.3,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": -6,
     "angleX": 0,
     "angleY": 0,
@@ -272,7 +272,7 @@
   {
     "type": "Box",
     "PosX": 6.5,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": -2,
     "angleX": 0,
     "angleY": 0,
@@ -287,7 +287,7 @@
   {
     "type": "Box",
     "PosX": 6.5,
-    "PosY": 0.8,
+    "PosY": 1,
     "PosZ": 15,
     "angleX": 0,
     "angleY": 0,
@@ -301,9 +301,24 @@
   },
   {
     "type": "Box",
-    "PosX": -8.3,
-    "PosY": 0.8,
-    "PosZ": 15,
+    "PosX": -6,
+    "PosY": 1,
+    "PosZ": 17,
+    "angleX": 0,
+    "angleY": 0,
+    "angleZ": 0,
+    "ScaleX": 0.5,
+    "ScaleY": 0.5,
+    "ScaleZ": 0.5,
+    "DirectionX": 0,
+    "DirectionY": 0,
+    "DirectionZ": 0
+  },
+  {
+    "type": "Box",
+    "PosX": -2,
+    "PosY": 1,
+    "PosZ": 6,
     "angleX": 0,
     "angleY": 0,
     "angleZ": 0,
