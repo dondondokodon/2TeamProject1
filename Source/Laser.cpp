@@ -248,9 +248,11 @@ void LaserBeam::Render()
 	// 止めた直後にPlayし直すと、回転中ずっと生成/停止を繰り返して重くなる。
 	if (isRotating) {
 		if (isEffectPlaying) {
-			StopEffect();
+			//StopEffect();
+			//isEffectPlaying = false;
+			StopBackEffect();
 		}
-		return;
+		//return;
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
