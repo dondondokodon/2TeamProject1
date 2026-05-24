@@ -37,6 +37,7 @@ void Mirror::Update(float elapsedTime)
 
     Flag::Instance().SetFlag(Flag::MirrorRotateSE, false);
     Flag::Instance().SetFlag(Flag::rotateMirror, false);
+    Flag::Instance().SetFlag(Flag::reflectMirror, false);
 
     if (trgU)
     {
@@ -353,6 +354,8 @@ RayHitResult Mirror::ReallyHit(
     DirectX::XMStoreFloat3(
         &result.hitNormal,
         N);
+
+    Flag::Instance().SetFlag(Flag::reflectMirror, true);
 
     return result;
 }

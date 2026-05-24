@@ -75,7 +75,7 @@ void Tutorial1::Update(float elapsedTime)
 		break;
 
 	case 4:
-		if (Flag::Instance().getFlag(Flag::eventName::rotateMirror))
+		if (Flag::Instance().getFlag(Flag::eventName::rotateMirror)&& Flag::Instance().getFlag(Flag::eventName::reflectMirror))
 		{
 			index++;
 			renderIndex++;

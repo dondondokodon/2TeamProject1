@@ -25,7 +25,8 @@ public:
 		ResultBGM = 1 << 7,
 		GoalSE = 1 << 8,
 		GoalOpenSE = 1 << 9,
-		TitleBGM=1<<10
+		TitleBGM=1<<10,
+		reflectMirror=1<<11,
 	};
 
 	void SetFlag(eventName name,bool q)
