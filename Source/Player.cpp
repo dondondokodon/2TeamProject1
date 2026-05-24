@@ -955,8 +955,11 @@ void Player::ResetMove()
 
 void Player::WaitIdleForLaserRotation()
 {
-	// レーザー回転中は操作できないので、直前の移動入力と速度を消す
+	// レーザー回転中は操作できないので横移動だけ止める。
+	// Y速度まで消すと、空中やレーザー上から降りている時に重力を受けず固まってしまう。
+	float verticalVelocity = velocity.y;
 	ResetMove();
+	velocity.y = verticalVelocity;
 
 	// 肩車中にStateをIdleへ変えると肩車処理が切れるので、通常時だけ状態も戻す
 	if (!isRiding && !isWaitingByLaserRotation)
