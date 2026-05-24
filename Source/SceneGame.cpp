@@ -332,9 +332,7 @@ void SceneGame::Update(float elapsedTime)
 			reset = true;
 			changeScene = true;
 		}
-
 	}
-
 	//デバッグ用
 #if GAME_ENABLE_DEBUG_TOOLS
 	if (GetAsyncKeyState('G') & 0x0001)
