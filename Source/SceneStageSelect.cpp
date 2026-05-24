@@ -6,6 +6,7 @@
 #include"SceneManager.h"
 #include"SceneLoading.h"
 #include"SceneGame.h"
+#include"SceneTitle.h"
 
 #include "AudioManager.h"
 
@@ -51,6 +52,7 @@ void SceneStageSelect::Initialize()
 	prevAy = 0.0f;
 	num = 0;
 	changeScene = false;
+	nextSceneTitle = false;
 
 	Flag::Instance().SetFlag(Flag::eventName::TitleBGM, true);
 	Flag::Instance().SetFlag(Flag::eventName::ResultBGM, false);
@@ -120,6 +122,18 @@ void SceneStageSelect::Update(float elapsedTime)
 		}
 	}
 
+	//タイトルに戻る
+	if (GetAsyncKeyState(VK_BACK) & 0x8000)
+	{
+		if (!changeScene)
+		{
+			fade.StartFadeOut(1.0f, 0.5f);
+			nextSceneTitle = true;
+			changeScene = true;
+		}
+		
+	}
+
 	//背景更新
 	back.Update(elapsedTime);
 
@@ -134,11 +148,20 @@ void SceneStageSelect::Update(float elapsedTime)
 	if (num >= 500000) num -= 500000;
 
 	//フェード終わったら
-	if (!fade.IsFading() && changeScene)
+	if (!fade.IsFading()&& changeScene)
 	{
-		SceneManager::Instance().ChangeScene(
-			new SceneLoading(new SceneGame)
-		);
+		if (nextSceneTitle)
+		{
+			SceneManager::Instance().ChangeScene(
+				new SceneLoading(new SceneTitle)
+			);
+		}
+		else
+		{
+			SceneManager::Instance().ChangeScene(
+				new SceneLoading(new SceneGame)
+			);
+		}
 	}
 
 	//フェード更新
