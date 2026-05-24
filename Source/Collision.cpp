@@ -306,7 +306,8 @@ bool Collision::RayCast(
 	const DirectX::XMFLOAT4X4& worldTransform,
 	const Model* model,
 	DirectX::XMFLOAT3& hitPosition,
-	DirectX::XMFLOAT3& hitNormal)
+	DirectX::XMFLOAT3& hitNormal,
+	bool hitBackFace)
 {
 	using namespace DirectX;
 
@@ -384,8 +385,9 @@ bool Collision::RayCast(
 					if (worldT < nearestDistT)
 					{
 						XMVECTOR Normal = XMVector3Cross(B - A, C - B);
+						float normalDot = XMVectorGetX(XMVector3Dot(LocalDir, Normal));
 
-						if (XMVectorGetX(XMVector3Dot(LocalDir, Normal)) < 0)
+						if (hitBackFace || normalDot < 0)
 						{
 							nearestDistT = worldT;
 
@@ -396,9 +398,17 @@ bool Collision::RayCast(
 								XMVector3Transform(HitPos, World)
 							);
 
+							// 裏面ヒットを許可した時は、法線をレーザーの来た方向へ向ける。
+							// これで裏側から鏡に当たった時も、停止エフェクトの向きが変になりにくい。
+							XMVECTOR HitNormal = Normal;
+							if (normalDot > 0.0f)
+							{
+								HitNormal = XMVectorNegate(HitNormal);
+							}
+
 							XMStoreFloat3(
 								&hitNormal,
-								XMVector3Normalize(XMVector3TransformNormal(Normal, World))
+								XMVector3Normalize(XMVector3TransformNormal(HitNormal, World))
 							);
 
 							hit = true;
