@@ -320,7 +320,8 @@ RayHitResult StageObjectManager::RayCast(
 			obj->GetTransform(),
 			obj->GetModel(),
 			tempHitPos,
-			tempNormal))
+			tempNormal,
+			obj->GetRayHitType() == RayHitType::reflection))
 		{
 			// start → hitPos の距離
 			float dx = tempHitPos.x - start.x;

@@ -833,17 +833,8 @@ if (distanceSq <= 0.0001f)
 //ジャンプ入力処理
 bool Player::InputJump()
 {
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	if (gamePad.GetButtonDown() & GamePad::BTN_A)
-	{
-		if (JumpCount < JumpLimit)
-		{
-			velocity.y = 0.0f;
-			Jump(JumpSpeed);
-			JumpCount++;
-			return true;
-		}
-	}
+	// ジャンプ機能は使わないので、入力が来ても何もしない。
+	// 落下や着地処理は別で使うため、関数だけ残して呼び出し元への影響を小さくする。
 	return false;
 }
 

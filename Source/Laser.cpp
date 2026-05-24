@@ -184,11 +184,13 @@ void LaserBeam::Update(float elapsedTime)
 		//反射
 		if (hit.object)
 		{
-			if (!isRotating)
+			// レーザー回転中でも、鏡だけは ReallyHit を通して反射方向を計算する。
+			// ここを飛ばすと reflectionDir が入らず、鏡に当たっても反射しないことがある。
+			if (!isRotating || hit.type == RayHitType::reflection)
 			{
 				//それぞれのヒット条件と見比べる
 				hit = hit.object->ReallyHit(dir, hitPos, hitNormal);
-				if (hit.hit)
+				if (!isRotating && hit.hit)
 				{
 					hit.object->OnHit(true); //ヒット通知
 				}
@@ -242,14 +244,13 @@ void LaserBeam::Update(float elapsedTime)
 
 void LaserBeam::Render()
 {
-	// 1. 回転中は何もしない
+	// 回転中はレーザーエフェクトを止めて、このフレームでは再生しない。
+	// 止めた直後にPlayし直すと、回転中ずっと生成/停止を繰り返して重くなる。
 	if (isRotating) {
 		if (isEffectPlaying) {
-			//StopEffect();
-			//isEffectPlaying = false;
-			StopBackEffect();
+			StopEffect();
 		}
-		//return;
+		return;
 	}
 	
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
