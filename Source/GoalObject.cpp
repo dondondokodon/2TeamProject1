@@ -12,7 +12,7 @@ GoalObject::GoalObject()
 
 GoalObject::~GoalObject()
 {
-
+	StopGoalEffect();
 }
 
 void GoalObject::Update(float elapsedTime)
