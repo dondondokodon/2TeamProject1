@@ -248,6 +248,7 @@ void StageObjectManager::Clear()
 	stageObjects.clear();
 	mirrors.clear();
 	grids.clear();
+	laserManager->Clear();
 }
 
 //ステージオブジェクト削除
