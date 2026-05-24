@@ -35,6 +35,8 @@ void SceneGame::Initialize()
 	goalSlowTimer = 0.0f;
 	rotateLockTimer = 0.0f;
 
+	reset = false;
+
 	tutorialIndex = 0;
 
 	//プレイヤー初期化
@@ -162,8 +164,21 @@ void SceneGame::Update(float elapsedTime)
 	if (changeScene)
 	{
 		fade.Update(elapsedTime);
-		if(!fade.IsFading())
-		SceneManager::Instance().ChangeScene(new SceneResult());
+		if (!fade.IsFading())
+		{
+			if (reset)
+			{
+				StageObjectManager::Instance().setStageIndex(StageObjectManager::Instance().getNowStageIndex());
+				SceneManager::Instance().ChangeScene(
+					new SceneLoading(new SceneGame)
+				);
+			}
+			else
+			{
+				SceneManager::Instance().ChangeScene(new SceneResult());
+			}
+				
+		}
 		return;
 	}
 
@@ -306,6 +321,19 @@ void SceneGame::Update(float elapsedTime)
 
 	//音
 	AudioManager::Instance().Update(elapsedTime);
+
+	//リセット用
+	//タイトルに戻る
+	if (GetAsyncKeyState(VK_BACK) & 0x8000)
+	{
+		if (!changeScene)
+		{
+			fade.StartFadeOut(1.0f, 0.5f);
+			reset = true;
+			changeScene = true;
+		}
+
+	}
 
 	//デバッグ用
 #if GAME_ENABLE_DEBUG_TOOLS

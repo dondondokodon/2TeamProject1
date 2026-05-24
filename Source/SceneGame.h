@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"Stage.h"
 #include"StageGrid.h"
@@ -10,29 +10,29 @@
 #include"Fade.h"
 #include "Tutorial1.h"
 
-// ƒQ[ƒ€ƒV[ƒ“
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
 class SceneGame :public Scene
 {
 public:
 	SceneGame() {}
 	~SceneGame()override {}
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize()override;
 
-	// I—¹‰»
+	// çµ‚äº†åŒ–
 	void Finalize()override;
 
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(float elapsedTime)override;
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Render()override;
 
-	// GUI•`‰æ
+	// GUIæç”»
 	void DrawGUI()override;
 
-	// ƒS[ƒ‹‚Ìˆ—
+	// ã‚´ãƒ¼ãƒ«ã®å‡¦ç†
 	void Goal();
 private:
 	//Stage* stage = nullptr;
@@ -52,4 +52,5 @@ private:
 	bool goalSlow = false;
 	float goalSlowTimer = 0.0f;
 	float rotateLockTimer = 0.0f;
+	bool reset = false;
 };
