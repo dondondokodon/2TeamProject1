@@ -52,6 +52,11 @@ void Mirror::Update(float elapsedTime)
         isRotating = true;
     }
 
+    if (targetAngleY > DirectX::XM_PI)
+        targetAngleY -= DirectX::XM_2PI;
+    if (targetAngleY < -DirectX::XM_PI)
+        targetAngleY += DirectX::XM_2PI;
+
    // if(isRotating) 
 
     // -----------------------------
@@ -79,11 +84,50 @@ void Mirror::Update(float elapsedTime)
     // -----------------------------
     // 到達判定
     // -----------------------------
-    if (isRotating&&fabs(diff) < 0.01f)
+   /* if (isRotating&&fabs(diff) < 0.01f)
     {
         angle.y = targetAngleY;
         Flag::Instance().SetFlag(Flag::rotateMirror, true);
-        isRotating = false;    }
+        isRotating = false;    }*/
+
+
+        // -----------------------------
+        // 到達判定
+        // -----------------------------
+    if (isRotating && fabs(diff) < 0.01f)
+    {
+        // ターゲットの角度に完全に同期
+        angle.y = targetAngleY;
+        Flag::Instance().SetFlag(Flag::rotateMirror, true);
+        isRotating = false;
+
+        // -------------------------------------------------------------
+        // レーザーと同じように、誤差を丸め込む処理
+        // -------------------------------------------------------------
+        // 角度（ラジアン）の小数第3位丸め込み
+        angle.y = round(angle.y * 1000.0f) / 1000.0f;
+        targetAngleY = angle.y;
+
+        // 座標（position）も念のため小数第3位で丸め込む
+        position.x = round(position.x * 1000.0f) / 1000.0f;
+        position.y = round(position.y * 1000.0f) / 1000.0f;
+        position.z = round(position.z * 1000.0f) / 1000.0f;
+
+        // 綺麗になった値で、トランスフォーム行列を「確定版」として再生成
+        UpdateTransform();
+    }
+
+    // -----------------------------
+    // angleも正規化（※コメントアウトのままでOKですが、もし使うならここ）
+    // -----------------------------
+    while (angle.y > DirectX::XM_PI)
+        angle.y -= DirectX::XM_2PI;
+
+    while (angle.y < -DirectX::XM_PI)
+        angle.y += DirectX::XM_2PI;
+
+    // 毎フレームの行列更新
+    UpdateTransform();
 
     // -----------------------------
     // angleも正規化
@@ -252,6 +296,16 @@ RayHitResult Mirror::ReallyHit(
 
     N = DirectX::XMVector3Normalize(N);
 
+    //DirectX::XMFLOAT3 nTmp;
+    //DirectX::XMStoreFloat3(&nTmp, N);
+    //// 45度刻みのゲームの場合、法線の各軸は 0.0, 1.0, 0.707 などの決まった値にしかなりません。
+    //// 0.00001 みたいな「ほぼゼロ」のゴミ成分が回転の繰り返しで生まれたら、完全に 0.0 に叩き落とします。
+    //if (fabs(nTmp.x) < 0.001f) nTmp.x = 0.0f;
+    //if (fabs(nTmp.y) < 0.001f) nTmp.y = 0.0f;
+    //if (fabs(nTmp.z) < 0.001f) nTmp.z = 0.0f;
+    //N = DirectX::XMLoadFloat3(&nTmp);
+    //N = DirectX::XMVector3Normalize(N); // 念のため再正規化
+
     //========================
     // 表裏補正
     //========================
@@ -266,6 +320,12 @@ RayHitResult Mirror::ReallyHit(
         return result;
     }
 
+
+    //if (dot > 0.001f)
+    //{
+    //    result.type = RayHitType::Stop;
+    //    return result;
+    //}
     //========================
     // 反射計算
     //========================
@@ -273,6 +333,15 @@ RayHitResult Mirror::ReallyHit(
         DirectX::XMVector3Reflect(D, N);
 
     R = DirectX::XMVector3Normalize(R);
+
+
+    //DirectX::XMFLOAT3 rTmp;
+    //DirectX::XMStoreFloat3(&rTmp, R);
+    //if (fabs(rTmp.x) < 0.001f) rTmp.x = 0.0f;
+    //if (fabs(rTmp.y) < 0.001f) rTmp.y = 0.0f;
+    //if (fabs(rTmp.z) < 0.001f) rTmp.z = 0.0f;
+    //R = DirectX::XMLoadFloat3(&rTmp);
+    //R = DirectX::XMVector3Normalize(R);
 
     //========================
     // 保存
