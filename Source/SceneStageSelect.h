@@ -27,6 +27,7 @@ private:
 	bool changeScene = false;
 	short ButtonIndex = 0;
 	Fade fade;
+	bool nextSceneTitle = false;
 
 	std::unique_ptr<Sprite> checkMarks[4];
 	std::unique_ptr<Sprite> stageNumberSprite;
