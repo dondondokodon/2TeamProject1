@@ -180,21 +180,6 @@
     "DirectionZ": 0
   },
   {
-    "type": -1,
-    "PosX": -1,
-    "PosY": 2,
-    "PosZ": -1,
-    "angleX": -1,
-    "angleY": -1,
-    "angleZ": -1,
-    "ScaleX": -1,
-    "ScaleY": -1,
-    "ScaleZ": -1,
-    "DirectionX": -1,
-    "DirectionY": -1,
-    "DirectionZ": -1
-  },
-  {
     "type": "Goal",
     "PosX": -1,
     "PosY": 3,
