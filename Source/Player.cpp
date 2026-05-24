@@ -76,6 +76,11 @@ void Player::ChangeState(std::unique_ptr<PlayerState> newState)
 //更新処理
 void Player::Update(float elapsedTime, bool canControl)
 {
+	if (canControl)
+	{
+		isWaitingByLaserRotation = false;
+	}
+
 // 肩車タイマー更新
 if (rideTimer > 0.0f)
 {
@@ -953,6 +958,22 @@ void Player::ResetMove()
 	moveVecX = 0.0f;
 	moveVecZ = 0.0f;
 	maxMoveSpeed = 0.0f;
+}
+
+void Player::WaitIdleForLaserRotation()
+{
+	// レーザー回転中は操作できないので、直前の移動入力と速度を消す
+	ResetMove();
+
+	// 肩車中にStateをIdleへ変えると肩車処理が切れるので、通常時だけ状態も戻す
+	if (!isRiding && !isWaitingByLaserRotation)
+	{
+		ChangeState(std::make_unique<IdleState>());
+		isWaitingByLaserRotation = true;
+	}
+
+	// 直前にRunだった場合でも、見た目は待機にする
+	animation.PlayAnimation("Idle", true);
 }
 
 
