@@ -81,10 +81,10 @@ void SceneResult::Update(float elapsedTime)
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
-		if (StageObjectManager::Instance().isLastStage())
+		/*if (StageObjectManager::Instance().isLastStage())
 		{
 			isClear = true;
-		}
+		}*/
 
 		if (!changeScene)
 		{
@@ -97,11 +97,11 @@ void SceneResult::Update(float elapsedTime)
 	fade.Update(elapsedTime);
 	if (!fade.IsFading() && changeScene)
 	{
-		if(isClear)	//最期のステージクリアしたらタイトルに戻るようにしてる（仮）
-		SceneManager::Instance().ChangeScene(
-			new SceneLoading(new SceneTitle)
-		);
-		else //それ以外の時はステージセレクトに行く
+		//if(isClear)	//最期のステージクリアしたらタイトルに戻るようにしてる（仮）
+		//SceneManager::Instance().ChangeScene(
+		//	new SceneLoading(new SceneTitle)
+		//);
+		//else //それ以外の時はステージセレクトに行く
 		SceneManager::Instance().ChangeScene(
 			new SceneLoading(new SceneStageSelect)
 		);
