@@ -237,6 +237,10 @@ void SceneGame::Update(float elapsedTime)
 				// レーザー回転中はプレイヤー操作だけ止める。
 				// Update自体は動かして、重力や衝突などの通常処理は残す。
 				bool canControl = (!goalSlow && !laserRotating && rotateLockTimer <= 0.0f && i == controlPlayerIndex);
+				if (!canControl && laserRotating)
+				{
+					players[i]->WaitIdleForLaserRotation();
+				}
 				players[i]->Update(gameElapsedTime, canControl);
 			}
 		}

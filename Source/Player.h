@@ -75,6 +75,8 @@ public:
 	void UpdateRiding(float elapsedTime);
 	//移動入力をリセット
 	void ResetMove();
+	//レーザー回転で操作を止める時、移動を消して待機アニメーションにする
+	void WaitIdleForLaserRotation();
 	//肩車可能か
 	bool CanStartRiding() const { return rideTimer <= 0.0f; }
 	//肩車解除処理
@@ -153,6 +155,8 @@ private:
 
 	//木箱を押しているときに固定化する用・いらないなら消す
 	bool isBoxPushing = false;
+	//レーザー回転中にIdleへ戻したか。毎フレームStateを作り直さないためのフラグ
+	bool isWaitingByLaserRotation = false;
 
 	//乗っているか
 	bool isRiding = false;
