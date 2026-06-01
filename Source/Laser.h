@@ -33,7 +33,7 @@ public:
 	float maxLength = 100.0f;
 	float isActive = true;
 	float radius = 0.5f;
-	int maxReflection = 10;
+	const int maxReflection = 10;
 	bool isRotating = false;
 
 

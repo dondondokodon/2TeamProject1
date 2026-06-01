@@ -843,7 +843,7 @@ void Laser::Initialize(
 	beam.origin = startPos;
 	beam.direction = direction;
 	beam.maxLength = maxLength;
-	beam.maxReflection = 5;
+	//beam.maxReflection = 5;
 	//beam.radius = 0.3f;
 
    // OutputDebugStringA("laserやってる\n");
