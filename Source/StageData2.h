@@ -21,3 +21,25 @@ class StageData4 : public StageData
 	~StageData4() {};
 };
 
+class StageData5 : public StageData
+{
+public:
+	StageData5();
+	~StageData5() {};
+};
+
+class StageData6 : public StageData
+{
+public:
+	StageData6();
+	~StageData6() {};
+};
+
+class StageData7 : public StageData
+{
+public:
+	StageData7();
+	~StageData7() {};
+};
+
+
