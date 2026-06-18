@@ -7,14 +7,78 @@
 #include"SceneLoading.h"
 #include"SceneGame.h"
 #include"SceneTitle.h"
+#include "StageObjectManager.h"
+#include "Flag.h"
 
 #include "AudioManager.h"
+
+namespace
+{
+constexpr int GRID_ROWS = 3;
+constexpr int GRID_COLS = 3;
+
+// -1 = 空セル
+constexpr int GRID_TO_INDEX[GRID_ROWS][GRID_COLS] =
+{
+	{ 0,  1,  2 },
+	{ 3,  4,  5 },
+	{ -1, 6, -1 },
+};
+
+void IndexToGrid(int index, int& row, int& col)
+{
+	for (int r = 0; r < GRID_ROWS; ++r)
+	{
+		for (int c = 0; c < GRID_COLS; ++c)
+		{
+			if (GRID_TO_INDEX[r][c] == index)
+			{
+				row = r;
+				col = c;
+				return;
+			}
+		}
+	}
+
+	row = 0;
+	col = 0;
+}
+
+int MoveStageIndex(int current, int dRow, int dCol)
+{
+	int row = 0;
+	int col = 0;
+	IndexToGrid(current, row, col);
+
+	const int newRow = row + dRow;
+	const int newCol = col + dCol;
+
+	if (newRow < 0 || newRow >= GRID_ROWS || newCol < 0 || newCol >= GRID_COLS)
+	{
+		return current;
+	}
+
+	const int next = GRID_TO_INDEX[newRow][newCol];
+	return (next >= 0) ? next : current;
+}
+}
 
 SceneStageSelect::SceneStageSelect()
 {
 	ButtonIndex = 0;
 }
 
+DirectX::XMFLOAT2 SceneStageSelect::GetStageCenter(int index) const
+{
+	int row = 0;
+	int col = 0;
+	IndexToGrid(index, row, col);
+
+	const float COL_X[3] = { 0.25f, 0.5f, 0.75f };
+	const float ROW_Y[3] = { 0.22f, 0.50f, 0.78f };
+
+	return { SCREEN_W * COL_X[col], SCREEN_H * ROW_Y[row] };
+}
 
 void SceneStageSelect::Initialize()
 {
@@ -23,28 +87,32 @@ void SceneStageSelect::Initialize()
 	//フェード初期化
 	fade.Initialize();
 
-	//ボタン初期化
-	buttons[0].Initialize("Data/Sprite/StageSelect/stage1.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.25f), 500.0f, 400.0f);
-	buttons[0].setStageIndex(0);
+	const float STAGE_BUTTON_WIDTH = 380.0f;
+	const float STAGE_BUTTON_HEIGHT = 280.0f;
+	const float SELECT_BOX_WIDTH = 370.0f;
+	const float SELECT_BOX_HEIGHT = 270.0f;
 
-	buttons[1].Initialize("Data/Sprite/StageSelect/stage2.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.25f), 500.0f, 400.0f);
-	buttons[1].setStageIndex(1);
+	static const char* stageSpritePaths[STAGE_COUNT] =
+	{
+		"Data/Sprite/StageSelect/stage1.png",
+		"Data/Sprite/StageSelect/stage2.png",
+		"Data/Sprite/StageSelect/stage3.png",
+		"Data/Sprite/StageSelect/stage4.png",
+		"Data/Sprite/StageSelect/stage5.png",
+		"Data/Sprite/StageSelect/stage6.png",
+		"Data/Sprite/StageSelect/stage7.png",
+	};
 
-	buttons[2].Initialize("Data/Sprite/StageSelect/stage3.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.75f), 500.0f, 400.0f);
-	buttons[2].setStageIndex(2);
+	for (int i = 0; i < STAGE_COUNT; ++i)
+	{
+		const DirectX::XMFLOAT2 center = GetStageCenter(i);
 
-	buttons[3].Initialize("Data/Sprite/StageSelect/stage4.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.75f), 500.0f, 400.0f);
-	buttons[3].setStageIndex(3);
+		buttons[i].Initialize(stageSpritePaths[i], center, STAGE_BUTTON_WIDTH, STAGE_BUTTON_HEIGHT);
+		buttons[i].setStageIndex(i);
 
-	selectButtons[0].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.25f), 490.0f, 390.0f);
-	selectButtons[1].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.25f), 490.0f, 390.0f);
-	selectButtons[2].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.3f, SCREEN_H * 0.75f), 490.0f, 390.0f);
-	selectButtons[3].Initialize("Data/Sprite/SelectBox.png", DirectX::XMFLOAT2(SCREEN_W * 0.7f, SCREEN_H * 0.75f), 490.0f, 390.0f);
-
-	checkMarks[0] = std::make_unique<Sprite>("Data/Sprite/check.png");
-	checkMarks[1] = std::make_unique<Sprite>("Data/Sprite/check.png");
-	checkMarks[2] = std::make_unique<Sprite>("Data/Sprite/check.png");
-	checkMarks[3] = std::make_unique<Sprite>("Data/Sprite/check.png");
+		selectButtons[i].Initialize("Data/Sprite/SelectBox.png", center, SELECT_BOX_WIDTH, SELECT_BOX_HEIGHT);
+		checkMarks[i] = std::make_unique<Sprite>("Data/Sprite/check.png");
+	}
 
 	stageNumberSprite = std::make_unique<Sprite>("Data/Sprite/number.png");
 
@@ -66,46 +134,43 @@ void SceneStageSelect::Update(float elapsedTime)
 	float ay = gamePad.GetAxisLY();
 	float ax = gamePad.GetAxisLX();
 
-	
-	int row = ButtonIndex / 2; // 現在の行 (0〜1)
-	int col = ButtonIndex % 2; // 現在の列 (0〜1)
-
 	const float THRESHOLD = 0.5f; //しきい値
 
 	// 横方向の移動（左・右）
 	if (ax > THRESHOLD && prevAx <= THRESHOLD) {
-		if (col < 1)
+		const int next = MoveStageIndex(ButtonIndex, 0, 1);
+		if (next != ButtonIndex)
 		{
-			col++; // 右へ
+			ButtonIndex = static_cast<short>(next);
 			num = 0;
 		}
 	}
 	else if (ax < -THRESHOLD && prevAx >= -THRESHOLD) {
-		if (col > 0)
+		const int next = MoveStageIndex(ButtonIndex, 0, -1);
+		if (next != ButtonIndex)
 		{
-			col--; // 左へ
+			ButtonIndex = static_cast<short>(next);
 			num = 0;
 		}
 	}
 
-	// 縦方向の移動（上・下） 
+	// 縦方向の移動（上・下）
 	if (ay > THRESHOLD && prevAy <= THRESHOLD) {
-		if (row > 0)
+		const int next = MoveStageIndex(ButtonIndex, -1, 0);
+		if (next != ButtonIndex)
 		{
-			row--; // 上へ（行を減らす）
+			ButtonIndex = static_cast<short>(next);
 			num = 0;
 		}
 	}
 	else if (ay < -THRESHOLD && prevAy >= -THRESHOLD) {
-		if (row < 1)
+		const int next = MoveStageIndex(ButtonIndex, 1, 0);
+		if (next != ButtonIndex)
 		{
-			row++; // 下へ（行を増やす）
+			ButtonIndex = static_cast<short>(next);
 			num = 0;
 		}
 	}
-
-	// インデックスの再計算
-	ButtonIndex = row * 2 + col;
 
 	// 今回の入力を保存
 	prevAx = ax;
@@ -131,24 +196,24 @@ void SceneStageSelect::Update(float elapsedTime)
 			nextSceneTitle = true;
 			changeScene = true;
 		}
-		
+
 	}
 
 	//背景更新
 	back.Update(elapsedTime);
 
 	//ボタン更新
-	for(auto& button : buttons)
+	for (auto& button : buttons)
 		button.Update(elapsedTime);
 
-	for(auto& selectButton : selectButtons)
+	for (auto& selectButton : selectButtons)
 		selectButton.Update(elapsedTime);
 
 	num++;
 	if (num >= 500000) num -= 500000;
 
 	//フェード終わったら
-	if (!fade.IsFading()&& changeScene)
+	if (!fade.IsFading() && changeScene)
 	{
 		if (nextSceneTitle)
 		{
@@ -180,62 +245,51 @@ void SceneStageSelect::Render()
 	RenderContext rc;
 	rc.deviceContext = dc;
 	rc.renderState = graphics.GetRenderState();
-	
+
 	//背景
 	back.render(rc);
 
 	//ボタン
-	for(auto& button : buttons)
+	for (auto& button : buttons)
 		button.render(rc);
 
-	for (int i = 0; i < 4; ++i)
+	const float STAGE_BUTTON_WIDTH = 380.0f;
+	const float STAGE_BUTTON_HEIGHT = 280.0f;
+	const float NUMBER_OFFSET_X = 35.0f;
+	const float NUMBER_OFFSET_Y = 30.0f;
+
+	for (int i = 0; i < STAGE_COUNT; ++i)
 	{
-		float cx = (i % 2 == 0) ? SCREEN_W * 0.3f : SCREEN_W * 0.7f;
-		float cy = (i < 2) ? SCREEN_H * 0.25f : SCREEN_H * 0.75f;
-
-		const float STAGE_BUTTON_WIDTH = 500.0f;
-		const float STAGE_BUTTON_HEIGHT = 400.0f;
-		const float NUMBER_OFFSET_X = 35.0f;
-		const float NUMBER_OFFSET_Y = 30.0f;
-
-		// ステージ画像の左上から同じ位置に数字を置く。
-		// 数字の場所を変えたい時は NUMBER_OFFSET_X/Y を調整する。
-		float numberX = cx - STAGE_BUTTON_WIDTH * 0.5f + NUMBER_OFFSET_X;
-		float numberY = cy - STAGE_BUTTON_HEIGHT * 0.5f + NUMBER_OFFSET_Y;
+		const DirectX::XMFLOAT2 center = GetStageCenter(i);
+		const float numberX = center.x - STAGE_BUTTON_WIDTH * 0.5f + NUMBER_OFFSET_X;
+		const float numberY = center.y - STAGE_BUTTON_HEIGHT * 0.5f + NUMBER_OFFSET_Y;
 
 		RenderStageNumber(rc, i + 1, numberX, numberY);
 	}
 
 	if (num % 80 < 40)
-	selectButtons[ButtonIndex].render(rc);
+		selectButtons[ButtonIndex].render(rc);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < STAGE_COUNT; ++i)
 	{
 		if (StageObjectManager::Instance().IsCleared(i))
 		{
-			// ボタンの中心位置
-			float cx = (i % 2 == 0) ? SCREEN_W * 0.3f : SCREEN_W * 0.7f;
-			float cy = (i < 2) ? SCREEN_H * 0.25f : SCREEN_H * 0.75f;
+			const DirectX::XMFLOAT2 center = GetStageCenter(i);
 
 			// Sprite は左上座標なので補正
-			float x = cx - 60;   // 120px の半分
-			float y = cy - 60;
+			const float x = center.x - 60;
+			const float y = center.y - 60;
 
 			checkMarks[i]->Render(
 				rc,
-				x - 150, y - 150,   // 中心補正（半分引く）
+				x - 150, y - 150,
 				0.0f,
-				450, 450,           // 幅・高さを拡大
+				450, 450,
 				0.0f,
 				1, 1, 1, 1
 			);
-
-
 		}
 	}
-
-
-
 
 	//フェード
 	fade.Render(rc);

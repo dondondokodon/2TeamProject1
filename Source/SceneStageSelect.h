@@ -10,6 +10,8 @@ class SceneStageSelect :
     public Scene
 {
 public:
+	static constexpr int STAGE_COUNT = 7;
+
 	SceneStageSelect();
 	~SceneStageSelect() {}
 	void Initialize() override;
@@ -20,16 +22,17 @@ public:
 
 private:
 	void RenderStageNumber(const RenderContext& rc, int number, float x, float y);
+	DirectX::XMFLOAT2 GetStageCenter(int index) const;
 
 	Sprite2D back;
-	Button buttons[4];
-	Sprite2D selectButtons[4];
+	Button buttons[STAGE_COUNT];
+	Sprite2D selectButtons[STAGE_COUNT];
 	bool changeScene = false;
 	short ButtonIndex = 0;
 	Fade fade;
 	bool nextSceneTitle = false;
 
-	std::unique_ptr<Sprite> checkMarks[4];
+	std::unique_ptr<Sprite> checkMarks[STAGE_COUNT];
 	std::unique_ptr<Sprite> stageNumberSprite;
 
 	float prevAx = 0.0f;
@@ -37,4 +40,3 @@ private:
 
 	int num = 0;
 };
-
