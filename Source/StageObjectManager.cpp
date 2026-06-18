@@ -14,6 +14,9 @@ StageObjectManager::StageObjectManager()
 	stageDatas.push_back(std::make_unique<StageData2>());
 	stageDatas.push_back(std::make_unique<StageData3>());
 	stageDatas.push_back(std::make_unique<StageData4>());
+	stageDatas.push_back(std::make_unique<StageData5>());
+	stageDatas.push_back(std::make_unique<StageData6>());
+	stageDatas.push_back(std::make_unique<StageData7>());
 }
 
 StageObjectManager::~StageObjectManager() 
@@ -31,6 +34,9 @@ void StageObjectManager::Reset()
 	stageDatas.push_back(std::make_unique<StageData2>());
 	stageDatas.push_back(std::make_unique<StageData3>());
 	stageDatas.push_back(std::make_unique<StageData4>());
+	stageDatas.push_back(std::make_unique<StageData5>());
+	stageDatas.push_back(std::make_unique<StageData6>());
+	stageDatas.push_back(std::make_unique<StageData7>());
 }
 
 

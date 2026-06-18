@@ -162,7 +162,7 @@ private:
 	float stageMinZ = -25.0f;
 	float stageMaxZ = 25.0f;
 
-	bool cleared[4] = { false };
+	bool cleared[10] = { false };
 
 	std::vector <std::unique_ptr<StageObject>> stageObjects;
 	std::unique_ptr<StageObject> stageFloor;
