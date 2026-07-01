@@ -227,7 +227,7 @@ void SceneGame::Update(float elapsedTime)
 	//if (StageObjectManager::Instance().GetLaserManager()&&!StageObjectManager::Instance().GetLaserManager()->GetIsRotating())
 	{
 		// プレイヤー更新 (ステージ0ではPlayer2を非表示にする)
-		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() <= 2);
 		for (int i = 0; i < 2; ++i)
 		{
 			if (hidePlayer2 && i == 1) continue;
@@ -246,7 +246,7 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 	
-	bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+	bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() <= 2);
 
 	if (!hidePlayer2 && players[0] != nullptr && players[1] != nullptr)
 	{
@@ -408,7 +408,7 @@ void SceneGame::Render()
 		skyBox.Render(rc, modelRenderer);
 
 		// Player2をステージ0で非表示にする
-		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() <=2);
 		for (int i = 0; i < 2; ++i)
 		{
 			if (hidePlayer2 && i == 1) continue;
@@ -439,7 +439,7 @@ void SceneGame::Render()
 		//	}
 		//}
 		// Player2をステージ0で非表示にする
-		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() == 0);
+		bool hidePlayer2 = (StageObjectManager::Instance().GetStageIndex() <=2);
 
 		for (int i = 0; i < 2; ++i)
 		{
