@@ -417,7 +417,7 @@ bool Player::RayCastLaserMirror(
 bool Player::IsStage1RobotDisabled() const
 {
 	return isRobot &&
-		StageObjectManager::Instance().GetStageIndex() == 0;
+		StageObjectManager::Instance().GetStageIndex() <= 2;
 }
 
 //着地したときの処理
